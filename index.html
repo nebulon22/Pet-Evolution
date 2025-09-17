@@ -21,7 +21,7 @@
     .pet-wrapper {
       position: relative;
       display: flex;
-      align-items: center;   /* thermometer & pet sejajar */
+      align-items: center;
       justify-content: center;
       margin-top: 20px;
       gap: 20px;
@@ -188,9 +188,17 @@ function feedPet(){
     pet.exp++;
   }
 
-  // Kalau exp penuh, munculkan tombol Evo
+  // Kalau exp penuh, cek apakah saatnya evolusi
   if (pet.exp >= 10) {
-    document.getElementById("evoBtn").style.display = "inline-block";
+    if (pet.level >= 10 && pet.stage === "egg") {
+      document.getElementById("evoBtn").style.display = "inline-block";
+    }
+    if (pet.level >= 20 && pet.stage === "chick") {
+      document.getElementById("evoBtn").style.display = "inline-block";
+    }
+    if (pet.level >= 30 && pet.stage === "rooster") {
+      document.getElementById("evoBtn").style.display = "inline-block";
+    }
   }
 
   updateUI();
