@@ -88,6 +88,25 @@
       border-radius: 10px;
     }
 
+    /* Tombol reset mungil */
+    #resetWrapper {
+      position: fixed;
+      top: 5px;
+      right: 5px;
+      z-index: 10;
+    }
+
+    #resetBtn {
+      font-size: 2.5vw;
+      padding: 4px 8px;
+      border-radius: 6px;
+      opacity: 0.6;
+    }
+
+    #resetBtn:hover {
+      opacity: 1;
+    }
+
     @keyframes breathing {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.05); }
@@ -121,7 +140,11 @@
 
   <button onclick="feedPet()">🍖 Feed</button>
   <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
-  <button onclick="resetGame()">🔄 Reset</button>
+
+  <!-- Tombol reset mungil -->
+  <div id="resetWrapper">
+    <button id="resetBtn" onclick="resetGame()">🔄</button>
+  </div>
 
 <script>
 let pet = JSON.parse(localStorage.getItem("petData")) || { 
@@ -183,15 +206,12 @@ function feedPet(){
     if ((pet.level === 10 && pet.stage === "egg") ||
         (pet.level === 20 && pet.stage === "chick") ||
         (pet.level === 30 && pet.stage === "rooster")) {
-      // Level terkunci, tunggu evo
       document.getElementById("evoBtn").style.display = "inline-block";
     } else {
-      // Naik level + reset EXP
       pet.exp = 0;
       pet.level++;
     }
   } else {
-    // Tambah EXP normal
     pet.exp = Math.min(100, pet.exp + 10);
   }
 
@@ -212,7 +232,7 @@ function evolvePet(){
     showBubble("🔥 Evolusi jadi Phoenix!");
   }
 
-  pet.exp = 0; // reset exp setelah evolusi
+  pet.exp = 0;
   document.getElementById("evoBtn").style.display = "none";
   updateUI();
 }
