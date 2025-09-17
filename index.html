@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pet Evolusi</title>
+  <style>
+    body {
+      margin: 0; text-align: center;
+      background: #2e7d32; color: white;
+      font-family: sans-serif; overflow-x: hidden;
+    }
+
+    .pet-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 30px;
+    }
+    #pet { width: 200px; height: auto; }
+
+    /* Bubble overlay di kanan pet */
+#bubble {
+  position: absolute;
+  left: 60%; top: 20%;
+  background: white; color: black;
+  padding: 8px 12px; border-radius: 12px;
+  display: none; max-width: 150px; text-align: left;
+  z-index: 2;
+  font-size: 14px;
+}
+
+/* Ekor bubble */
+#bubble::after {
+  content: "";
+  position: absolute;
+  left: -10px; /* muncul di sisi kiri bubble */
+  top: 20px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent white transparent transparent;
+}
+
+
+    /* Thermometer Hunger kiri */
+    .thermometer {
+      position: fixed; left: 20px; top: 50%;
+      transform: translateY(-50%);
+      width: 30px; height: 200px;
+      background: #444; border-radius: 15px;
+      overflow: hidden; border: 2px solid #ccc;
+    }
+    .thermo-fill {
+      position: absolute; bottom: 0; width: 100%; height: 0%;
+      transition: height 0.5s ease, background 0.5s ease;
+      background: green;
+    }
+
+    /* EXP Bar tetap horizontal */
+    .bar-container {
+      width: 80%; margin: 10px auto;
+      background: #444; border-radius: 10px;
+      overflow: hidden; height: 20px;
+    }
+    #expBar {
+      height: 100%; width: 0%;
+      text-align: center; color: white;
+      font-size: 12px; line-height: 20px;
+      background: dodgerblue; transition: width 0.5s ease;
+    }
+
+    button {
+      margin: 10px; padding: 10px 20px;
+      font-size: 16px; border-radius: 8px;
+    }
+
+    /* Animasi Pet */
+    @keyframes breathing {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes hungry-shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+    .breathing { animation: breathing 3s infinite; }
+    .hungry { animation: hungry-shake 0.5s infinite; }
+  </style>
+</head>
+<body>
+  <h2>🐣 Pet Evolusi</h2>
+
+  <!-- Pet di tengah -->
+  <div class="pet-wrapper">
+    <img id="pet" src="egg.png" class="breathing">
+    <div id="bubble"></div>
+  </div>
+  
+  <p>Level: <span id="level">1</span></p>
+
+  <!-- Hunger Thermometer kiri -->
+  <div class="thermometer">
+    <div id="thermoFill" class="thermo-fill"></div>
+  </div>
+
+  <!-- EXP Bar -->
+  <div class="bar-container">
+    <div id="expBar">EXP</div>
+  </div>
+
+  <button onclick="feedPet()">🍖 Feed</button>
+  <button onclick="resetGame()">🔄 Reset</button>
+
+<script>
+let pet = JSON.parse(localStorage.getItem("petData")) || { level: 1, exp: 0, stage: "egg", hunger: 30 };
+
+function getPetImage(stage){
+  switch(stage){
+    case "egg": return "egg.png";
+    case "chick": return "chick.png";
+    case "rooster": return "rooster.png";
+    case "phoenix": return "phoenix.png";
+    default: return "egg.png";
+  }
+}
+
+function updateUI(){
+  document.getElementById("level").textContent = pet.level;
+  document.getElementById("pet").src = getPetImage(pet.stage);
+
+  // Thermometer Hunger
+  const thermo = document.getElementById("thermoFill");
+  thermo.style.height = pet.hunger + "%";
+  if(pet.hunger > 70) thermo.style.background = "green";
+  else if(pet.hunger > 30) thermo.style.background = "gold";
+  else thermo.style.background = "red";
+
+  // EXP bar
+  const expPercent = (pet.exp / 10) * 100;
+  const expBar = document.getElementById("expBar");
+  expBar.style.width = expPercent + "%";
+  expBar.textContent = "EXP " + pet.exp + "/10";
+
+  // Animasi Pet
+  const petImg = document.getElementById("pet");
+  if(pet.hunger <= 30) {
+    petImg.classList.remove("breathing");
+    petImg.classList.add("hungry");
+  } else {
+    petImg.classList.remove("hungry");
+    petImg.classList.add("breathing");
+  }
+
+  // Simpan progress
+  localStorage.setItem("petData", JSON.stringify(pet));
+}
+
+// Bubble text di kanan overlay
+function showBubble(text){
+  const bubble = document.getElementById("bubble");
+  bubble.textContent = text;
+  bubble.style.display = "block";
+  setTimeout(()=> bubble.style.display="none", 2500);
+}
+
+function feedPet(){
+  pet.hunger = Math.min(100, pet.hunger + 20);
+  pet.exp++;
+  if(pet.exp >= 10){ 
+    pet.exp = 0; 
+    pet.level++;
+    if(pet.level == 10) pet.stage = "chick";
+    if(pet.level == 20) pet.stage = "rooster";
+    if(pet.level == 30) pet.stage = "phoenix";
+  }
+  updateUI();
+}
+
+// Hunger menurun
+setInterval(()=>{
+  pet.hunger = Math.max(0, pet.hunger - 5);
+  if(pet.hunger < 50 && Math.random() < 0.3){
+    showBubble("Aku lapar 🥺");
+  }
+  updateUI();
+}, 5000);
+
+// Reset game
+function resetGame(){
+  localStorage.removeItem("petData");
+  pet = { level: 1, exp: 0, stage: "egg", hunger: 30 };
+  updateUI();
+  alert("Game direset! Pet kamu lapar 🥺");
+}
+
+updateUI();
+</script>
+</body>
+</html>
