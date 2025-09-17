@@ -21,14 +21,15 @@
     .pet-wrapper {
       position: relative;
       display: flex;
+      align-items: center;   /* thermometer & pet sejajar */
       justify-content: center;
-      align-items: center;
       margin-top: 20px;
+      gap: 20px; /* jarak antar elemen */
     }
 
     /* Pet responsif */
     #pet {
-      width: 50vw;       /* 50% dari lebar layar */
+      width: 40vw;       /* 40% dari lebar layar */
       max-width: 220px;  /* batas maksimum */
       height: auto;
     }
@@ -52,15 +53,16 @@
       border-color: transparent white transparent transparent;
     }
 
-    /* Thermometer kiri responsif */
+    /* Thermometer kiri sejajar dengan Pet */
     .thermometer {
-      position: fixed;
-      left: 4vw; top: 20%;
-      transform: translateY(-50%);
-      width: 6vw; max-width: 30px;
-      height: 40vh;
-      background: #444; border-radius: 15px;
-      overflow: hidden; border: 2px solid #ccc;
+      position: relative;
+      width: 6vw; 
+      max-width: 30px;
+      height: 35vh;
+      background: #444;
+      border-radius: 15px;
+      overflow: hidden;
+      border: 2px solid #ccc;
     }
     .thermo-fill {
       position: absolute; bottom: 0; width: 100%; height: 0%;
@@ -107,15 +109,19 @@
   <h2>🐣 Pet Evolusi</h2>
 
   <div class="pet-wrapper">
+    <!-- Thermometer di kiri -->
+    <div class="thermometer">
+      <div id="thermoFill" class="thermo-fill"></div>
+    </div>
+
+    <!-- Pet di tengah -->
     <img id="pet" src="egg1.png" class="breathing">
+
+    <!-- Bubble tetap di atas pet -->
     <div id="bubble"></div>
   </div>
   
   <p style="font-size:4vw;">Level: <span id="level">1</span></p>
-
-  <div class="thermometer">
-    <div id="thermoFill" class="thermo-fill"></div>
-  </div>
 
   <div class="bar-container">
     <div id="expBar">EXP</div>
@@ -203,4 +209,3 @@ updateUI();
 </script>
 </body>
 </html>
-
