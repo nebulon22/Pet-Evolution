@@ -178,43 +178,41 @@ function showBubble(text){
 function feedPet(){
   pet.hunger = Math.min(100, pet.hunger + 20);
 
-  // Tambah 10% EXP tiap makan
-  pet.exp = Math.min(100, pet.exp + 10);
-
-  // Kalau sudah penuh (100%), reset + naik level
   if (pet.exp >= 100) {
-    pet.exp = 0;
-    pet.level++;
-
-    // Tampilkan tombol Evo di level tertentu
-    if (pet.level === 10 && pet.stage === "egg") {
+    // EXP penuh → cek apakah level Evo
+    if ((pet.level === 10 && pet.stage === "egg") ||
+        (pet.level === 20 && pet.stage === "chick") ||
+        (pet.level === 30 && pet.stage === "rooster")) {
+      // Level terkunci, tunggu evo
       document.getElementById("evoBtn").style.display = "inline-block";
+    } else {
+      // Naik level + reset EXP
+      pet.exp = 0;
+      pet.level++;
     }
-    if (pet.level === 20 && pet.stage === "chick") {
-      document.getElementById("evoBtn").style.display = "inline-block";
-    }
-    if (pet.level === 30 && pet.stage === "rooster") {
-      document.getElementById("evoBtn").style.display = "inline-block";
-    }
+  } else {
+    // Tambah EXP normal
+    pet.exp = Math.min(100, pet.exp + 10);
   }
 
   updateUI();
 }
 
 function evolvePet(){
-  if(pet.level >= 10 && pet.stage === "egg") {
+  if(pet.level === 10 && pet.stage === "egg") {
     pet.stage = "chick";
     showBubble("✨ Evolusi jadi Anak Ayam 🐥");
   }
-  else if(pet.level >= 20 && pet.stage === "chick") {
+  else if(pet.level === 20 && pet.stage === "chick") {
     pet.stage = "rooster";
     showBubble("✨ Evolusi jadi Ayam Jantan 🐓");
   }
-  else if(pet.level >= 30 && pet.stage === "rooster") {
+  else if(pet.level === 30 && pet.stage === "rooster") {
     pet.stage = "phoenix";
     showBubble("🔥 Evolusi jadi Phoenix!");
   }
 
+  pet.exp = 0; // reset exp setelah evolusi
   document.getElementById("evoBtn").style.display = "none";
   updateUI();
 }
