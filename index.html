@@ -28,7 +28,7 @@
 
     /* Pet responsif */
     #pet {
-      width: 40vw;       /* 40% dari lebar layar */
+      width: 50vw;       /* 50% dari lebar layar */
       max-width: 220px;  /* batas maksimum */
       height: auto;
     }
@@ -55,7 +55,7 @@
     /* Thermometer kiri responsif */
     .thermometer {
       position: fixed;
-      left: 4vw; top: 50%;
+      left: 4vw; top: 20%;
       transform: translateY(-50%);
       width: 6vw; max-width: 30px;
       height: 40vh;
@@ -107,7 +107,7 @@
   <h2>🐣 Pet Evolusi</h2>
 
   <div class="pet-wrapper">
-    <img id="pet" src="egg.png" class="breathing">
+    <img id="pet" src="egg1.png" class="breathing">
     <div id="bubble"></div>
   </div>
   
@@ -129,11 +129,11 @@ let pet = JSON.parse(localStorage.getItem("petData")) || { level: 1, exp: 0, sta
 
 function getPetImage(stage){
   switch(stage){
-    case "egg": return "egg.png";
+    case "egg": return "egg1.png";
     case "chick": return "chick.png";
-    case "rooster": return "rooster.png";
-    case "phoenix": return "phoenix.png";
-    default: return "egg.png";
+    case "rooster": return "ayam2.png";
+    case "phoenix": return "pinix.png";
+    default: return "egg1.png";
   }
 }
 
@@ -203,3 +203,4 @@ updateUI();
 </script>
 </body>
 </html>
+
