@@ -24,13 +24,13 @@
       align-items: center;   /* thermometer & pet sejajar */
       justify-content: center;
       margin-top: 20px;
-      gap: 20px; /* jarak antar elemen */
+      gap: 20px;
     }
 
     /* Pet responsif */
     #pet {
-      width: 40vw;       /* 40% dari lebar layar */
-      max-width: 220px;  /* batas maksimum */
+      width: 40vw;
+      max-width: 220px;
       height: auto;
     }
 
@@ -53,10 +53,10 @@
       border-color: transparent white transparent transparent;
     }
 
-    /* Thermometer kiri sejajar dengan Pet */
+    /* Thermometer */
     .thermometer {
       position: relative;
-      width: 6vw; 
+      width: 6vw;
       max-width: 30px;
       height: 35vh;
       background: #444;
@@ -70,7 +70,7 @@
       background: green;
     }
 
-    /* EXP Bar responsif */
+    /* EXP Bar */
     .bar-container {
       width: 80vw;
       max-width: 500px;
@@ -115,9 +115,9 @@
     </div>
 
     <!-- Pet di tengah -->
-    <img id="pet" src="egg.png" class="breathing">
+    <img id="pet" src="images/egg.png" class="breathing">
 
-    <!-- Bubble tetap di atas pet -->
+    <!-- Bubble -->
     <div id="bubble"></div>
   </div>
   
@@ -128,6 +128,7 @@
   </div>
 
   <button onclick="feedPet()">🍖 Feed</button>
+  <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
   <button onclick="resetGame()">🔄 Reset</button>
 
 <script>
@@ -135,11 +136,11 @@ let pet = JSON.parse(localStorage.getItem("petData")) || { level: 1, exp: 0, sta
 
 function getPetImage(stage){
   switch(stage){
-    case "egg": return "egg.png";
-    case "chick": return "chick.png";
-    case "rooster": return "rooster.png";
-    case "phoenix": return "phoenix.png";
-    default: return "egg.png";
+    case "egg": return "images/egg.png";
+    case "chick": return "images/chick.png";
+    case "rooster": return "images/rooster.png";
+    case "phoenix": return "images/phoenix.png";
+    default: return "images/egg.png";
   }
 }
 
@@ -147,17 +148,20 @@ function updateUI(){
   document.getElementById("level").textContent = pet.level;
   document.getElementById("pet").src = getPetImage(pet.stage);
 
+  // Thermometer
   const thermo = document.getElementById("thermoFill");
   thermo.style.height = pet.hunger + "%";
   if(pet.hunger > 70) thermo.style.background = "green";
   else if(pet.hunger > 30) thermo.style.background = "gold";
   else thermo.style.background = "red";
 
+  // EXP bar
   const expPercent = (pet.exp / 10) * 100;
   const expBar = document.getElementById("expBar");
   expBar.style.width = expPercent + "%";
   expBar.textContent = "EXP " + pet.exp + "/10";
 
+  // Animasi Pet
   const petImg = document.getElementById("pet");
   if(pet.hunger <= 30) {
     petImg.classList.remove("breathing");
@@ -179,17 +183,37 @@ function showBubble(text){
 
 function feedPet(){
   pet.hunger = Math.min(100, pet.hunger + 20);
-  pet.exp++;
 
-  if(pet.exp >= 10){ 
-    pet.exp = 0; 
-    pet.level++;
-
-    // Evolusi saat melewati level tertentu (bukan tepat di level itu)
-    if(pet.level > 10 && pet.stage === "egg") pet.stage = "chick";
-    if(pet.level > 20 && pet.stage === "chick") pet.stage = "rooster";
-    if(pet.level > 30 && pet.stage === "rooster") pet.stage = "phoenix";
+  if (pet.exp < 10) {
+    pet.exp++;
   }
+
+  // Kalau exp penuh, munculkan tombol Evo
+  if (pet.exp >= 10) {
+    document.getElementById("evoBtn").style.display = "inline-block";
+  }
+
+  updateUI();
+}
+
+function evolvePet(){
+  pet.exp = 0; 
+  pet.level++;
+
+  if(pet.level >= 10 && pet.stage === "egg") {
+    pet.stage = "chick";
+    showBubble("✨ Evolusi jadi Anak Ayam 🐥");
+  }
+  else if(pet.level >= 20 && pet.stage === "chick") {
+    pet.stage = "rooster";
+    showBubble("✨ Evolusi jadi Ayam Jantan 🐓");
+  }
+  else if(pet.level >= 30 && pet.stage === "rooster") {
+    pet.stage = "phoenix";
+    showBubble("🔥 Evolusi jadi Phoenix!");
+  }
+
+  document.getElementById("evoBtn").style.display = "none";
   updateUI();
 }
 
