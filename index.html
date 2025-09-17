@@ -115,7 +115,7 @@
     </div>
 
     <!-- Pet di tengah -->
-    <img id="pet" src="egg1.png" class="breathing">
+    <img id="pet" src="egg.png" class="breathing">
 
     <!-- Bubble tetap di atas pet -->
     <div id="bubble"></div>
@@ -135,11 +135,11 @@ let pet = JSON.parse(localStorage.getItem("petData")) || { level: 1, exp: 0, sta
 
 function getPetImage(stage){
   switch(stage){
-    case "egg": return "egg1.png";
+    case "egg": return "egg.png";
     case "chick": return "chick.png";
-    case "rooster": return "ayam2.png";
-    case "phoenix": return "pinix.png";
-    default: return "egg1.png";
+    case "rooster": return "rooster.png";
+    case "phoenix": return "phoenix.png";
+    default: return "egg.png";
   }
 }
 
@@ -180,12 +180,15 @@ function showBubble(text){
 function feedPet(){
   pet.hunger = Math.min(100, pet.hunger + 20);
   pet.exp++;
+
   if(pet.exp >= 10){ 
     pet.exp = 0; 
     pet.level++;
-    if(pet.level == 10) pet.stage = "chick";
-    if(pet.level == 20) pet.stage = "rooster";
-    if(pet.level == 30) pet.stage = "phoenix";
+
+    // Evolusi saat melewati level tertentu (bukan tepat di level itu)
+    if(pet.level > 10 && pet.stage === "egg") pet.stage = "chick";
+    if(pet.level > 20 && pet.stage === "chick") pet.stage = "rooster";
+    if(pet.level > 30 && pet.stage === "rooster") pet.stage = "phoenix";
   }
   updateUI();
 }
