@@ -30,17 +30,31 @@
     #bubble { position:absolute; left:60%; top:20%; background:white; color:black; padding:8px 12px; border-radius:12px; display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
     #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid; border-color:transparent white transparent transparent; }
 
-    .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start; width:30px; height:200px; border:2px solid #ccc; border-radius:6px; overflow:hidden; }
-    .bar { flex:1; margin:1px 0; opacity:0.2; }
+    /* Thermometer */
+    .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start;
+      width:40px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; }
+    .bar { flex:1; margin:1px 0; background:#666; }
     .bar.active { opacity:1; }
-    .bar:nth-child(1){background:#800000;} .bar:nth-child(2){background:#b22222;} .bar:nth-child(3){background:#ff4500;}
-    .bar:nth-child(4){background:#ff8c00;} .bar:nth-child(5){background:#ffd700;} .bar:nth-child(6){background:#f0e68c;}
-    .bar:nth-child(7){background:#adff2f;} .bar:nth-child(8){background:#7fff00;} .bar:nth-child(9){background:#32cd32;}
-    .bar:nth-child(10){background:#00ff00;}
+    .bar:nth-child(2).active{background:#800000;}
+    .bar:nth-child(3).active{background:#b22222;}
+    .bar:nth-child(4).active{background:#ff4500;}
+    .bar:nth-child(5).active{background:#ff8c00;}
+    .bar:nth-child(6).active{background:#ffd700;}
+    .bar:nth-child(7).active{background:#f0e68c;}
+    .bar:nth-child(8).active{background:#adff2f;}
+    .bar:nth-child(9).active{background:#7fff00;}
+    .bar:nth-child(10).active{background:#32cd32;}
+    .bar:nth-child(11).active{background:#00ff00;}
 
+    .thermo-label { position:absolute; left:50%; transform:translateX(-50%); font-size:2.8vw; color:white; text-shadow:1px 1px 2px black; }
+    #labelTop { top:2px; }
+    #labelBottom { bottom:2px; }
+
+    /* EXP Bar */
     .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444; border-radius:10px; overflow:hidden; height:24px; }
     #expBar { height:100%; width:0%; text-align:center; color:white; font-size:3.5vw; line-height:24px; background:dodgerblue; transition:width 0.5s ease; }
 
+    /* Buttons */
     button { margin:10px; padding:12px 24px; font-size:4vw; border-radius:10px; }
     button:disabled { opacity:0.5; background:#777 !important; cursor:not-allowed; }
 
@@ -51,54 +65,61 @@
     @keyframes breathing { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
     @keyframes hungry-shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-10px);} 75%{transform:translateX(10px);} }
     .breathing{animation:breathing 3s infinite;} .hungry{animation:hungry-shake 0.5s infinite;}
+
+    /* Animasi Evo */
+    @keyframes evoPulse { 0%,100% { transform: scale(1);} 25%{transform:scale(1.3);} 50%{transform:scale(0.7);} 75%{transform:scale(1.4);} }
+    @keyframes evoPop { 0%{transform:scale(0);opacity:0;} 80%{transform:scale(1.2);opacity:1;} 100%{transform:scale(1);} }
+    .evo-pulse { animation:evoPulse 2s ease-in-out; }
+    .evo-pop   { animation:evoPop 0.8s ease-out; }
+
+    /* Plate & Food */
+    #plate { width:80px; height:80px; border:2px solid #ccc; border-radius:50%; background:#555;
+      margin:10px auto; font-size:30px; line-height:80px; text-align:center; }
+    #foods { margin-top:10px; display:flex; gap:10px; justify-content:center; }
+    #foods img { cursor:grab; width:50px; }
   </style>
 </head>
 <body>
   <h2>🐣 Pet Evolusi</h2>
-
-  <!-- Coin -->
   <div id="coinDisplay">💰 0</div>
 
   <div class="pet-wrapper" id="petWrapper">
-    <!-- Thermometer bar -->
     <div class="thermometer" id="thermometer">
+      <div id="labelTop" class="thermo-label">Kenyang</div>
       <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
       <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div id="labelBottom" class="thermo-label">Lapar</div>
     </div>
-
-    <!-- Glow effect -->
     <div class="glow" id="evoGlow"></div>
-
-    <!-- Pet -->
     <img id="pet" src="images/egg.png" class="breathing">
-
-    <!-- Bubble -->
     <div id="bubble"></div>
   </div>
   
   <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
+  <div class="bar-container"><div id="expBar">EXP 0%</div></div>
 
-  <div class="bar-container">
-    <div id="expBar">EXP 0%</div>
+  <!-- Plate -->
+  <div id="plate">🍽️</div>
+
+  <!-- Food Items -->
+  <div id="foods">
+    <img src="images/meat.png" class="food" data-type="meat" draggable="true">
+    <img src="images/fruit.png" class="food" data-type="fruit" draggable="true">
+    <img src="images/leaf.png" class="food" data-type="leaf" draggable="true">
   </div>
 
-  <button onclick="feedPet()" id="feedBtn">🍖 Feed</button>
+  <button onclick="feedPet()" id="feedBtn" disabled>🍖 Feed</button>
   <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
 
-  <!-- Tombol reset mungil -->
-  <div id="resetWrapper">
-    <button id="resetBtn" onclick="resetGame()">🔄</button>
-  </div>
+  <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
 
-  <!-- Audio -->
   <audio id="soundFeed" src="sounds/feed.mp3" preload="auto"></audio>
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
 
 <script>
-let pet = JSON.parse(localStorage.getItem("petData")) || { 
-  level: 1, exp: 0, stage: "egg", hunger: 30, coins: 0
-};
+let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
+const plate = document.getElementById("plate");
 
 function getPetImage(stage){
   switch(stage){
@@ -114,123 +135,73 @@ function updateUI(){
   document.getElementById("level").textContent = pet.level;
   document.getElementById("pet").src = getPetImage(pet.stage);
 
-  // Thermometer bars
+  // hunger bars
   const bars = document.querySelectorAll("#thermometer .bar");
   const activeBars = Math.round(pet.hunger / 10);
   bars.forEach((bar, i)=>{ i < activeBars ? bar.classList.add("active") : bar.classList.remove("active"); });
 
-  // EXP bar
+  // exp bar
   const expBar = document.getElementById("expBar");
   expBar.style.width = pet.exp + "%";
   expBar.textContent = "EXP " + pet.exp + "%";
 
-  // Coin display
+  // coins
   document.getElementById("coinDisplay").textContent = "💰 " + (pet.coins || 0);
 
-  // Animasi lapar / normal
-  const petImg = document.getElementById("pet");
-  if(pet.hunger <= 30) { petImg.classList.remove("breathing"); petImg.classList.add("hungry"); }
-  else { petImg.classList.remove("hungry"); petImg.classList.add("breathing"); }
-
-  // Lock feed if evo
-  const feedBtn = document.getElementById("feedBtn");
-  const isEvoLevel = (pet.level===10 && pet.stage==="egg") || (pet.level===20 && pet.stage==="chick") || (pet.level===30 && pet.stage==="rooster");
-  feedBtn.disabled = (pet.exp>=100 && isEvoLevel);
+  // animasi
+  const petImg=document.getElementById("pet");
+  if(pet.hunger<=30){ petImg.classList.remove("breathing"); petImg.classList.add("hungry"); }
+  else{ petImg.classList.remove("hungry"); petImg.classList.add("breathing"); }
 
   localStorage.setItem("petData", JSON.stringify(pet));
 }
 
 function showBubble(text){
-  const bubble = document.getElementById("bubble");
-  bubble.textContent = text;
-  bubble.style.display = "block";
-  setTimeout(()=> bubble.style.display="none", 2500);
+  const bubble=document.getElementById("bubble");
+  bubble.textContent=text; bubble.style.display="block";
+  setTimeout(()=>bubble.style.display="none",2500);
 }
+function playSound(id){ const s=document.getElementById(id); if(s){ s.currentTime=0; s.play(); } }
 
-function playSound(id){ 
-  const s = document.getElementById(id); 
-  if(s){ s.currentTime=0; s.play(); } 
-}
+// drag drop makanan
+document.querySelectorAll(".food").forEach(food=>{
+  food.addEventListener("dragstart", e=>{
+    e.dataTransfer.setData("type", food.dataset.type);
+  });
+});
+plate.addEventListener("dragover", e=>e.preventDefault());
+plate.addEventListener("drop", e=>{
+  e.preventDefault();
+  if(!plate.querySelector("img")){
+    const type=e.dataTransfer.getData("type");
+    const img=document.createElement("img");
+    img.src="images/"+type+".png"; img.width=40;
+    plate.innerHTML=""; plate.appendChild(img);
+    plate.dataset.foodType=type;
+    document.getElementById("feedBtn").disabled=false;
+  }
+});
 
+// feed pakai makanan di piring
 function feedPet(){
-  pet.hunger = Math.min(100, pet.hunger + 20);
+  if(!plate.dataset.foodType) return;
+  const type=plate.dataset.foodType;
+  let hungerGain=0, expGain=0;
+
+  if(type==="meat"){ hungerGain=1; expGain=2; }
+  if(type==="fruit"){ hungerGain=1; expGain=1; }
+  if(type==="leaf"){ hungerGain=1; expGain=0.5; }
+
+  pet.hunger=Math.min(100, pet.hunger+hungerGain);
+  pet.exp=Math.min(100, pet.exp+expGain);
   pet.coins++;
 
-  const isEvoLevel = (pet.level===10 && pet.stage==="egg") || (pet.level===20 && pet.stage==="chick") || (pet.level===30 && pet.stage==="rooster");
+  showBubble("Pet makan "+type+" 🍴");
+  playSound("soundFeed");
 
-  if (pet.exp >= 100) {
-    if (isEvoLevel) {
-      document.getElementById("evoBtn").style.display="inline-block";
-      document.getElementById("evoGlow").style.display="block";
-      startSparkle();
-      showBubble("EXP penuh — tekan Evo Sekarang!");
-    } else {
-      pet.exp=0; pet.level++;
-      playSound("soundLevel");
-      showBubble("Level naik! Sekarang level "+pet.level);
-    }
-    updateUI(); return;
-  }
-
-  pet.exp = Math.min(100, pet.exp + 10);
-
-  if (pet.exp >= 100) {
-    if (isEvoLevel) {
-      document.getElementById("evoBtn").style.display="inline-block";
-      document.getElementById("evoGlow").style.display="block";
-      startSparkle();
-      showBubble("EXP penuh! Tekan Evo Sekarang!");
-    } else {
-      showBubble("EXP penuh! Tekan Feed sekali lagi untuk naik level.");
-    }
-  } else {
-    showBubble("Nyam nyam 🍖 +1 koin!");
-    playSound("soundFeed");
-  }
+  plate.innerHTML="🍽️"; delete plate.dataset.foodType;
+  document.getElementById("feedBtn").disabled=true;
   updateUI();
-}
-
-function evolvePet(){
-  if(pet.level===10 && pet.stage==="egg"){ pet.stage="chick"; pet.coins+=50; showBubble("✨ Evolusi jadi Anak Ayam 🐥 +50 koin!"); }
-  else if(pet.level===20 && pet.stage==="chick"){ pet.stage="rooster"; pet.coins+=50; showBubble("✨ Evolusi jadi Ayam Jantan 🐓 +50 koin!"); }
-  else if(pet.level===30 && pet.stage==="rooster"){ pet.stage="phoenix"; pet.coins+=50; showBubble("🔥 Evolusi jadi Phoenix! +50 koin!"); }
-
-  pet.exp=0;
-  document.getElementById("evoBtn").style.display="none";
-  document.getElementById("evoGlow").style.display="none";
-  document.getElementById("feedBtn").disabled=false;
-
-  playSound("soundEvo");
-  updateUI();
-}
-
-setInterval(()=>{
-  pet.hunger = Math.max(0, pet.hunger - 5);
-  if(pet.hunger < 50 && Math.random()<0.3){ showBubble("Aku lapar 🥺"); }
-  updateUI();
-},5000);
-
-function resetGame(){
-  localStorage.removeItem("petData");
-  pet = { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
-  updateUI();
-  alert("Game direset! Pet kamu lapar 🥺");
-}
-
-function startSparkle(){
-  const wrapper=document.getElementById("petWrapper");
-  for(let i=0;i<10;i++){
-    setTimeout(()=>{
-      const spark=document.createElement("span");
-      spark.classList.add("sparkle");
-      const w=wrapper.clientWidth; const h=wrapper.clientHeight;
-      const x=(w/2)+(Math.random()*(w*0.6)-(w*0.3));
-      const y=(h/2)+(Math.random()*(h*0.6)-(h*0.3));
-      spark.style.left=x+"px"; spark.style.top=y+"px";
-      wrapper.appendChild(spark);
-      setTimeout(()=>spark.remove(),1500);
-    }, i*180);
-  }
 }
 updateUI();
 </script>
