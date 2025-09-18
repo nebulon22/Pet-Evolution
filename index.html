@@ -18,6 +18,8 @@
     /* Piring + drop zone */
     #plateWrapper { position:relative; margin:10px auto 0; width:120px; height:120px; }
     #plate { width:100%; height:auto; display:block; }
+    #plateFood { position:absolute; top:25%; left:25%; width:50%; height:50%; }
+
     #dropZone { position:absolute; top:25%; left:25%; width:50%; height:50%;
       border-radius:50%; }
 
@@ -92,7 +94,6 @@
   <div id="coinDisplay">💰 0</div>
 
   <div class="pet-wrapper" id="petWrapper">
-    <!-- Thermometer -->
     <div class="thermometer" id="thermometer">
       <div id="labelTop" class="thermo-label">Kenyang</div>
       <div class="bar"></div><div class="bar"></div><div class="bar"></div>
@@ -102,17 +103,15 @@
       <div id="labelBottom" class="thermo-label">Lapar</div>
     </div>
 
-    <!-- Glow -->
     <div class="glow" id="evoGlow"></div>
-    <!-- Pet -->
     <img id="pet" src="images/egg.png" class="breathing">
-    <!-- Bubble -->
     <div id="bubble"></div>
   </div>
 
-  <!-- Piring + Drop zone -->
+  <!-- Piring + makanan aktif -->
   <div id="plateWrapper">
     <img id="plate" src="images/plate.png" alt="Piring Kosong">
+    <img id="plateFood" src="" alt="">
     <div id="dropZone"></div>
   </div>
 
@@ -172,10 +171,14 @@ function showBubble(text){
   setTimeout(()=>bubble.style.display="none",2500);
 }
 
-// Feed pet
 function feedPet(){
   if(!selectedFood){ showBubble("Taruh makanan di piring dulu 🍽️"); return; }
-  if(inventory[selectedFood]<=0){ showBubble("Stok habis!"); return; }
+  if(inventory[selectedFood]<=0){
+    showBubble("Stok habis!"); 
+    document.getElementById("plateFood").src="";
+    selectedFood=null;
+    return;
+  }
 
   inventory[selectedFood]--;
   pet.hunger=Math.min(100,pet.hunger+20);
@@ -195,11 +198,15 @@ function feedPet(){
     pet.exp=Math.min(100,pet.exp+10);
     if(pet.exp===100){ showBubble("EXP penuh!"); }
   }
-  selectedFood=null;
+
+  if(inventory[selectedFood]<=0){
+    document.getElementById("plateFood").src="";
+    selectedFood=null;
+  }
+
   updateUI();
 }
 
-// Evolusi
 function evolvePet(){
   if(pet.level===10&&pet.stage==="egg"){ pet.stage="chick"; showBubble("🐥 Anak Ayam!"); }
   else if(pet.level===20&&pet.stage==="chick"){ pet.stage="rooster"; showBubble("🐓 Ayam Jantan!"); }
@@ -210,16 +217,17 @@ function evolvePet(){
   updateUI();
 }
 
-// Reset
 function resetGame(){
   localStorage.removeItem("petData");
   pet={level:1,exp:0,stage:"egg",hunger:30,coins:0};
   inventory={meat:100,fruit:100,leaf:100};
+  selectedFood=null;
+  document.getElementById("plateFood").src="";
   updateUI();
   alert("Game direset!");
 }
 
-// Drag clone
+// Drag clone -> set makanan aktif
 function initTouchDrag(){
   const foods=document.querySelectorAll(".food-item");
   const drop=document.getElementById("dropZone");
@@ -244,6 +252,7 @@ function initTouchDrag(){
         const rect=drop.getBoundingClientRect();
         if(t.clientX>rect.left&&t.clientX<rect.right&&t.clientY>rect.top&&t.clientY<rect.bottom){
           selectedFood=type;
+          document.getElementById("plateFood").src="images/"+type+".png";
           showBubble("Makanan siap di piring 🍽️");
         }
         clone.remove();
