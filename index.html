@@ -168,13 +168,25 @@ function playSound(id){ const s=document.getElementById(id); if(s){ s.currentTim
 // Feed
 function feedPet(){
   if(!selectedFood){ showBubble("Taruh makanan di piring dulu 🍽️"); return; }
-  if(foodStock[selectedFood]<=0){ showBubble("Stok habis!"); return; }
+  if(foodStock[selectedFood] <= 0){
+    showBubble("Stok " + selectedFood + " habis!");
+    document.getElementById("plateFood").src = "";
+    selectedFood = null;
+    return;
+  }
 
+  // Kurangi stok
   foodStock[selectedFood]--;
-  document.getElementById("count-"+selectedFood).textContent=foodStock[selectedFood];
-  if(foodStock[selectedFood]<=0){ document.getElementById("plateFood").src=""; selectedFood=null; }
+  document.getElementById("count-"+selectedFood).textContent = foodStock[selectedFood];
 
-  pet.hunger=Math.min(100,pet.hunger+20);
+  // Kalau habis, kosongkan piring
+  if(foodStock[selectedFood] <= 0){
+    document.getElementById("plateFood").src = "";
+    selectedFood = null;
+  }
+
+  // Efek asli feed
+  pet.hunger = Math.min(100, pet.hunger + 20);
   pet.coins++; playSound("soundFeed");
 
   const isEvoLevel=(pet.level===10&&pet.stage==="egg")||(pet.level===20&&pet.stage==="chick")||(pet.level===30&&pet.stage==="rooster");
@@ -227,10 +239,10 @@ plate.addEventListener("dragover",e=>{e.preventDefault(); plate.classList.add("d
 plate.addEventListener("dragleave",()=>plate.classList.remove("drop-hover"));
 plate.addEventListener("drop",e=>{
   e.preventDefault(); const foodType=e.dataTransfer.getData("food");
-  if(foodType&&foodStock[foodType]>0){
-    selectedFood=foodType;
-    document.getElementById("plateFood").src="images/"+foodType+".png";
-    showBubble("🍽️ "+foodType+" siap di piring!");
+  if(foodType && foodStock[foodType] > 0){
+    selectedFood = foodType;
+    document.getElementById("plateFood").src = "images/" + foodType + ".png";
+    showBubble("🍽️ " + foodType + " siap di piring!");
   }
   plate.classList.remove("drop-hover");
 });
