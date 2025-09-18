@@ -4,7 +4,8 @@
   <title>Pet Evolusi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { margin:0; text-align:center; background:#2e7d32; color:white; font-family:sans-serif; overflow-x:hidden; display:flex; flex-direction:column; align-items:center; }
+    body { margin:0; text-align:center; background:#2e7d32; color:white; font-family:sans-serif;
+           overflow-x:hidden; display:flex; flex-direction:column; align-items:center; }
     h2 { margin-top:10px; font-size:6vw; }
 
     #coinDisplay {
@@ -24,15 +25,20 @@
 
     #pet { width:40vw; max-width:220px; height:auto; z-index:1; }
 
-    .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.8; animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
-    @keyframes sparkleMove { 0%{transform:translateY(0) scale(1);opacity:1;} 100%{transform:translateY(-50px) scale(0.5);opacity:0;} }
+    .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.8;
+               animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
+    @keyframes sparkleMove { 0%{transform:translateY(0) scale(1);opacity:1;}
+                             100%{transform:translateY(-50px) scale(0.5);opacity:0;} }
 
-    #bubble { position:absolute; left:60%; top:20%; background:white; color:black; padding:8px 12px; border-radius:12px; display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
-    #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid; border-color:transparent white transparent transparent; }
+    #bubble { position:absolute; left:60%; top:20%; background:white; color:black; padding:8px 12px; border-radius:12px;
+              display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
+    #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid;
+                     border-color:transparent white transparent transparent; }
 
     /* Thermometer */
     .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start;
-      width:40px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; }
+      width:40px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden;
+      background:#666; position:relative; }
     .bar { flex:1; margin:1px 0; background:#666; }
     .bar.active { opacity:1; }
     .bar:nth-child(2).active{background:#800000;}
@@ -46,13 +52,16 @@
     .bar:nth-child(10).active{background:#32cd32;}
     .bar:nth-child(11).active{background:#00ff00;}
 
-    .thermo-label { position:absolute; left:50%; transform:translateX(-50%); font-size:2.8vw; color:white; text-shadow:1px 1px 2px black; }
+    .thermo-label { position:absolute; left:50%; transform:translateX(-50%);
+                    font-size:2.8vw; color:white; text-shadow:1px 1px 2px black; }
     #labelTop { top:2px; }
     #labelBottom { bottom:2px; }
 
     /* EXP Bar */
-    .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444; border-radius:10px; overflow:hidden; height:24px; }
-    #expBar { height:100%; width:0%; text-align:center; color:white; font-size:3.5vw; line-height:24px; background:dodgerblue; transition:width 0.5s ease; }
+    .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444;
+                     border-radius:10px; overflow:hidden; height:24px; }
+    #expBar { height:100%; width:0%; text-align:center; color:white; font-size:3.5vw;
+              line-height:24px; background:dodgerblue; transition:width 0.5s ease; }
 
     /* Buttons */
     button { margin:10px; padding:12px 24px; font-size:4vw; border-radius:10px; }
@@ -103,9 +112,9 @@
 
   <!-- Food Items -->
   <div id="foods">
-    <img src="images/meat.png" class="food" data-type="meat" draggable="true">
-    <img src="images/fruit.png" class="food" data-type="fruit" draggable="true">
-    <img src="images/leaf.png" class="food" data-type="leaf" draggable="true">
+    <img src="images/meat.png" class="food" data-type="meat">
+    <img src="images/fruit.png" class="food" data-type="fruit">
+    <img src="images/leaf.png" class="food" data-type="leaf">
   </div>
 
   <button onclick="feedPet()" id="feedBtn" disabled>🍖 Feed</button>
@@ -163,26 +172,49 @@ function showBubble(text){
 }
 function playSound(id){ const s=document.getElementById(id); if(s){ s.currentTime=0; s.play(); } }
 
-// drag drop makanan
+// --- Touch Drag untuk Mobile ---
 document.querySelectorAll(".food").forEach(food=>{
-  food.addEventListener("dragstart", e=>{
-    e.dataTransfer.setData("type", food.dataset.type);
+  let dragging = false;
+
+  food.addEventListener("touchstart", e=>{
+    dragging = true;
+    food.style.position = "absolute";
+    food.style.zIndex = 1000;
+  });
+
+  food.addEventListener("touchmove", e=>{
+    if(!dragging) return;
+    const touch = e.touches[0];
+    food.style.left = (touch.pageX - 25) + "px";
+    food.style.top  = (touch.pageY - 25) + "px";
+  });
+
+  food.addEventListener("touchend", e=>{
+    dragging = false;
+
+    // cek tabrakan dengan plate
+    const plateRect = plate.getBoundingClientRect();
+    const foodRect  = food.getBoundingClientRect();
+    if (!(foodRect.right < plateRect.left || foodRect.left > plateRect.right ||
+          foodRect.bottom < plateRect.top || foodRect.top > plateRect.bottom)) {
+      const type = food.dataset.type;
+      plate.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = "images/"+type+".png"; img.width = 40;
+      plate.appendChild(img);
+      plate.dataset.foodType = type;
+      document.getElementById("feedBtn").disabled = false;
+    }
+
+    // reset posisi makanan
+    food.style.position = "";
+    food.style.left = "";
+    food.style.top = "";
+    food.style.zIndex = "";
   });
 });
-plate.addEventListener("dragover", e=>e.preventDefault());
-plate.addEventListener("drop", e=>{
-  e.preventDefault();
-  if(!plate.querySelector("img")){
-    const type=e.dataTransfer.getData("type");
-    const img=document.createElement("img");
-    img.src="images/"+type+".png"; img.width=40;
-    plate.innerHTML=""; plate.appendChild(img);
-    plate.dataset.foodType=type;
-    document.getElementById("feedBtn").disabled=false;
-  }
-});
 
-// feed pakai makanan di piring
+// --- Feed pakai makanan di piring ---
 function feedPet(){
   if(!plate.dataset.foodType) return;
   const type=plate.dataset.foodType;
@@ -203,6 +235,14 @@ function feedPet(){
   document.getElementById("feedBtn").disabled=true;
   updateUI();
 }
+
+function resetGame(){
+  localStorage.removeItem("petData");
+  pet = { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
+  updateUI();
+  alert("Game direset! Pet kamu lapar 🥺");
+}
+
 updateUI();
 </script>
 </body>
