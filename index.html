@@ -27,6 +27,7 @@
       gap: 20px;
     }
 
+    /* Efek cahaya evolusi */
     .glow {
       position: absolute;
       width: 200px;
@@ -49,6 +50,7 @@
       z-index: 1;
     }
 
+    /* Efek sparkle evolusi */
     .sparkle {
       position: absolute;
       width: 8px;
@@ -65,6 +67,7 @@
       100% { transform: translateY(-50px) scale(0.5); opacity: 0; }
     }
 
+    /* Bubble pesan */
     #bubble {
       position: absolute;
       left: 60%; top: 20%;
@@ -83,12 +86,13 @@
       border-color: transparent white transparent transparent;
     }
 
+    /* Thermometer lapar */
     .thermometer {
       position: relative;
       width: 6vw;
       max-width: 30px;
       height: 35vh;
-      background: #888;  /* abu-abu background */
+      background: #888;
       border-radius: 15px;
       overflow: hidden;
       border: 2px solid #ccc;
@@ -110,6 +114,7 @@
     .thermo-label.top { top: 0; transform: translateY(-50%); }
     .thermo-label.bottom { bottom: 0; transform: translateY(50%); }
 
+    /* Bar EXP */
     .bar-container {
       width: 80vw;
       max-width: 500px;
@@ -131,6 +136,7 @@
       border-radius: 10px;
     }
 
+    /* Tombol reset */
     #resetWrapper {
       position: fixed;
       top: 5px;
@@ -145,6 +151,7 @@
     }
     #resetBtn:hover { opacity: 1; }
 
+    /* Makanan dengan jumlah */
     .food-wrapper {
       position: relative;
       display: inline-block;
@@ -312,12 +319,13 @@ function feedPet(){
       document.getElementById("evoGlow").style.display="block";
     } else {
       pet.level++;
-      pet.exp = 0;
+      pet.exp = 0; // reset ke 0 setelah naik level
       showBubble("⬆️ Level naik jadi "+pet.level+"!");
     }
   }
 
   showBubble("Pet makan "+type+" 🍴");
+
   plate.innerHTML="🍽️"; delete plate.dataset.foodType;
   document.getElementById("feedBtn").disabled=true;
   updateUI();
