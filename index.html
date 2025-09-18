@@ -27,10 +27,44 @@
       gap: 20px;
     }
 
+    /* Glow untuk efek Evo */
+    .glow {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%);
+      animation: glow 2s infinite;
+      border-radius: 50%;
+      z-index: 0;
+      display: none;
+    }
+    @keyframes glow {
+      0%, 100% { opacity: 0; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.2); }
+    }
+
     #pet {
       width: 40vw;
       max-width: 220px;
       height: auto;
+      z-index: 1;
+    }
+
+    /* Sparkle efek */
+    .sparkle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: sparkleMove 1.5s forwards;
+      pointer-events: none;
+      z-index: 2;
+    }
+    @keyframes sparkleMove {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-50px) scale(0.5); opacity: 0; }
     }
 
     #bubble {
@@ -39,7 +73,7 @@
       background: white; color: black;
       padding: 8px 12px; border-radius: 12px;
       display: none; max-width: 150px; text-align: left;
-      z-index: 2;
+      z-index: 3;
       font-size: 3.5vw;
     }
     #bubble::after {
@@ -123,12 +157,18 @@
 <body>
   <h2>🐣 Pet Evolusi</h2>
 
-  <div class="pet-wrapper">
+  <div class="pet-wrapper" id="petWrapper">
     <div class="thermometer">
       <div id="thermoFill" class="thermo-fill"></div>
     </div>
 
+    <!-- Glow effect -->
+    <div class="glow" id="evoGlow"></div>
+
+    <!-- Pet -->
     <img id="pet" src="images/egg.png" class="breathing">
+
+    <!-- Bubble -->
     <div id="bubble"></div>
   </div>
   
@@ -178,7 +218,7 @@ function updateUI(){
   expBar.style.width = pet.exp + "%";
   expBar.textContent = "EXP " + pet.exp + "%";
 
-  // Animasi
+  // Animasi lapar / normal
   const petImg = document.getElementById("pet");
   if(pet.hunger <= 30) {
     petImg.classList.remove("breathing");
@@ -202,11 +242,12 @@ function feedPet(){
   pet.hunger = Math.min(100, pet.hunger + 20);
 
   if (pet.exp >= 100) {
-    // EXP penuh → cek apakah level Evo
     if ((pet.level === 10 && pet.stage === "egg") ||
         (pet.level === 20 && pet.stage === "chick") ||
         (pet.level === 30 && pet.stage === "rooster")) {
       document.getElementById("evoBtn").style.display = "inline-block";
+      document.getElementById("evoGlow").style.display = "block"; 
+      startSparkle(); // aktifkan sparkle
     } else {
       pet.exp = 0;
       pet.level++;
@@ -234,6 +275,7 @@ function evolvePet(){
 
   pet.exp = 0;
   document.getElementById("evoBtn").style.display = "none";
+  document.getElementById("evoGlow").style.display = "none";
   updateUI();
 }
 
@@ -250,6 +292,21 @@ function resetGame(){
   pet = { level: 1, exp: 0, stage: "egg", hunger: 30 };
   updateUI();
   alert("Game direset! Pet kamu lapar 🥺");
+}
+
+/* Sparkle Generator */
+function startSparkle(){
+  const wrapper = document.getElementById("petWrapper");
+  for(let i=0; i<10; i++){
+    setTimeout(()=>{
+      const spark = document.createElement("span");
+      spark.classList.add("sparkle");
+      spark.style.left = (50 + (Math.random()*100 - 50)) + "px";
+      spark.style.top = (50 + (Math.random()*100 - 50)) + "px";
+      wrapper.appendChild(spark);
+      setTimeout(()=> spark.remove(), 1500);
+    }, i*200);
+  }
 }
 
 updateUI();
