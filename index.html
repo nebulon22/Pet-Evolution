@@ -84,7 +84,10 @@
     /* Plate & Food */
     #plate { width:80px; height:80px; border:2px solid #ccc; border-radius:50%; background:#555;
       margin:10px auto; font-size:30px; line-height:80px; text-align:center; }
-    #foods { margin-top:10px; display:flex; gap:10px; justify-content:center; }
+    #foods { margin-top:10px; display:flex; gap:15px; justify-content:center; }
+    .food-wrapper { position:relative; display:inline-block; }
+    .food-count { position:absolute; bottom:-5px; right:-5px; background:red; color:white;
+      font-size:2.5vw; padding:2px 5px; border-radius:50%; font-weight:bold; }
     #foods img { cursor:grab; width:50px; }
   </style>
 </head>
@@ -112,9 +115,18 @@
 
   <!-- Food Items -->
   <div id="foods">
-    <img src="images/meat.png" class="food" data-type="meat">
-    <img src="images/fruit.png" class="food" data-type="fruit">
-    <img src="images/leaf.png" class="food" data-type="leaf">
+    <div class="food-wrapper">
+      <img src="images/meat.png" class="food" data-type="meat">
+      <div class="food-count" id="count-meat">3</div>
+    </div>
+    <div class="food-wrapper">
+      <img src="images/fruit.png" class="food" data-type="fruit">
+      <div class="food-count" id="count-fruit">5</div>
+    </div>
+    <div class="food-wrapper">
+      <img src="images/leaf.png" class="food" data-type="leaf">
+      <div class="food-count" id="count-leaf">7</div>
+    </div>
   </div>
 
   <button onclick="feedPet()" id="feedBtn" disabled>🍖 Feed</button>
@@ -128,6 +140,7 @@
 
 <script>
 let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
+let inventory = { meat:3, fruit:5, leaf:7 }; // jumlah awal
 const plate = document.getElementById("plate");
 
 function getPetImage(stage){
@@ -163,6 +176,18 @@ function updateUI(){
   else{ petImg.classList.remove("hungry"); petImg.classList.add("breathing"); }
 
   localStorage.setItem("petData", JSON.stringify(pet));
+  updateInventoryUI();
+}
+
+function updateInventoryUI(){
+  document.getElementById("count-meat").textContent = inventory.meat > 0 ? inventory.meat : "";
+  document.getElementById("count-fruit").textContent = inventory.fruit > 0 ? inventory.fruit : "";
+  document.getElementById("count-leaf").textContent = inventory.leaf > 0 ? inventory.leaf : "";
+
+  document.querySelectorAll(".food").forEach(food=>{
+    const type = food.dataset.type;
+    food.style.display = (inventory[type] > 0) ? "inline" : "none";
+  });
 }
 
 function showBubble(text){
@@ -192,21 +217,21 @@ document.querySelectorAll(".food").forEach(food=>{
   food.addEventListener("touchend", e=>{
     dragging = false;
 
-    // cek tabrakan dengan plate
     const plateRect = plate.getBoundingClientRect();
     const foodRect  = food.getBoundingClientRect();
     if (!(foodRect.right < plateRect.left || foodRect.left > plateRect.right ||
           foodRect.bottom < plateRect.top || foodRect.top > plateRect.bottom)) {
       const type = food.dataset.type;
-      plate.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = "images/"+type+".png"; img.width = 40;
-      plate.appendChild(img);
-      plate.dataset.foodType = type;
-      document.getElementById("feedBtn").disabled = false;
+      if(inventory[type] > 0){
+        plate.innerHTML = "";
+        const img = document.createElement("img");
+        img.src = "images/"+type+".png"; img.width = 40;
+        plate.appendChild(img);
+        plate.dataset.foodType = type;
+        document.getElementById("feedBtn").disabled = false;
+      }
     }
 
-    // reset posisi makanan
     food.style.position = "";
     food.style.left = "";
     food.style.top = "";
@@ -218,8 +243,16 @@ document.querySelectorAll(".food").forEach(food=>{
 function feedPet(){
   if(!plate.dataset.foodType) return;
   const type=plate.dataset.foodType;
-  let hungerGain=0, expGain=0;
 
+  if(inventory[type] <= 0){ 
+    showBubble("Item habis ❌"); 
+    plate.innerHTML="🍽️"; 
+    delete plate.dataset.foodType;
+    document.getElementById("feedBtn").disabled=true;
+    return;
+  }
+
+  let hungerGain=0, expGain=0;
   if(type==="meat"){ hungerGain=1; expGain=2; }
   if(type==="fruit"){ hungerGain=1; expGain=1; }
   if(type==="leaf"){ hungerGain=1; expGain=0.5; }
@@ -227,6 +260,9 @@ function feedPet(){
   pet.hunger=Math.min(100, pet.hunger+hungerGain);
   pet.exp=Math.min(100, pet.exp+expGain);
   pet.coins++;
+
+  inventory[type]--; // kurangi stok
+  updateInventoryUI();
 
   showBubble("Pet makan "+type+" 🍴");
   playSound("soundFeed");
@@ -239,6 +275,7 @@ function feedPet(){
 function resetGame(){
   localStorage.removeItem("petData");
   pet = { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
+  inventory = { meat:3, fruit:5, leaf:7 };
   updateUI();
   alert("Game direset! Pet kamu lapar 🥺");
 }
