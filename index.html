@@ -4,30 +4,51 @@
   <title>Pet Evolusi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { margin:0; text-align:center; background:#2e7d32; color:white; font-family:sans-serif; overflow-x:hidden; display:flex; flex-direction:column; align-items:center; padding-bottom:70px; }
+    body { margin:0; text-align:center; background:#2e7d32; color:white;
+           font-family:sans-serif; overflow-x:hidden; display:flex;
+           flex-direction:column; align-items:center; }
     h2 { margin-top:10px; font-size:6vw; }
 
-    #coinDisplay {
-      position: fixed; top:5px; left:5px;
-      font-size:4vw; background:rgba(0,0,0,0.3);
-      padding:4px 8px; border-radius:6px; z-index:10;
-    }
+    #coinDisplay { position:fixed; top:5px; left:5px; font-size:4vw;
+      background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; }
 
-    .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; }
+    .pet-wrapper { position:relative; display:flex; align-items:center;
+      justify-content:center; margin-top:10px; gap:20px; }
 
-    .glow { position:absolute; width:200px; height:200px; background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%); animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; }
-    @keyframes glow { 0%,100%{opacity:0; transform:scale(1);} 50%{opacity:0.8; transform:scale(1.2);} }
+    /* Piring + drop zone */
+    #plateWrapper { position:relative; margin:10px auto 0; width:120px; height:120px; }
+    #plate { width:100%; height:auto; display:block; }
+    #dropZone { position:absolute; top:25%; left:25%; width:50%; height:50%;
+      border-radius:50%; }
+
+    /* Inventory */
+    .inventory { display:flex; justify-content:center; margin-top:8px; gap:20px; }
+    .food-item { position:relative; width:50px; height:50px; }
+    .food-item img { width:100%; height:auto; }
+    .count { position:absolute; bottom:0; right:0; background:black; color:white;
+      font-size:12px; padding:2px 5px; border-radius:8px; }
+
+    /* Glow & evo effect */
+    .glow { position:absolute; width:200px; height:200px;
+      background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%);
+      animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; }
+    @keyframes glow { 0%,100%{opacity:0; transform:scale(1);}
+                      50%{opacity:0.8; transform:scale(1.2);} }
 
     #pet { width:40vw; max-width:220px; height:auto; z-index:1; }
 
-    .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.8; animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
-    @keyframes sparkleMove { 0%{transform:translateY(0) scale(1);opacity:1;} 100%{transform:translateY(-50px) scale(0.5);opacity:0;} }
+    /* Bubble */
+    #bubble { position:absolute; left:60%; top:20%; background:white; color:black;
+      padding:8px 12px; border-radius:12px; display:none; max-width:180px;
+      text-align:left; z-index:3; font-size:3.5vw; }
+    #bubble::after { content:""; position:absolute; left:-10px; top:20px;
+      border-width:10px; border-style:solid;
+      border-color:transparent white transparent transparent; }
 
-    #bubble { position:absolute; left:60%; top:20%; background:white; color:black; padding:8px 12px; border-radius:12px; display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
-    #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid; border-color:transparent white transparent transparent; }
-
-    /* Thermometer */
-    .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start; width:40px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; }
+    /* Thermometer bar */
+    .thermometer { display:flex; flex-direction:column-reverse;
+      width:40px; height:220px; border:2px solid #ccc; border-radius:6px;
+      overflow:hidden; background:#666; position:relative; }
     .bar { flex:1; margin:1px 0; background:#666; }
     .bar.active { opacity:1; }
     .bar:nth-child(2).active{background:#800000;}
@@ -40,12 +61,15 @@
     .bar:nth-child(9).active{background:#7fff00;}
     .bar:nth-child(10).active{background:#32cd32;}
     .bar:nth-child(11).active{background:#00ff00;}
-    .thermo-label { position:absolute; left:50%; transform:translateX(-50%); font-size:2.8vw; color:white; text-shadow:1px 1px 2px black; }
-    #labelTop { top:2px; }
-    #labelBottom { bottom:2px; }
+    .thermo-label { position:absolute; left:50%; transform:translateX(-50%);
+      font-size:2.8vw; color:white; text-shadow:1px 1px 2px black; }
+    #labelTop { top:2px; } #labelBottom { bottom:2px; }
 
-    .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444; border-radius:10px; overflow:hidden; height:24px; }
-    #expBar { height:100%; width:0%; text-align:center; color:white; font-size:3.5vw; line-height:24px; background:dodgerblue; transition:width 0.5s ease; }
+    .bar-container { width:80vw; max-width:500px; margin:10px auto;
+      background:#444; border-radius:10px; overflow:hidden; height:24px; }
+    #expBar { height:100%; width:0%; text-align:center; color:white;
+      font-size:3.5vw; line-height:24px; background:dodgerblue;
+      transition:width 0.5s ease; }
 
     button { margin:10px; padding:12px 24px; font-size:4vw; border-radius:10px; }
     button:disabled { opacity:0.5; background:#777 !important; cursor:not-allowed; }
@@ -54,61 +78,39 @@
     #resetBtn { font-size:2.5vw; padding:4px 8px; border-radius:6px; opacity:0.6; }
     #resetBtn:hover { opacity:1; }
 
-    @keyframes breathing { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
-    @keyframes hungry-shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-10px);} 75%{transform:translateX(10px);} }
-    .breathing{animation:breathing 3s infinite;} .hungry{animation:hungry-shake 0.5s infinite;}
-
-    /* Evolusi */
-    @keyframes evoPulse { 0%,100% { transform: scale(1);} 25%{transform:scale(1.3);} 50%{transform:scale(0.7);} 75%{transform:scale(1.4);} }
-    @keyframes evoPop { 0%{transform:scale(0);opacity:0;} 80%{transform:scale(1.2);opacity:1;} 100%{transform:scale(1);} }
-    .evo-pulse { animation:evoPulse 2s ease-in-out; }
-    .evo-pop   { animation:evoPop 0.8s ease-out; }
-
-    /* Piring */
-    #plateWrapper { position: relative; margin: 20px auto 10px; width: 120px; height: 120px; }
-    #plate { width: 100%; height: auto; display: block; }
-    #dropZone { position:absolute; top:25%; left:25%; width:50%; height:50%; border:2px dashed rgba(255,255,255,0.3); border-radius:50%; }
-
-    /* Inventory makanan */
-    .inventory { display:flex; justify-content:center; margin-top:10px; gap:20px; }
-    .food-item { position:relative; width:60px; height:60px; }
-    .food-item img { width:100%; height:100%; border-radius:8px; }
-    .food-count { position:absolute; bottom:0; right:0; background:black; color:white; font-size:3vw; border-radius:50%; padding:2px 5px; }
-
-    /* Bottom tab */
-    .bottom-tab { position: fixed; bottom: 0; left: 0; right: 0; height: 60px; background: #1b5e20; display: flex; justify-content: space-around; align-items: center; border-top: 2px solid #444; z-index: 20; }
-    .tab-item { flex: 1; text-align: center; color: white; font-size: 4vw; }
-    .tab-item.active { color: yellow; font-weight: bold; }
+    @keyframes breathing { 0%,100%{transform:scale(1);}
+                           50%{transform:scale(1.05);} }
+    @keyframes hungry-shake { 0%,100%{transform:translateX(0);}
+                              25%{transform:translateX(-10px);}
+                              75%{transform:translateX(10px);} }
+    .breathing{animation:breathing 3s infinite;}
+    .hungry{animation:hungry-shake 0.5s infinite;}
   </style>
 </head>
 <body>
   <h2>🐣 Pet Evolusi</h2>
-
   <div id="coinDisplay">💰 0</div>
 
   <div class="pet-wrapper" id="petWrapper">
+    <!-- Thermometer -->
     <div class="thermometer" id="thermometer">
       <div id="labelTop" class="thermo-label">Kenyang</div>
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div>
       <div id="labelBottom" class="thermo-label">Lapar</div>
     </div>
 
+    <!-- Glow -->
     <div class="glow" id="evoGlow"></div>
+    <!-- Pet -->
     <img id="pet" src="images/egg.png" class="breathing">
+    <!-- Bubble -->
     <div id="bubble"></div>
   </div>
 
-  <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
-
-  <div class="bar-container">
-    <div id="expBar">EXP 0%</div>
-  </div>
-
-  <button onclick="feedPet()" id="feedBtn">🍽️ Feed</button>
-  <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
-
-  <!-- Piring -->
+  <!-- Piring + Drop zone -->
   <div id="plateWrapper">
     <img id="plate" src="images/plate.png" alt="Piring Kosong">
     <div id="dropZone"></div>
@@ -116,35 +118,22 @@
 
   <!-- Inventory -->
   <div class="inventory">
-    <div class="food-item" id="foodMeat">
-      <img src="images/meat.png" alt="Meat">
-      <div class="food-count" id="countMeat">100</div>
-    </div>
-    <div class="food-item" id="foodFruit">
-      <img src="images/fruit.png" alt="Fruit">
-      <div class="food-count" id="countFruit">100</div>
-    </div>
-    <div class="food-item" id="foodLeaf">
-      <img src="images/leaf.png" alt="Leaf">
-      <div class="food-count" id="countLeaf">100</div>
-    </div>
+    <div class="food-item" id="foodMeat"><img src="images/meat.png"><div class="count" id="countMeat">100</div></div>
+    <div class="food-item" id="foodFruit"><img src="images/fruit.png"><div class="count" id="countFruit">100</div></div>
+    <div class="food-item" id="foodLeaf"><img src="images/leaf.png"><div class="count" id="countLeaf">100</div></div>
   </div>
+
+  <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
+  <div class="bar-container"><div id="expBar">EXP 0%</div></div>
+
+  <button onclick="feedPet()" id="feedBtn">🍖 Feed</button>
+  <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
 
   <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
 
-  <!-- Bottom Tab -->
-  <div class="bottom-tab">
-    <div class="tab-item active">🏠 Home</div>
-    <div class="tab-item">🛒 Shop</div>
-    <div class="tab-item">🏆 Leaderboard</div>
-  </div>
-
-  <audio id="soundFeed" src="sounds/feed.mp3" preload="auto"></audio>
-  <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
-  <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
-
 <script>
-let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0, inventory:{meat:100, fruit:100, leaf:100} };
+let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
+let inventory = { meat:100, fruit:100, leaf:100 };
 let selectedFood = null;
 
 function getPetImage(stage){
@@ -162,87 +151,112 @@ function updateUI(){
   document.getElementById("pet").src = getPetImage(pet.stage);
 
   const bars = document.querySelectorAll("#thermometer .bar");
-  const activeBars = Math.round(pet.hunger/10);
-  bars.forEach((bar,i)=>{ i<activeBars ? bar.classList.add("active"):bar.classList.remove("active"); });
+  const activeBars = Math.round(pet.hunger / 10);
+  bars.forEach((bar,i)=>{ i<activeBars ? bar.classList.add("active") : bar.classList.remove("active"); });
 
-  const expBar=document.getElementById("expBar");
-  expBar.style.width=pet.exp+"%";
-  expBar.textContent="EXP "+pet.exp+"%";
+  const expBar = document.getElementById("expBar");
+  expBar.style.width = pet.exp + "%";
+  expBar.textContent = "EXP " + pet.exp + "%";
 
-  document.getElementById("coinDisplay").textContent="💰 "+pet.coins;
-  document.getElementById("countMeat").textContent=pet.inventory.meat;
-  document.getElementById("countFruit").textContent=pet.inventory.fruit;
-  document.getElementById("countLeaf").textContent=pet.inventory.leaf;
+  document.getElementById("coinDisplay").textContent = "💰 " + (pet.coins || 0);
+  document.getElementById("countMeat").textContent = inventory.meat;
+  document.getElementById("countFruit").textContent = inventory.fruit;
+  document.getElementById("countLeaf").textContent = inventory.leaf;
 
   localStorage.setItem("petData", JSON.stringify(pet));
 }
 
-function showBubble(text){const b=document.getElementById("bubble");b.textContent=text;b.style.display="block";setTimeout(()=>b.style.display="none",2500);}
-function playSound(id){const s=document.getElementById(id);if(s){s.currentTime=0;s.play();}}
+function showBubble(text){
+  const bubble=document.getElementById("bubble");
+  bubble.textContent=text; bubble.style.display="block";
+  setTimeout(()=>bubble.style.display="none",2500);
+}
 
+// Feed pet
 function feedPet(){
-  if(!selectedFood){showBubble("Letakkan makanan di piring dulu!");return;}
-  if(pet.inventory[selectedFood]<=0){showBubble("Stok habis!");selectedFood=null;return;}
-  pet.inventory[selectedFood]--; selectedFood=null;
+  if(!selectedFood){ showBubble("Taruh makanan di piring dulu 🍽️"); return; }
+  if(inventory[selectedFood]<=0){ showBubble("Stok habis!"); return; }
 
+  inventory[selectedFood]--;
   pet.hunger=Math.min(100,pet.hunger+20);
-  pet.coins++;
+  pet.coins+=1;
 
   if(pet.exp>=100){
-    if((pet.level===10&&pet.stage==="egg")||(pet.level===20&&pet.stage==="chick")||(pet.level===30&&pet.stage==="rooster")){
+    const isEvo=(pet.level===10&&pet.stage==="egg")||(pet.level===20&&pet.stage==="chick")||(pet.level===30&&pet.stage==="rooster");
+    if(isEvo){
       document.getElementById("evoBtn").style.display="inline-block";
       document.getElementById("evoGlow").style.display="block";
+      showBubble("EXP penuh! Tekan Evo Sekarang!");
     }else{
-      pet.exp=0;pet.level++;playSound("soundLevel");showBubble("Level naik! "+pet.level);
+      pet.exp=0; pet.level++;
+      showBubble("Level naik! Sekarang "+pet.level);
     }
-  }else{
+  } else {
     pet.exp=Math.min(100,pet.exp+10);
-    playSound("soundFeed");showBubble("Nyam! +1 koin");
+    if(pet.exp===100){ showBubble("EXP penuh!"); }
   }
+  selectedFood=null;
   updateUI();
 }
 
-function evolvePet(){ /* isi sama seperti versi sebelumnya */ }
+// Evolusi
+function evolvePet(){
+  if(pet.level===10&&pet.stage==="egg"){ pet.stage="chick"; showBubble("🐥 Anak Ayam!"); }
+  else if(pet.level===20&&pet.stage==="chick"){ pet.stage="rooster"; showBubble("🐓 Ayam Jantan!"); }
+  else if(pet.level===30&&pet.stage==="rooster"){ pet.stage="phoenix"; showBubble("🔥 Phoenix!"); }
+  pet.exp=0;
+  document.getElementById("evoBtn").style.display="none";
+  document.getElementById("evoGlow").style.display="none";
+  updateUI();
+}
 
+// Reset
 function resetGame(){
   localStorage.removeItem("petData");
-  pet={level:1,exp:0,stage:"egg",hunger:30,coins:0,inventory:{meat:100,fruit:100,leaf:100}};
+  pet={level:1,exp:0,stage:"egg",hunger:30,coins:0};
+  inventory={meat:100,fruit:100,leaf:100};
   updateUI();
+  alert("Game direset!");
 }
 
-function initTouchDrag() {
+// Drag clone
+function initTouchDrag(){
   const foods=document.querySelectorAll(".food-item");
   const drop=document.getElementById("dropZone");
 
   foods.forEach(f=>{
     f.addEventListener("touchstart",e=>{
-      selectedFood=f.id.replace("food","").toLowerCase();
-      f.classList.add("dragging");
-    });
+      const type=f.id.replace("food","").toLowerCase();
+      if(inventory[type]<=0)return;
+      const clone=f.cloneNode(true);
+      clone.style.position="absolute";
+      clone.style.width="40px";
+      clone.style.zIndex=1000;
+      document.body.appendChild(clone);
 
-    f.addEventListener("touchmove",e=>{
-      const touch=e.touches[0];
-      f.style.position="absolute";
-      f.style.left=(touch.pageX-30)+"px";
-      f.style.top=(touch.pageY-30)+"px";
-      f.style.zIndex=1000;
-    });
-
-    f.addEventListener("touchend",e=>{
-      f.classList.remove("dragging");
-      f.style.position="relative"; f.style.left=""; f.style.top=""; f.style.zIndex="";
-      const dropRect=drop.getBoundingClientRect();
-      const touch=e.changedTouches[0];
-      if(touch.clientX>dropRect.left&&touch.clientX<dropRect.right&&touch.clientY>dropRect.top&&touch.clientY<dropRect.bottom){
-        showBubble("Makanan siap di piring! Tekan Feed 🍽️");
-      }else{
-        selectedFood=null;
-      }
+      const move=(ev)=>{
+        const t=ev.touches[0];
+        clone.style.left=(t.pageX-20)+"px";
+        clone.style.top=(t.pageY-20)+"px";
+      };
+      const end=(ev)=>{
+        const t=ev.changedTouches[0];
+        const rect=drop.getBoundingClientRect();
+        if(t.clientX>rect.left&&t.clientX<rect.right&&t.clientY>rect.top&&t.clientY<rect.bottom){
+          selectedFood=type;
+          showBubble("Makanan siap di piring 🍽️");
+        }
+        clone.remove();
+        document.removeEventListener("touchmove",move);
+        document.removeEventListener("touchend",end);
+      };
+      document.addEventListener("touchmove",move);
+      document.addEventListener("touchend",end);
     });
   });
 }
-
-initTouchDrag(); updateUI();
+initTouchDrag();
+updateUI();
 </script>
 </body>
 </html>
