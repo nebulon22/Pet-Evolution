@@ -50,10 +50,9 @@
 
     /* Plate & evo button */
     .pet-zone { display:flex; flex-direction:column; align-items:center; margin-top:10px; position:relative; }
-    #evoBtn { margin-top:10px; font-size:4vw; padding:10px 20px; border-radius:10px; display:none; }
-    #plateWrapper { position:relative; margin-top:100px; width:120px; height:120px; }
+    #plateWrapper { position:relative; margin-top:25px; width:140px; height:140px; }
     #plate { width:100%; height:auto; display:block; }
-    #plateFood { position:absolute; top:25%; left:25%; width:50%; height:50%; object-fit:contain; }
+    #plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; }
 
     /* Food inventory */
     .food-zone { display:flex; justify-content:center; gap:20px; margin-top:15px; }
@@ -66,6 +65,18 @@
     @keyframes evoPop { 0%{transform:scale(0);opacity:0;} 80%{transform:scale(1.2);opacity:1;} 100%{transform:scale(1);} }
     .evo-pulse { animation:evoPulse 2s ease-in-out; }
     .evo-pop   { animation:evoPop 0.8s ease-out; }
+
+    /* Tombol sejajar */
+    .action-buttons {
+      display:flex;
+      justify-content:center;
+      gap:15px;
+      margin-top:15px;
+    }
+    .action-buttons button {
+      flex:1;
+      max-width:120px;
+    }
   </style>
 </head>
 <body>
@@ -82,7 +93,7 @@
 
     <div class="pet-zone">
       <img id="pet" src="images/egg.png" class="breathing">
-      <button id="evoBtn" onclick="evolvePet()">✨ Evo Sekarang!</button>
+
       <div id="plateWrapper">
         <img id="plate" src="images/plate.png" alt="Piring">
         <img id="plateFood" src="" alt="">
@@ -95,7 +106,13 @@
   <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
   <div class="bar-container"><div id="expBar">EXP 0%</div></div>
 
-  <button onclick="feedPet()" id="feedBtn">🍖 Feed</button>
+  <!-- Tombol aksi -->
+  <div class="action-buttons">
+    <button id="feedBtn" onclick="feedPet()">🍖 Feed</button>
+    <button id="playBtn" onclick="playWithPet()">🎮 Play</button>
+    <button id="evoBtn" onclick="evolvePet()" style="display:none;">✨ Evo</button>
+  </div>
+
   <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
 
   <!-- Food inventory -->
@@ -145,6 +162,7 @@ function updateUI(){
 
   const isEvoLevel=(pet.level===10&&pet.stage==="egg")||(pet.level===20&&pet.stage==="chick")||(pet.level===30&&pet.stage==="rooster");
   document.getElementById("feedBtn").disabled=(pet.exp>=100&&isEvoLevel);
+  document.getElementById("evoBtn").style.display=(pet.exp>=100&&isEvoLevel)?"inline-block":"none";
 
   localStorage.setItem("petData",JSON.stringify(pet));
 }
@@ -174,10 +192,7 @@ function feedPet(){
   const isEvoLevel=(pet.level===10&&pet.stage==="egg")||(pet.level===20&&pet.stage==="chick")||(pet.level===30&&pet.stage==="rooster");
 
   if(pet.exp>=100){
-    if(isEvoLevel){
-      document.getElementById("evoBtn").style.display="inline-block";
-      showBubble("EXP penuh — tekan Evo Sekarang!");
-    }else{
+    if(!isEvoLevel){
       pet.exp=0; pet.level++;
       playSound("soundLevel"); showBubble("Level naik! Sekarang level "+pet.level);
     }
@@ -197,8 +212,7 @@ function evolvePet(){
     if(pet.level===10&&oldStage==="egg"){pet.stage="chick";pet.coins+=50;showBubble("✨ Anak Ayam 🐥 +50 koin!");}
     else if(pet.level===20&&oldStage==="chick"){pet.stage="rooster";pet.coins+=50;showBubble("✨ Ayam Jantan 🐓 +50 koin!");}
     else if(pet.level===30&&oldStage==="rooster"){pet.stage="phoenix";pet.coins+=50;showBubble("🔥 Phoenix! +50 koin!");}
-    pet.exp=0; document.getElementById("evoBtn").style.display="none";
-    document.getElementById("feedBtn").disabled=false;
+    pet.exp=0; document.getElementById("feedBtn").disabled=false;
     petImg.src=getPetImage(pet.stage);
     petImg.classList.remove("evo-pulse"); petImg.classList.add("evo-pop");
     playSound("soundEvo"); updateUI(); setTimeout(()=>petImg.classList.remove("evo-pop"),1000);
@@ -209,7 +223,7 @@ setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.ra
 
 function resetGame(){ localStorage.removeItem("petData"); pet={level:1,exp:0,stage:"egg",hunger:30,coins:0}; updateUI(); alert("Game direset!"); }
 
-// Drag-drop makanan ke piring
+// Drag-drop makanan (touch)
 document.querySelectorAll(".food-item").forEach(item=>{
   item.addEventListener("touchstart", e=>{
     e.preventDefault();
@@ -239,11 +253,12 @@ document.querySelectorAll(".food-item").forEach(item=>{
   });
 });
 
+function playWithPet(){
+  showBubble("🎮 Main bareng peliharaanmu!");
+  // nanti bisa ditambah logika mini game
+}
+
 updateUI();
 </script>
 </body>
 </html>
-
-
-
-
