@@ -52,7 +52,14 @@
     .pet-zone { display:flex; flex-direction:column; align-items:center; margin-top:10px; position:relative; }
     #plateWrapper { position:relative; margin-top:25px; width:140px; height:140px; }
     #plate { width:100%; height:auto; display:block; }
-    #plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; }
+    #plateFood { 
+      position:absolute; 
+      top:50%; left:50%; 
+      transform:translate(-50%,-50%); 
+      width:50%; height:50%; 
+      object-fit:contain; 
+      display:none; /* default hidden */
+    }
 
     /* Food inventory */
     .food-zone { display:flex; justify-content:center; gap:20px; margin-top:15px; }
@@ -174,7 +181,9 @@ function feedPet(){
   if(!selectedFood){ showBubble("Taruh makanan di piring dulu 🍽️"); return; }
   if(foodStock[selectedFood] <= 0){
     showBubble("Stok " + selectedFood + " habis!");
-    document.getElementById("plateFood").src = "";
+    const plateFood = document.getElementById("plateFood");
+    plateFood.src = "";
+    plateFood.style.display = "none";
     selectedFood = null;
     return;
   }
@@ -182,7 +191,9 @@ function feedPet(){
   foodStock[selectedFood]--;
   document.getElementById("count-"+selectedFood).textContent = foodStock[selectedFood];
   if(foodStock[selectedFood] <= 0){
-    document.getElementById("plateFood").src = "";
+    const plateFood = document.getElementById("plateFood");
+    plateFood.src = "";
+    plateFood.style.display = "none";
     selectedFood = null;
   }
 
@@ -237,10 +248,21 @@ document.querySelectorAll(".food-item").forEach(item=>{
     function onTouchEnd(ev){
       const plate=document.getElementById("plateWrapper").getBoundingClientRect();
       const x=ev.changedTouches[0].clientX; const y=ev.changedTouches[0].clientY;
-      if(x>plate.left && x<plate.right && y>plate.top && y<plate.bottom){
+
+      // hitbox lingkaran tengah
+      const centerX = plate.left + plate.width/2;
+      const centerY = plate.top + plate.height/2;
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const distance = Math.sqrt(dx*dx + dy*dy);
+      const radius = plate.width * 0.4;
+
+      if(distance <= radius){
         if(foodStock[foodType]>0){
           selectedFood=foodType;
-          document.getElementById("plateFood").src="images/"+foodType+".png";
+          const plateFood = document.getElementById("plateFood");
+          plateFood.src="images/"+foodType+".png";
+          plateFood.style.display="block"; // tampilkan hanya jika ada makanan
           showBubble("🍽️ "+foodType+" siap di piring!");
         }
       }
