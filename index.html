@@ -215,13 +215,39 @@ function updateUI(){
   document.getElementById("count-meat").textContent=foodStock.meat;
   document.getElementById("count-fruit").textContent=foodStock.fruit;
   document.getElementById("count-leaf").textContent=foodStock.leaf;
-  localStorage.setItem("petData",JSON.stringify(pet));
+  
+  // kontrol tombol Feed & Evo
+  const isEvoLevel = 
+    (pet.level===10 && pet.stage==="egg") ||
+    (pet.level===20 && pet.stage==="chick") ||
+    (pet.level===30 && pet.stage==="rooster");
+
+  if(isEvoLevel && pet.exp>=100){
+    document.getElementById("feedBtn").disabled = true;
+    document.getElementById("evoBtn").style.display = "inline-block";
+  } else {
+    document.getElementById("feedBtn").disabled = false;
+    if(pet.exp < 100){
+      document.getElementById("evoBtn").style.display = "none";
+    }
+  }
+localStorage.setItem("petData",JSON.stringify(pet));
 }
 
 function showBubble(t){ const b=document.getElementById("bubble"); b.textContent=t; b.style.display="block"; setTimeout(()=>b.style.display="none",2500); }
 function playSound(id){const s=document.getElementById(id); if(s){s.currentTime=0;s.play();}}
 
 function feedPet(){
+  const isEvoLevel = 
+    (pet.level===10 && pet.stage==="egg") ||
+    (pet.level===20 && pet.stage==="chick") ||
+    (pet.level===30 && pet.stage==="rooster");
+
+  if(isEvoLevel && pet.exp>=100){
+    showBubble("Sudah siap evolusi! Tekan tombol ✨");
+    return;
+  }
+
   if(!selectedFood){showBubble("Pilih makanan dulu!");return;}
   if(foodStock[selectedFood]<=0){showBubble("Stok habis!");return;}
 
