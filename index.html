@@ -193,6 +193,8 @@
   <audio id="soundFeed" src="sounds/feed.mp3" preload="auto"></audio>
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
+  <audio id="soundCoin" src="sounds/coin.mp3" preload="auto"></audio>
+
 
 <script>
 let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
@@ -236,6 +238,7 @@ localStorage.setItem("petData",JSON.stringify(pet));
 
 function showBubble(t){ const b=document.getElementById("bubble"); b.textContent=t; b.style.display="block"; setTimeout(()=>b.style.display="none",2500); }
 function playSound(id){const s=document.getElementById(id); if(s){s.currentTime=0;s.play();}}
+  
 
 function feedPet(){
   const isEvoLevel = 
@@ -332,16 +335,18 @@ function toggleShop(show){
   document.getElementById("shopPopup").style.display= show? "block":"none";
 }
 
-function buyItem(type,price){
+;
+  function buyItem(type,price){
   if(pet.coins<price){
     showBubble("Koin tidak cukup!");
     return;
   }
   pet.coins -= price;
   foodStock[type] += 1;
+  playSound("soundCoin"); // 🔔 mainkan suara koin
   showBubble("Berhasil beli "+type+"! +1 stok");
   updateUI();
-}
+  }
 
 </script>
 
@@ -365,3 +370,4 @@ function buyItem(type,price){
 </div>
 </body>
 </html>
+
