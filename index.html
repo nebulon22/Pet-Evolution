@@ -68,6 +68,24 @@
     .foodItem { position:relative; width:60px; }
     .foodItem img { width:100%; }
     .count { position:absolute; bottom:0; right:0; background:rgba(0,0,0,0.7); font-size:14px; padding:2px 5px; border-radius:8px; }
+
+    /* Efek EXP melayang */
+    .flytext {
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:110%;
+      font-size:12px;
+      color:#fff;
+      text-shadow:1px 1px 2px black;
+      opacity:0;
+      animation:flyUp 1s forwards;
+      pointer-events:none;
+    }
+    @keyframes flyUp {
+      0%   { transform:translateX(-50%) translateY(0); opacity:1; }
+      100% { transform:translateX(-50%) translateY(-30px); opacity:0; }
+    }
   </style>
 </head>
 <body>
@@ -103,9 +121,18 @@
   </div>
 
   <div id="foodItems">
-    <div class="foodItem" ontouchstart="startDrag(event,'meat')"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
-    <div class="foodItem" ontouchstart="startDrag(event,'fruit')"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
-    <div class="foodItem" ontouchstart="startDrag(event,'leaf')"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
+    <div class="foodItem" ontouchstart="startDrag(event,'meat')">
+      <img src="images/meat.png">
+      <div class="count" id="count-meat">100</div>
+    </div>
+    <div class="foodItem" ontouchstart="startDrag(event,'fruit')">
+      <img src="images/fruit.png">
+      <div class="count" id="count-fruit">100</div>
+    </div>
+    <div class="foodItem" ontouchstart="startDrag(event,'leaf')">
+      <img src="images/leaf.png">
+      <div class="count" id="count-leaf">100</div>
+    </div>
   </div>
 
   <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
@@ -144,14 +171,47 @@ function playSound(id){const s=document.getElementById(id); if(s){s.currentTime=
 function feedPet(){
   if(!selectedFood){showBubble("Pilih makanan dulu!");return;}
   if(foodStock[selectedFood]<=0){showBubble("Stok habis!");return;}
+
   pet.hunger=Math.min(100,pet.hunger+20);
-  foodStock[selectedFood]--; pet.coins++;
+  foodStock[selectedFood]--;
+  pet.coins++;
+
+  let expGain=0;
+  if(selectedFood==="meat") expGain=10;
+  else if(selectedFood==="fruit") expGain=5;
+  else if(selectedFood==="leaf") expGain=2.5;
+
+  // 🔥 efek text melayang
+  const foodDiv=document.querySelector(`.foodItem[ontouchstart*='${selectedFood}']`);
+  const fly=document.createElement("span");
+  fly.className="flytext";
+  fly.textContent="+"+expGain+"% EXP";
+  foodDiv.appendChild(fly);
+  setTimeout(()=>fly.remove(),1000);
+
   if(pet.exp>=100){
-    if((pet.level===10&&pet.stage==="egg")||(pet.level===20&&pet.stage==="chick")||(pet.level===30&&pet.stage==="rooster")){
-      document.getElementById("evoBtn").style.display="inline-block"; document.getElementById("evoGlow").style.display="block"; startSparkle(); showBubble("EXP penuh — tekan Evo Sekarang!");
-    } else { pet.exp=0; pet.level++; playSound("soundLevel"); showBubble("Level naik! Sekarang level "+pet.level); }
-  } else { pet.exp=Math.min(100,pet.exp+10); playSound("soundFeed"); showBubble("Nyam nyam 🍖 +1 koin!"); }
-  if(foodStock[selectedFood]<=0){ document.getElementById("plateFood").style.display="none"; selectedFood=null; }
+    const isEvoLevel=(pet.level===10&&pet.stage==="egg")||(pet.level===20&&pet.stage==="chick")||(pet.level===30&&pet.stage==="rooster");
+    if(isEvoLevel){
+      document.getElementById("evoBtn").style.display="inline-block"; 
+      document.getElementById("evoGlow").style.display="block"; 
+      startSparkle();
+      showBubble("EXP penuh — tekan Evo Sekarang!");
+    } else {
+      pet.exp=0; pet.level++; 
+      playSound("soundLevel"); 
+      showBubble("Level naik! Sekarang level "+pet.level);
+    }
+  } else {
+    pet.exp=Math.min(100,pet.exp+expGain);
+    playSound("soundFeed");
+    showBubble("Nyam nyam 🍖 +"+expGain+"% EXP, +1 koin!");
+  }
+
+  if(foodStock[selectedFood]<=0){
+    document.getElementById("plateFood").style.display="none";
+    selectedFood=null;
+  }
+
   updateUI();
 }
 
@@ -177,7 +237,7 @@ function startDrag(ev,foodType){
     const plate=document.getElementById("plateWrapper").getBoundingClientRect();
     const x=e.changedTouches[0].clientX; const y=e.changedTouches[0].clientY;
     const centerX=plate.left+plate.width/2;
-    const centerY=plate.top+plate.height/2 - 15; // ⬅️ geser drop zone lebih ke atas
+    const centerY=plate.top+plate.height/2 - 15; // drop zone naik 15px
     const dx=x-centerX; const dy=y-centerY; const distance=Math.sqrt(dx*dx+dy*dy); const radius=plate.width*0.4;
     if(distance<=radius){ if(foodStock[foodType]>0){ selectedFood=foodType; const plateFood=document.getElementById("plateFood"); plateFood.src="images/"+foodType+".png"; plateFood.style.display="block"; showBubble("🍽️ "+foodType+" siap di piring!"); } }
     clone.remove(); document.removeEventListener("touchmove",onTouchMove); document.removeEventListener("touchend",onTouchEnd);
