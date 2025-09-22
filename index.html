@@ -121,7 +121,8 @@
   <div class="bar-container"><div id="expBar">EXP 0%</div></div>
 
   <button onclick="feedPet()" id="feedBtn">🍖 Feed</button>
-  <button id="playBtn">🎮 Play</button>
+  <button id="playBtn" onclick="playWithPet()">🎮 Play</button>
+
   <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
 
   <div id="plateWrapper">
@@ -289,6 +290,31 @@ function resetGame(){
   foodStock={meat:100,fruit:100,leaf:100};
   selectedFood=null;
   updateUI();
+}
+function playWithPet(){
+  const btn = document.getElementById("playBtn");
+  if(btn.disabled) return; // kalau masih cooldown
+
+  // Kurangi hunger
+  pet.hunger = Math.max(0, pet.hunger - 10);
+  updateUI();
+
+  // Animasi terbang
+  const petImg = document.getElementById("pet");
+  petImg.classList.add("pet-fly");
+  showBubble("🎮 Bermain seru! Hunger -10%");
+  
+  setTimeout(()=>{
+    petImg.classList.remove("pet-fly");
+  },2000);
+
+  // Cooldown 5 detik
+  btn.disabled = true;
+  btn.textContent = "⏳ Tunggu...";
+  setTimeout(()=>{
+    btn.disabled = false;
+    btn.textContent = "🎮 Play";
+  },5000);
 }
 
 function startSparkle(){
