@@ -1,31 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pet Evolusi</title>
+  <title>Game Pet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* --- Layout & styles --- */
     body { margin:0; text-align:center; background:#2e7d32; color:white; font-family:sans-serif; overflow-x:hidden; display:flex; flex-direction:column; align-items:center; }
     h2 { margin-top:10px; font-size:6vw; }
 
-    #coinDisplay { position:fixed; top:5px; left:5px; font-size:4vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; }
-    #shopBtn { position: fixed; top: 50px; left: 5px; font-size: 4vw; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; z-index: 10; cursor: pointer; }
+    #coinDisplay { position:fixed; top:5px; left:5px; font-size:4vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; transition: transform 0.5s, opacity 0.5s; }
 
-    .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; overflow:hidden; width:100%; max-width:420px; }
+    #shopIcon { position:fixed; top:5px; left:65px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
 
-    .glow { position:absolute; width:240px; height:240px; background:radial-gradient(circle, rgba(255,255,200,0.9) 0%, transparent 70%); animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; left:50%; transform:translateX(-50%); top:18%; }
-    @keyframes glow { 0%,100%{opacity:0; transform:translateX(-50%) scale(1);} 50%{opacity:0.9; transform:translateX(-50%) scale(1.18);} }
-    .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.9; animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
-    @keyframes sparkleMove { 0%{transform:translateY(0) scale(1);opacity:1;} 100%{transform:translateY(-60px) scale(0.4);opacity:0;} }
+    #shopPopup {
+      display:none;
+      position:fixed;
+      top:50px; left:10px;
+      background:rgba(51,51,51,0.9);
+      padding:15px;
+      border-radius:12px;
+      z-index:20;
+      text-align:left;
+      width:160px;
+    }
+    #shopPopup h3 { margin:0 0 10px; font-size:4vw; }
+    .shopItem { margin:10px 0; }
+    .shopItem button { padding:6px 12px; font-size:3.5vw; }
 
-    #pet { width:40vw; max-width:220px; height:auto; z-index:2; transition:transform 0.15s ease; user-select:none; -webkit-user-drag:none; }
-    .breathing{ animation:breathing 3s infinite; }
-    @keyframes breathing { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
-    .hungry { animation:hungry-shake 0.5s infinite; }
-    @keyframes hungry-shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-8px);} 75%{transform:translateX(8px);} }
+    .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; }
+    .glow { position:absolute; width:200px; height:200px; background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%); animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; }
+    @keyframes glow { 0%,100%{opacity:0; transform:scale(1);} 50%{opacity:0.8; transform:scale(1.2);} }
+    #pet { width:40vw; max-width:220px; height:auto; z-index:1; }
+    .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.8; animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
+    @keyframes sparkleMove { 0%{transform:translateY(0) scale(1);opacity:1;} 100%{transform:translateY(-50px) scale(0.5);opacity:0;} }
+    #bubble { position:absolute; left:60%; top:20%; background:white; color:black; padding:8px 12px; border-radius:12px; display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
+    #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid; border-color:transparent white transparent transparent; }
 
-    .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start; width:40px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; z-index:2; margin-right:8px; }
-    .bar { flex:1; margin:1px 0; background:#666; opacity:0.4; }
+    .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start; width:40px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; }
+    .bar { flex:1; margin:1px 0; background:#666; }
     .bar.active { opacity:1; }
     .bar:nth-child(2).active{background:#800000;}
     .bar:nth-child(3).active{background:#b22222;}
@@ -40,9 +51,6 @@
     .thermo-label { position:absolute; left:50%; transform:translateX(-50%); font-size:2.8vw; color:white; text-shadow:1px 1px 2px black; }
     #labelTop { top:2px; } #labelBottom { bottom:2px; }
 
-    #bubble { position:absolute; left:60%; top:10%; background:white; color:black; padding:8px 12px; border-radius:12px; display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
-    #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid; border-color:transparent white transparent transparent; }
-
     .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444; border-radius:10px; overflow:hidden; height:24px; }
     #expBar { height:100%; width:0%; text-align:center; color:white; font-size:3.5vw; line-height:24px; background:dodgerblue; transition:width 0.5s ease; }
 
@@ -53,45 +61,59 @@
     #resetBtn { font-size:2.5vw; padding:4px 8px; border-radius:6px; opacity:0.6; }
     #resetBtn:hover { opacity:1; }
 
-    #plateWrapper { position:relative; margin-top:20px; z-index:2; }
-    #plate { width:180px; user-select:none; -webkit-user-drag:none; }
-    #plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; display:none; pointer-events:none; }
+    @keyframes breathing { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+    @keyframes hungry-shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-10px);} 75%{transform:translateX(10px);} }
+    .breathing{animation:breathing 3s infinite;} .hungry{animation:hungry-shake 0.5s infinite;}
+    @keyframes evoPulse { 0%,100% { transform: scale(1);} 25%{transform:scale(1.3);} 50%{transform:scale(0.7);} 75%{transform:scale(1.4);} }
+    @keyframes evoPop { 0%{transform:scale(0);opacity:0;} 80%{transform:scale(1.2);opacity:1;} 100%{transform:scale(1);} }
+    .evo-pulse { animation:evoPulse 2s ease-in-out; }
+    .evo-pop   { animation:evoPop 0.8s ease-out; }
 
-    #foodItems { display:flex; gap:15px; justify-content:center; margin-top:10px; z-index:2; }
-    .foodItem { position:relative; width:60px; touch-action: none; }
-    .foodItem img { width:100%; user-select:none; -webkit-user-drag:none; }
+    #plateWrapper { position:relative; margin-top:20px; }
+    #plate { width:180px; }
+    #plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; display:none; }
+
+    #foodItems { display:flex; gap:15px; justify-content:center; margin-top:10px; touch-action: none; }
+    .foodItem { position:relative; width:60px; }
+    .foodItem img { width:100%; user-select: none; }
     .count { position:absolute; bottom:0; right:0; background:rgba(0,0,0,0.7); font-size:14px; padding:2px 5px; border-radius:8px; }
+    .foodItem.disabled img { opacity:0.3; }
 
-    .flytext { position:absolute; left:50%; transform:translateX(-50%); bottom:110%; font-size:12px; color:#fff; text-shadow:1px 1px 2px black; opacity:0; animation:flyUp 1s forwards; pointer-events:none; }
+    .flytext { position:absolute; left:50%; transform:translateX(-50%) translateY(0); bottom:110%; font-size:12px; color:#fff; text-shadow:1px 1px 2px black; opacity:0; animation:flyUp 1s forwards; pointer-events:none; }
     @keyframes flyUp { 0% { transform:translateX(-50%) translateY(0); opacity:1; } 100% { transform:translateX(-50%) translateY(-30px); opacity:0; } }
-
-    #shopPopup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: white; color: black; padding: 15px; border-radius: 12px; display: none; z-index: 40; width: 85%; max-width: 320px; box-shadow: 0 0 12px rgba(0,0,0,0.6); }
-    #shopItems { display:flex; gap:15px; justify-content:center; margin-top:10px; }
-    .shopItem { position:relative; width:70px; cursor:pointer; }
-    .shopItem img { width:100%; user-select:none; -webkit-user-drag:none; }
-    .price { position:absolute; bottom:-18px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.7); color:white; font-size:12px; padding:2px 5px; border-radius:8px; }
-    #shopClose { margin-top:15px; padding:8px 16px; }
-
-    #battleBtn { position: fixed; bottom: 10px; right: 10px; font-size: 3.5vw; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 50%; cursor: pointer; z-index: 20; }
-    #battlePopup, #hostPopup { position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: white; color: black; padding: 15px; border-radius: 12px; display: none; z-index: 40; width: 85%; max-width: 320px; box-shadow: 0 0 12px rgba(0,0,0,0.6); text-align: center; }
-    #battlePopup button, #hostPopup button { margin: 8px; padding: 8px 16px; font-size: 4vw; border-radius: 8px; }
-
-    #arena { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(180deg,#111 0%, #000 100%); color:white; z-index:50; text-align:center; padding-top:40px; }
-    #arena button { margin:10px; padding:12px 24px; font-size:5vw; }
-    #arena .arena-row { display:flex; justify-content:space-around; align-items:center; width:100%; max-width:720px; margin:10px auto; }
-    #arena .pet-small { width:28vw; max-width:140px; user-select:none; -webkit-user-drag:none; }
   </style>
 </head>
 <body>
-  <h2>🐣 Pet Evolusi</h2>
-
+  <h2>🐣 Game Pet</h2>
   <div id="coinDisplay">💰 0</div>
-  <div id="shopBtn" onclick="toggleShop(true)">🛒 Shop</div>
-  <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
+  <div id="shopIcon" onclick="toggleShop()">🛒</div>
+
+  <div id="shopPopup">
+    <h3>Shop</h3>
+    <div class="shopItem">
+      <span>🍖 Daging - 10 koin</span><br>
+      <button onclick="buyItem('meat',10)">Beli</button>
+    </div>
+    <div class="shopItem">
+      <span>🍎 Buah - 5 koin</span><br>
+      <button onclick="buyItem('fruit',5)">Beli</button>
+    </div>
+    <div class="shopItem">
+      <span>🌿 Daun - 3 koin</span><br>
+      <button onclick="buyItem('leaf',3)">Beli</button>
+    </div>
+    <button onclick="toggleShop()">Tutup</button>
+  </div>
 
   <div class="pet-wrapper" id="petWrapper">
+    <div class="thermometer" id="thermometer">
+      <div id="labelTop" class="thermo-label">Kenyang</div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div id="labelBottom" class="thermo-label">Lapar</div>
+    </div>
     <div class="glow" id="evoGlow"></div>
-    <img id="pet" src="images/egg.png" class="breathing" draggable="false" alt="Pet">
+    <img id="pet" src="images/egg.png" class="breathing">
     <div id="bubble"></div>
   </div>
 
@@ -103,497 +125,232 @@
   <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
 
   <div id="plateWrapper">
-    <img id="plate" src="images/plate.png" alt="Piring" draggable="false">
-    <img id="plateFood" src="" alt="" draggable="false">
+    <img id="plate" src="images/plate.png" alt="Piring">
+    <img id="plateFood" src="" alt="">
   </div>
 
   <div id="foodItems">
-    <div class="foodItem" data-food="meat" onmousedown="startDragMouse(event,'meat')" ontouchstart="startDrag(event,'meat')">
-      <img src="images/meat.png" draggable="false"><div class="count" id="count-meat">100</div>
+    <div class="foodItem" data-food="meat">
+      <img src="images/meat.png">
+      <div class="count" id="count-meat">100</div>
     </div>
-    <div class="foodItem" data-food="fruit" onmousedown="startDragMouse(event,'fruit')" ontouchstart="startDrag(event,'fruit')">
-      <img src="images/fruit.png" draggable="false"><div class="count" id="count-fruit">100</div>
+    <div class="foodItem" data-food="fruit">
+      <img src="images/fruit.png">
+      <div class="count" id="count-fruit">100</div>
     </div>
-    <div class="foodItem" data-food="leaf" onmousedown="startDragMouse(event,'leaf')" ontouchstart="startDrag(event,'leaf')">
-      <img src="images/leaf.png" draggable="false"><div class="count" id="count-leaf">100</div>
+    <div class="foodItem" data-food="leaf">
+      <img src="images/leaf.png">
+      <div class="count" id="count-leaf">100</div>
     </div>
   </div>
 
-  <div id="battleBtn" onclick="openBattleChoice()">⚔️</div>
-
-  <div id="battlePopup">
-    <h3>Pilih Mode Battle</h3>
-    <p><label>Arena ID:</label><br>
-    <input type="text" id="arenaInput" value="arena1" style="font-size:4vw; padding:4px; text-align:center; width:80%;"></p>
-    <button onclick="chooseHost()">🏠 Host</button>
-    <button onclick="chooseClient()">📱 Client</button><br>
-    <button onclick="closeBattle()">Tutup</button>
-  </div>
-
-  <div id="hostPopup">
-    <h3>Host Battle</h3>
-    <p>Buka <b>Termux</b> lalu jalankan:<br><code>node server.js</code></p>
-    <p>Setelah server aktif, klik Lanjutkan.</p>
-    <button onclick="connectAsHost()">Lanjutkan</button>
-    <button onclick="closeHost()">Tutup</button>
-  </div>
-
-  <div id="arena">
-    <h2>⚔️ Arena Battle</h2>
-    <div class="arena-row">
-      <div>
-        <img id="arenaMyPet" class="pet-small" src="images/egg.png" alt="My Pet">
-        <p id="myHP">HP: 100</p>
-      </div>
-      <div>
-        <img id="arenaEnemyPet" class="pet-small" src="images/egg.png" alt="Enemy Pet">
-        <p id="enemyHP">HP: 100</p>
-      </div>
-    </div>
-    <div style="margin-top:18px;">
-      <button onclick="sendAction('attack')">🔪 Attack</button>
-      <button onclick="sendAction('dodge')">↔️ Dodge</button>
-      <button onclick="sendAction('skill')">✨ Skill</button>
-    </div>
-    <p id="log">Menunggu aksi...</p>
-    <button onclick="exitArena()">Keluar Arena</button>
-  </div>
-
-  <div id="shopPopup">
-    <h3>🛒 Shop</h3>
-    <div id="shopItems">
-      <div class="shopItem" onclick="buyItem('meat',10)"><img src="images/meat.png" draggable="false"><div class="price">💰10</div></div>
-      <div class="shopItem" onclick="buyItem('fruit',5)"><img src="images/fruit.png" draggable="false"><div class="price">💰5</div></div>
-      <div class="shopItem" onclick="buyItem('leaf',3)"><img src="images/leaf.png" draggable="false"><div class="price">💰3</div></div>
-    </div>
-    <button id="shopClose" onclick="toggleShop(false)">Tutup</button>
-  </div>
+  <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
 
   <audio id="soundFeed" src="sounds/feed.mp3" preload="auto"></audio>
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
-  <audio id="soundCoin" src="sounds/coin.mp3" preload="auto"></audio>
 
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <script>
-  /* ================= State & Init ================= */
-  let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
-  let foodStock = JSON.parse(localStorage.getItem("foodStock")) || { meat:100, fruit:100, leaf:100 };
-  let selectedFood = null;
-  let socket = null;
-  let arenaId = "arena1";
+<script>
+let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
+let foodStock={meat:100,fruit:100,leaf:100};
+let selectedFood=null;
+let evoAnimating=false;
 
-  function getPetImage(stage){
-    if(stage === "egg") return "images/egg.png";
-    if(stage === "chick") return "images/chick.png";
-    if(stage === "rooster") return "images/rooster.png";
-    if(stage === "phoenix") return "images/phoenix.png";
-    return "images/egg.png";
-  }
-
-  /* ================= UI ================= */
-  function updateUI(){
-    document.getElementById("level").textContent = pet.level;
-    document.getElementById("pet").src = getPetImage(pet.stage);
-
-    // thermometer bars
-    const bars = document.querySelectorAll("#thermometer .bar");
-    if(bars.length){
-      const active = Math.round(pet.hunger/10);
-      bars.forEach((b,i)=> { if(i < active) b.classList.add("active"); else b.classList.remove("active"); });
-    }
-
-    // exp bar
-    const expBar = document.getElementById("expBar");
-    expBar.style.width = pet.exp + "%";
-    expBar.textContent = "EXP " + Math.round(pet.exp) + "%";
-
-    // coins & stocks
-    document.getElementById("coinDisplay").textContent = "💰 " + (pet.coins || 0);
-    document.getElementById("count-meat").textContent = foodStock.meat;
-    document.getElementById("count-fruit").textContent = foodStock.fruit;
-    document.getElementById("count-leaf").textContent = foodStock.leaf;
-
-    // evo-ready control: disable feed on evo-level when exp >=100
-    const isEvoLevel = (pet.level===10 && pet.stage==="egg") || (pet.level===20 && pet.stage==="chick") || (pet.level===30 && pet.stage==="rooster");
-    if(isEvoLevel && pet.exp >= 100){
-      document.getElementById("feedBtn").disabled = true;
-      document.getElementById("evoBtn").style.display = "inline-block";
-      document.getElementById("evoGlow").style.display = "block";
-      startSparkle();
-    } else {
-      document.getElementById("feedBtn").disabled = false;
-      if(pet.exp < 100){
-        document.getElementById("evoBtn").style.display = "none";
-        document.getElementById("evoGlow").style.display = "none";
-      }
-    }
-
-    // plateFood preview
-    if(selectedFood && foodStock[selectedFood] > 0){
-      const plateFood = document.getElementById("plateFood");
-      plateFood.src = "images/" + selectedFood + ".png";
-      plateFood.style.display = "block";
-    } else {
-      document.getElementById("plateFood").style.display = "none";
-    }
-
-    // save
-    localStorage.setItem("petData", JSON.stringify(pet));
-    localStorage.setItem("foodStock", JSON.stringify(foodStock));
-  }
-
-  function showBubble(txt){
-    const b = document.getElementById("bubble");
-    b.textContent = txt;
-    b.style.display = "block";
-    setTimeout(()=> b.style.display = "none", 2200);
-  }
-
-  function playSound(id){
-    const s = document.getElementById(id);
-    if(s){ try{ s.currentTime = 0; s.play(); } catch(e){} }
-  }
-
-  /* ================= Feed / Evo ================= */
-  function feedPet(){
-    const isEvoLevel = (pet.level===10 && pet.stage==="egg") || (pet.level===20 && pet.stage==="chick") || (pet.level===30 && pet.stage==="rooster");
-    if(isEvoLevel && pet.exp >= 100){
-      showBubble("Sudah siap evolusi! Tekan tombol ✨");
-      return;
-    }
-
-    if(!selectedFood){ showBubble("Pilih makanan dulu!"); return; }
-    if(foodStock[selectedFood] <= 0){ showBubble("Stok habis!"); return; }
-
-    // consume
-    foodStock[selectedFood]--;
-    pet.hunger = Math.min(100, pet.hunger + 20);
-    pet.coins = (pet.coins || 0) + 1;
-
-    // exp
-    let expGain = 0;
-    if(selectedFood === "meat") expGain = 10;
-    else if(selectedFood === "fruit") expGain = 5;
-    else if(selectedFood === "leaf") expGain = 2.5;
-
-    // floating text
-    const foodDiv = document.querySelector(`.foodItem[data-food='${selectedFood}']`);
-    if(foodDiv){
-      const fly = document.createElement("span");
-      fly.className = "flytext";
-      fly.textContent = "+" + expGain + "% EXP";
-      foodDiv.appendChild(fly);
-      setTimeout(()=> fly.remove(), 1000);
-    }
-
-    playSound("soundFeed");
-
-    // add exp with carryover (if not evo-ready)
-    pet.exp = pet.exp + expGain;
-    if(pet.exp >= 100){
-      const evoReady = (pet.level===10 && pet.stage==="egg") || (pet.level===20 && pet.stage==="chick") || (pet.level===30 && pet.stage==="rooster");
-      if(evoReady){
-        pet.exp = 100; // cap so UI shows full
-        document.getElementById("evoBtn").style.display = "inline-block";
-        document.getElementById("evoGlow").style.display = "block";
-        startSparkle();
-        showBubble("EXP penuh — tekan Evo Sekarang!");
-      } else {
-        // level up: carryover extra exp
-        pet.exp = pet.exp - 100;
-        pet.level++;
-        playSound("soundLevel");
-        showBubble("Level naik! Sekarang level " + pet.level);
-      }
-    } else {
-      showBubble("Nyam nyam 🍖 +" + expGain + "% EXP, +1 koin!");
-    }
-
-    if(foodStock[selectedFood] <= 0){
-      selectedFood = null;
-      document.getElementById("plateFood").style.display = "none";
-    }
-    updateUI();
-  }
-
-  function evolvePet(){
-    const petImg = document.getElementById("pet");
-    const oldStage = pet.stage;
-    petImg.classList.add("evo-pulse");
-    setTimeout(()=>{
-      if(pet.level === 10 && oldStage === "egg"){ pet.stage = "chick"; pet.coins += 50; showBubble("✨ Evolusi jadi Anak Ayam 🐥 +50 koin!"); }
-      else if(pet.level === 20 && oldStage === "chick"){ pet.stage = "rooster"; pet.coins += 50; showBubble("✨ Evolusi jadi Ayam Jantan 🐓 +50 koin!"); }
-      else if(pet.level === 30 && oldStage === "rooster"){ pet.stage = "phoenix"; pet.coins += 50; showBubble("🔥 Evolusi jadi Phoenix! +50 koin!"); }
-      pet.exp = 0;
-      document.getElementById("evoBtn").style.display = "none";
-      document.getElementById("evoGlow").style.display = "none";
-      petImg.src = getPetImage(pet.stage);
-      petImg.classList.remove("evo-pulse");
-      playSound("soundEvo");
-      updateUI();
-    }, 800);
-  }
-
-  function startSparkle(){
-    const wrapper = document.getElementById("petWrapper");
-    for(let i=0;i<10;i++){
-      setTimeout(()=>{
-        const s = document.createElement("span");
-        s.className = "sparkle";
-        const w = wrapper.clientWidth, h = wrapper.clientHeight;
-        const x = (w/2) + (Math.random()*(w*0.6)-(w*0.3));
-        const y = (h/2) + (Math.random()*(h*0.6)-(h*0.3));
-        s.style.left = x + "px";
-        s.style.top  = y + "px";
-        wrapper.appendChild(s);
-        setTimeout(()=> s.remove(), 1500);
-      }, i*120);
-    }
-  }
-
-  /* ================= Hunger timer & persist ================= */
-  setInterval(()=>{
-    pet.hunger = Math.max(0, pet.hunger - 5);
-    if(pet.hunger < 50 && Math.random() < 0.25){
-      showBubble("Aku lapar 🥺");
-      const p = document.getElementById("pet");
-      p.classList.add("hungry");
-      setTimeout(()=> p.classList.remove("hungry"), 800);
-    }
-    updateUI();
-  }, 5000);
-
-  function resetGame(){
-    localStorage.removeItem("petData");
-    localStorage.removeItem("foodStock");
-    pet = { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
-    foodStock = { meat:100, fruit:100, leaf:100 };
-    selectedFood = null;
-    document.getElementById("plateFood").style.display = "none";
-    updateUI();
-    alert("Game direset! Pet kamu lapar 🥺");
-  }
-
-  /* ================= Drag logic (touch + mouse) ================= */
-  function createDragClone(x,y,foodType){
-    // remove old clone if exists
-    const old = document.getElementById("dragClone");
-    if(old) old.remove();
-
-    const img = document.createElement("img");
-    img.id = "dragClone";
-    img.src = "images/" + foodType + ".png";
-    img.style.position = "fixed";
-    img.style.left = (x - 30) + "px";
-    img.style.top  = (y - 30) + "px";
-    img.style.width = "60px";
-    img.style.opacity = "0.9";
-    img.style.zIndex = 9999;
-    img.draggable = false;
-    document.body.appendChild(img);
-  }
-
-  function moveClone(x,y){
-    const clone = document.getElementById("dragClone");
-    if(clone){
-      clone.style.left = (x - 30) + "px";
-      clone.style.top  = (y - 30) + "px";
-    }
-  }
-
-  function removeClone(){
-    const clone = document.getElementById("dragClone");
-    if(clone) clone.remove();
-  }
-
-  function finishDrag(x,y,foodType){
-    const plate = document.getElementById("plateWrapper").getBoundingClientRect();
-    const centerX = plate.left + plate.width/2;
-    const centerY = plate.top + plate.height/2 - 15;
-    const dx = x - centerX;
-    const dy = y - centerY;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    const radius = plate.width * 0.4;
-    if(dist <= radius){
-      if(foodStock[foodType] > 0){
-        selectedFood = foodType;
-        document.getElementById("plateFood").src = "images/" + foodType + ".png";
-        document.getElementById("plateFood").style.display = "block";
-        showBubble("🍽️ " + foodType + " siap di piring!");
-      } else {
-        showBubble("Stok habis!");
-      }
-    }
-    removeClone();
-  }
-
-  // touchstart handler
-  function startDrag(ev, foodType){
-    ev.preventDefault();
-    const t = ev.touches[0];
-    createDragClone(t.clientX, t.clientY, foodType);
-    function onTouchMove(e){ moveClone(e.touches[0].clientX, e.touches[0].clientY); }
-    function onTouchEnd(e){
-      const ct = e.changedTouches[0];
-      finishDrag(ct.clientX, ct.clientY, foodType);
-      document.removeEventListener("touchmove", onTouchMove);
-      document.removeEventListener("touchend", onTouchEnd);
-    }
-    document.addEventListener("touchmove", onTouchMove, {passive:false});
-    document.addEventListener("touchend", onTouchEnd);
-  }
-
-  // mousedown handler for mouse
-  function startDragMouse(ev, foodType){
-    ev.preventDefault();
-    createDragClone(ev.clientX, ev.clientY, foodType);
-    function onMouseMove(e){ moveClone(e.clientX, e.clientY); }
-    function onMouseUp(e){
-      finishDrag(e.clientX, e.clientY, foodType);
-      document.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseup", onMouseUp);
-    }
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUp);
-  }
-
-  /* ================= Shop ================= */
-  function toggleShop(show){
-    document.getElementById("shopPopup").style.display = show ? "block" : "none";
-  }
-  function buyItem(type, price){
-    if((pet.coins || 0) < price){ showBubble("Koin tidak cukup!"); return; }
-    pet.coins -= price;
-    foodStock[type] = (foodStock[type] || 0) + 1;
-    playSound("soundCoin");
-    showBubble("Berhasil beli " + type + "! +1 stok");
-    updateUI();
-  }
-  // close shop when click outside
-  document.addEventListener('click', (e)=>{
-    const shop = document.getElementById("shopPopup");
-    const btn = document.getElementById("shopBtn");
-    if(!shop) return;
-    if(shop.style.display === "block" && !shop.contains(e.target) && e.target !== btn){
-      toggleShop(false);
-    }
+function updateUI(){
+  document.getElementById("level").textContent=pet.level;
+  document.getElementById("pet").src=getPetImage(pet.stage);
+  const bars=document.querySelectorAll("#thermometer .bar");
+  const activeBars=Math.round(pet.hunger/10);
+  bars.forEach((bar,i)=>{ i<activeBars?bar.classList.add("active"):bar.classList.remove("active"); });
+  const expBar=document.getElementById("expBar"); expBar.style.width=Math.min(100,pet.exp)+"%"; expBar.textContent="EXP "+Math.min(100,pet.exp)+"%";
+  document.getElementById("coinDisplay").textContent="💰 "+(pet.coins||0);
+  Object.keys(foodStock).forEach(f=>{
+    document.getElementById("count-"+f).textContent=foodStock[f];
+    const el=document.querySelector(`.foodItem[data-food='${f}']`);
+    el.classList.toggle("disabled", foodStock[f]<=0);
   });
+  localStorage.setItem("petData",JSON.stringify(pet));
+}
 
-  /* ================= Battle (socket.io client) ================= */
-  function openBattleChoice(){ document.getElementById("battlePopup").style.display = "block"; }
-  function closeBattle(){ document.getElementById("battlePopup").style.display = "none"; }
-  function chooseHost(){
-    arenaId = document.getElementById("arenaInput").value || "arena1";
-    document.getElementById("battlePopup").style.display = "none";
-    document.getElementById("hostPopup").style.display = "block";
+function getPetImage(stage){
+  switch(stage){
+    case "egg": return "images/egg.png";
+    case "chick": return "images/chick.png";
+    case "rooster": return "images/rooster.png";
+    case "phoenix": return "images/phoenix.png";
   }
-  function closeHost(){ document.getElementById("hostPopup").style.display = "none"; }
-  function chooseClient(){
-    arenaId = document.getElementById("arenaInput").value || "arena1";
-    const ip = prompt("Masukkan IP Host (contoh: 192.168.43.1:3000)");
-    if(ip){ connectToServer("http://" + ip); closeBattle(); }
-  }
-  function connectAsHost(){
-    arenaId = document.getElementById("arenaInput").value || "arena1";
-    // default local hotspot IP — ganti sesuai host
-    connectToServer("http://192.168.43.1:3000");
-    closeHost();
-  }
+}
 
-  function connectToServer(url){
-    try {
-      socket = io(url, { transports:['websocket'] });
-    } catch(err){
-      showBubble("Gagal inisialisasi socket");
-      return;
-    }
+function showBubble(text){
+  const b=document.getElementById("bubble");
+  b.textContent=text;
+  b.style.display="block";
+  setTimeout(()=>b.style.display="none",2500);
+}
 
-    socket.on("connect", ()=>{
-      showBubble("Terhubung ke " + url);
-      socket.emit("joinArena", arenaId, { id: socket.id, pet });
-    });
+function playSound(id){
+  const s=document.getElementById(id);
+  if(s){ try{s.currentTime=0;s.play();} catch(e){} }
+}
 
-    socket.on("joinedArena", (data) => {
-      document.getElementById("log").textContent = "Masuk ke " + data.arenaId;
-    });
+// ✅ Perbaikan feedPet
+function feedPet(){
+  if(!selectedFood){showBubble("Pilih makanan dulu!"); return;}
+  if(foodStock[selectedFood]<=0){showBubble("Stok habis!"); return;}
 
-    socket.on("roomFull", () => {
-      alert("Arena penuh! Pilih ID lain.");
-      if(socket){ socket.disconnect(); socket = null; }
-    });
+  pet.hunger=Math.min(100,pet.hunger+20);
+  foodStock[selectedFood]--;
+  pet.coins++;
 
-    socket.on("battleStart", (data) => {
-      // start battle when server says both joined
-      openArena();
-      document.getElementById("log").textContent = "⚔️ Battle dimulai di " + (data.arenaId||arenaId);
-    });
+  let expGain=selectedFood==='meat'?10:selectedFood==='fruit'?5:2.5;
 
-    socket.on("playerJoined", (payload) => {
-      document.getElementById("log").textContent = "👥 Musuh masuk arena!";
-      if(payload && payload.pet && payload.pet.stage){
-        document.getElementById("arenaEnemyPet").src = getPetImage(payload.pet.stage);
+  const foodDiv=document.querySelector(`.foodItem[data-food='${selectedFood}']`);
+  const fly=document.createElement("span"); fly.className="flytext"; fly.textContent=`+${expGain}% EXP`;
+  foodDiv.appendChild(fly); setTimeout(()=>fly.remove(),1000);
+
+  pet.exp = pet.exp + expGain;
+
+  if(pet.exp >= 100){
+    if(pet.exp === 100){
+      showBubble("EXP penuh — kasih makan sekali lagi untuk naik level!");
+    } else {
+      pet.exp = 0; pet.level++;
+      playSound("soundLevel");
+      showBubble("Level naik! Sekarang level "+pet.level);
+
+      // 🔥 Cek apakah saatnya evolusi
+      if((pet.level === 10 && pet.stage === "egg") ||
+         (pet.level === 20 && pet.stage === "chick") ||
+         (pet.level === 30 && pet.stage === "rooster")){
+        document.getElementById("evoBtn").style.display="inline-block";
+        document.getElementById("evoGlow").style.display="block";
+        document.getElementById("feedBtn").disabled = true;
+        startSparkle();
+        showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
       }
-    });
-
-    socket.on("playerLeft", () => {
-      document.getElementById("log").textContent = "❌ Musuh keluar!";
-    });
-
-    socket.on("action", (payload) => {
-      if(payload && payload.action){
-        document.getElementById("log").textContent = "Musuh melakukan: " + payload.action;
-        if(payload.action === "attack") flashEnemy();
-      }
-    });
-
-    socket.on("disconnect", () => {
-      showBubble("Koneksi battle terputus");
-      exitArena();
-    });
-
-    socket.on("connect_error", (err) => {
-      console.warn(err);
-      showBubble("Gagal connect ke server");
-    });
-  }
-
-  function openArena(){
-    document.getElementById("arenaMyPet").src = getPetImage(pet.stage);
-    document.getElementById("arenaEnemyPet").src = "images/egg.png";
-    document.getElementById("myHP").textContent = "HP: 100";
-    document.getElementById("enemyHP").textContent = "HP: 100";
-    document.getElementById("arena").style.display = "block";
-  }
-
-  function flashEnemy(){
-    const el = document.getElementById("arenaEnemyPet");
-    el.style.transform = "scale(0.92)";
-    setTimeout(()=> el.style.transform = "", 160);
-  }
-
-  function exitArena(){
-    document.getElementById("arena").style.display = "none";
-    if(socket){
-      try{ socket.emit('leaveArena', arenaId, { id: socket.id }); }catch(e){}
-      try{ socket.disconnect(); }catch(e){}
     }
-    socket = null;
+  } else {
+    playSound("soundFeed");
+    showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
   }
 
-  function sendAction(action){
-    if(!socket){ showBubble("Belum terhubung ke server"); return; }
-    socket.emit("action", arenaId, { action });
-    document.getElementById("log").textContent = "Kamu melakukan: " + action;
-    if(action === "attack"){
-      const el = document.getElementById("arenaMyPet");
-      el.style.transform = "scale(0.92)";
-      setTimeout(()=> el.style.transform = "", 160);
-    }
-  }
+  if(foodStock[selectedFood]<=0){ document.getElementById("plateFood").style.display="none"; selectedFood=null; }
 
-  /* ================ Init ================ */
   updateUI();
-  </script>
+}
+
+function evolvePet(){
+  if(evoAnimating) return;
+  evoAnimating=true;
+  const petImg=document.getElementById('pet');
+  const oldStage=pet.stage;
+  petImg.classList.add('evo-pulse');
+  document.getElementById('evoBtn').disabled=true;
+
+  setTimeout(()=>{
+    if(pet.level>=10 && oldStage==='egg'){
+      pet.stage='chick';
+      pet.coins+=50;
+      showBubble('✨ Evolusi jadi Anak Ayam 🐥 +50 koin!');
+    }
+    else if(pet.level>=20 && oldStage==='chick'){
+      pet.stage='rooster';
+      pet.coins+=50;
+      showBubble('✨ Evolusi jadi Ayam Jantan 🐓 +50 koin!');
+    }
+    else if(pet.level>=30 && oldStage==='rooster'){
+      pet.stage='phoenix';
+      pet.coins+=50;
+      showBubble('🔥 Evolusi jadi Phoenix! +50 koin!');
+    }
+
+    pet.exp=0;
+    document.getElementById('evoBtn').style.display='none';
+    document.getElementById('evoGlow').style.display='none';
+    document.getElementById('feedBtn').disabled=false; // ✅ feed aktif lagi
+
+    petImg.src=getPetImage(pet.stage);
+    petImg.classList.remove('evo-pulse');
+    petImg.classList.add('evo-pop');
+    playSound('soundEvo');
+    updateUI();
+
+    setTimeout(()=>{
+      petImg.classList.remove('evo-pop');
+      evoAnimating=false;
+      document.getElementById('evoBtn').disabled=false;
+    },1000);
+  },2000);
+}
+
+function resetGame(){
+  localStorage.removeItem("petData");
+  pet={level:1,exp:0,stage:"egg",hunger:30,coins:0};
+  foodStock={meat:100,fruit:100,leaf:100};
+  selectedFood=null;
+  updateUI();
+}
+
+function startSparkle(){
+  const w=document.getElementById("petWrapper");
+  for(let i=0;i<15;i++){
+    setTimeout(()=>{
+      const spark=document.createElement("div");
+      spark.className="sparkle";
+      spark.style.left=(Math.random()*200)+"px";
+      spark.style.top=(Math.random()*200)+"px";
+      w.appendChild(spark);
+      setTimeout(()=>spark.remove(),1500);
+    },i*180);
+  }
+}
+
+function setupDrag(){
+  document.querySelectorAll('.foodItem').forEach(item=>{
+    const foodType=item.dataset.food;
+    const handler=(ev)=>{ ev.preventDefault(); startDrag(ev,foodType); };
+    item.addEventListener('touchstart',handler);
+    item.addEventListener('mousedown',handler);
+  });
+}
+
+function startDrag(ev,foodType){
+  ev.preventDefault();
+  const clone=document.createElement('img'); clone.src='images/'+foodType+'.png'; clone.style.position='fixed'; clone.style.width='60px'; clone.style.opacity=0.8; clone.style.zIndex=1000; document.body.appendChild(clone);
+  function moveHandler(e){ const t=e.touches?e.touches[0]:e; clone.style.left=t.clientX-30+'px'; clone.style.top=t.clientY-30+'px'; }
+  function endHandler(e){ const t=e.changedTouches?e.changedTouches[0]:e;
+    const plate=document.getElementById('plateWrapper').getBoundingClientRect();
+    const dx=t.clientX-(plate.left+plate.width/2); const dy=t.clientY-(plate.top+plate.height/2-15);
+    if(Math.sqrt(dx*dx+dy*dy)<=plate.width*0.4 && foodStock[foodType]>0){ selectedFood=foodType; const pf=document.getElementById('plateFood'); pf.src='images/'+foodType+'.png'; pf.style.display='block'; showBubble('🍽️ '+foodType+' siap di piring!'); }
+    clone.remove(); document.removeEventListener('mousemove',moveHandler); document.removeEventListener('mouseup',endHandler);
+    document.removeEventListener('touchmove',moveHandler); document.removeEventListener('touchend',endHandler);
+  }
+  document.addEventListener('mousemove',moveHandler); document.addEventListener('mouseup',endHandler);
+  document.addEventListener('touchmove',moveHandler); document.addEventListener('touchend',endHandler);
+}
+
+function toggleShop(){
+  const popup=document.getElementById("shopPopup");
+  popup.style.display=(popup.style.display==="block"?"none":"block");
+}
+
+function buyItem(type,price){
+  if(pet.coins<price){ showBubble("Koin tidak cukup!"); return; }
+  pet.coins-=price;
+  foodStock[type]++;
+  showBubble("Beli "+type+" berhasil! -"+price+" koin");
+  updateUI();
+
+  const coinDisplay=document.getElementById("coinDisplay");
+  coinDisplay.style.transform="scale(1.2)";
+  coinDisplay.style.opacity="0.5";
+  setTimeout(()=>{ coinDisplay.style.transform="scale(1)"; coinDisplay.style.opacity="1"; },300);
+}
+
+setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
+
+updateUI();
+setupDrag();
+</script>
 </body>
 </html>
