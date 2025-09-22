@@ -149,7 +149,7 @@
   <audio id="soundFeed" src="sounds/feed.mp3" preload="auto"></audio>
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
-
+  <audio id="soundBuy" src="sounds/buy.mp3" preload="auto"></audio>
 <script>
 let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
 let foodStock={meat:100,fruit:100,leaf:100};
@@ -345,6 +345,28 @@ function buyItem(type,price){
   coinDisplay.style.transform="scale(1.2)";
   coinDisplay.style.opacity="0.5";
   setTimeout(()=>{ coinDisplay.style.transform="scale(1)"; coinDisplay.style.opacity="1"; },300);
+}
+function buyItem(type,price){
+  if(pet.coins < price){
+    showBubble("Koin tidak cukup!");
+    return;
+  }
+  pet.coins -= price;
+  foodStock[type]++;
+
+  // 🔊 Mainkan suara beli
+  playSound("soundBuy");
+
+  showBubble("Beli "+type+" berhasil! -"+price+" koin");
+  updateUI();
+
+  const coinDisplay=document.getElementById("coinDisplay");
+  coinDisplay.style.transform="scale(1.2)";
+  coinDisplay.style.opacity="0.5";
+  setTimeout(()=>{
+    coinDisplay.style.transform="scale(1)";
+    coinDisplay.style.opacity="1";
+  },300);
 }
 
 setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
