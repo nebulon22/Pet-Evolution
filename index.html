@@ -27,6 +27,24 @@
     }
     #statsPopup h3 { margin-top:0; font-size:4vw; }
     #statButtons button { margin:3px; font-size:3.2vw; }
+.mini-bubble {
+  position: fixed;
+  right: 55px; /* sejajar dengan ikon stats */
+  top: 55px;   /* sedikit di bawah ikon */
+  background: rgba(0,150,255,0.9);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 2.8vw;
+  opacity: 0;
+  animation: fadeUp 1s forwards;
+  z-index: 999;
+}
+@keyframes fadeUp {
+  0% { transform: translateY(0); opacity:1; }
+  100% { transform: translateY(-20px); opacity:0; }
+}
+
 
     .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; }
     .glow { position:absolute; width:200px; height:200px; background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%); animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; }
@@ -154,6 +172,14 @@ let foodStock={meat:100,fruit:100,leaf:100};
 let selectedFood=null;
 let evoAnimating=false;
 
+function showMiniBubble(text){
+  const b = document.createElement("div");
+  b.className = "mini-bubble";
+  b.textContent = text;
+  document.body.appendChild(b);
+  setTimeout(()=> b.remove(), 1000);
+}
+
 function updateUI(){
   document.getElementById("level").textContent=pet.level;
   document.getElementById("pet").src=getPetImage(pet.stage);
@@ -212,11 +238,13 @@ function feedPet(){
     if(pet.exp === 100){
       showBubble("EXP penuh — kasih makan sekali lagi untuk naik level!");
     } else {
-      pet.exp = 0; pet.level++;
+      pet.exp = 0; 
+      pet.level++;
       pet.statPoints += 10; // ✅ tambah poin saat level up
       playSound("soundLevel");
-      showBubble("Level naik! Sekarang level "+pet.level);
-
+      showBubble("Level naik! Sekarang level "+pet.level
+      );
+      showMiniBubble("+10 POIN STATS"); // ✨ ini ganti bubble poin
       // 🔥 Cek apakah saatnya evolusi
       if((pet.level === 10 && pet.stage === "egg") ||
          (pet.level === 20 && pet.stage === "chick") ||
@@ -411,12 +439,14 @@ function updateStatUI(){
     b.textContent = "+";
     b.disabled = pet.statPoints <= 0;
     b.onclick = ()=>{
-      pet.stats[key]++;
-      pet.statPoints--;
-      updateStatUI();
-      drawStatsChart();
-      updateUI();
-    };
+  pet.stats[key]++;
+  pet.statPoints--;
+  updateStatUI();
+  drawStatsChart();
+  updateUI();
+  showMiniBubble("+"+key.toUpperCase()); // ✅ mini bubble muncul
+};
+
 
     row.appendChild(label);
     row.appendChild(b);
