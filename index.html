@@ -17,8 +17,9 @@
   transition: transform 0.6s ease, filter 0.3s ease;
   transform-style: preserve-3d;
   filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-  animation: idleTilt 4s ease-in-out infinite;
+  animation: idleTilt 6s ease-in-out infinite, breathing 3s infinite;
 }
+
 
 /* Saat disentuh/hover pet akan "miring" */
 #petWrapper:hover #pet {
@@ -199,6 +200,17 @@ let pet = JSON.parse(localStorage.getItem("petData")) || {
 let foodStock={meat:100,fruit:100,leaf:100};
 let selectedFood=null;
 let evoAnimating=false;
+
+
+const petImg = document.getElementById("pet");
+petImg.addEventListener("click", ()=>{
+  petImg.style.transform = "rotateY(15deg) rotateX(6deg) skewX(3deg) scale(1.05)";
+  petImg.style.filter = "drop-shadow(15px 20px 12px rgba(0,0,0,0.6))";
+  setTimeout(()=>{
+    petImg.style.transform = "";
+    petImg.style.filter = "";
+  },600);
+});
 
 function showMiniBubble(text){
   const b = document.createElement("div");
@@ -523,4 +535,5 @@ setupDrag();
 </script>
 </body>
 </html>
+
 
