@@ -7,35 +7,6 @@
     body { margin:0; text-align:center; background:#2e7d32; color:white; font-family:sans-serif; overflow-x:hidden; display:flex; flex-direction:column; align-items:center; }
     h2 { margin-top:10px; font-size:6vw; }
 
-    /* Wrapper 3D effect */
-#petWrapper {
-  perspective: 800px; /* kedalaman 3D */
-}
-
-/* Efek dasar 2,5D */
-#pet {
-  transition: transform 0.6s ease, filter 0.3s ease;
-  transform-style: preserve-3d;
-  filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-  animation: idleTilt 6s ease-in-out infinite, breathing 3s infinite;
-}
-
-
-/* Saat disentuh/hover pet akan "miring" */
-#petWrapper:hover #pet {
-  transform: rotateY(15deg) rotateX(6deg) skewX(3deg) scale(1.05);
-  filter: drop-shadow(15px 20px 12px rgba(0,0,0,0.6));
-}
-
-/* Animasi idle tilt biar ada gerakan ringan */
-@keyframes idleTilt {
-  0%   { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
-  25%  { transform: rotateY(5deg) rotateX(2deg) skewX(1deg) scale(1.02); }
-  50%  { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
-  75%  { transform: rotateY(-5deg) rotateX(-2deg) skewX(-1deg) scale(1.02); }
-  100% { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
-}
-
     #coinDisplay { position:fixed; top:5px; left:5px; font-size:4vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; transition: transform 0.5s, opacity 0.5s; }
     #shopIcon { position:fixed; top:5px; left:65px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
     #statsIcon { position:fixed; top:5px; right:50px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
@@ -56,31 +27,52 @@
     }
     #statsPopup h3 { margin-top:0; font-size:4vw; }
     #statButtons button { margin:3px; font-size:3.2vw; }
-.mini-bubble {
-  position: fixed;
-  right: 55px; /* sejajar dengan ikon stats */
-  top: 55px;   /* sedikit di bawah ikon */
-  background: rgba(0,150,255,0.9);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 6px;
-  font-size: 2.8vw;
-  opacity: 0;
-  animation: fadeUp 1s forwards;
-  z-index: 999;
-}
-@keyframes fadeUp {
-  0% { transform: translateY(0); opacity:1; }
-  100% { transform: translateY(-20px); opacity:0; }
-}
 
+    .mini-bubble {
+      position: fixed;
+      right: 55px;
+      top: 55px;
+      background: rgba(0,150,255,0.9);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 2.8vw;
+      opacity: 0;
+      animation: fadeUp 1s forwards;
+      z-index: 999;
+    }
+    @keyframes fadeUp {
+      0% { transform: translateY(0); opacity:1; }
+      100% { transform: translateY(-20px); opacity:0; }
+    }
 
-    .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; }
+    .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; perspective:800px; }
     .glow { position:absolute; width:200px; height:200px; background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%); animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; }
     @keyframes glow { 0%,100%{opacity:0; transform:scale(1);} 50%{opacity:0.8; transform:scale(1.2);} }
-    #pet { width:40vw; max-width:220px; height:auto; z-index:1; }
+
+    /* ✨ Pet 2,5D effect */
+    #pet {
+      width:40vw; max-width:220px; height:auto; z-index:1;
+      transition: transform 0.6s ease, filter 0.3s ease;
+      transform-style: preserve-3d;
+      filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
+      animation: idleTilt 6s ease-in-out infinite, breathing 3s infinite;
+    }
+    @keyframes breathing {
+      0%,100%{transform:scale(1);}
+      50%{transform:scale(1.05);}
+    }
+    @keyframes idleTilt {
+      0%   { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+      25%  { transform: rotateY(5deg) rotateX(2deg) skewX(1deg) scale(1.02); }
+      50%  { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+      75%  { transform: rotateY(-5deg) rotateX(-2deg) skewX(-1deg) scale(1.02); }
+      100% { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+    }
+
     .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.8; animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
     @keyframes sparkleMove { 0%{transform:translateY(0) scale(1);opacity:1;} 100%{transform:translateY(-50px) scale(0.5);opacity:0;} }
+
     #bubble { position:absolute; left:60%; top:20%; background:white; color:black; padding:8px 12px; border-radius:12px; display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
     #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid; border-color:transparent white transparent transparent; }
 
@@ -156,17 +148,18 @@
 
   <div class="pet-wrapper" id="petWrapper">
     <div class="thermometer" id="thermometer">
-      <div id="labelTop" class="thermo-label">Kenyang</div>
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-      <div id="labelBottom" class="thermo-label">Lapar</div>
-    </div>
+  <div id="labelTop" class="thermo-label">Kenyang</div>
+  <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+  <div id="labelBottom" class="thermo-label">Lapar</div>
+</div>
+
     <div class="glow" id="evoGlow"></div>
-    <img id="pet" src="images/egg.png" class="breathing">
+    <!-- 🐣 class breathing DIHAPUS -->
+    <img id="pet" src="images/egg.png">
     <div id="bubble"></div>
   </div>
-
-  <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
+ <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
   <div class="bar-container"><div id="expBar">EXP 0%</div></div>
 
   <button onclick="feedPet()" id="feedBtn">🍖 Feed</button>
@@ -200,17 +193,6 @@ let pet = JSON.parse(localStorage.getItem("petData")) || {
 let foodStock={meat:100,fruit:100,leaf:100};
 let selectedFood=null;
 let evoAnimating=false;
-
-
-const petImg = document.getElementById("pet");
-petImg.addEventListener("click", ()=>{
-  petImg.style.transform = "rotateY(15deg) rotateX(6deg) skewX(3deg) scale(1.05)";
-  petImg.style.filter = "drop-shadow(15px 20px 12px rgba(0,0,0,0.6))";
-  setTimeout(()=>{
-    petImg.style.transform = "";
-    petImg.style.filter = "";
-  },600);
-});
 
 function showMiniBubble(text){
   const b = document.createElement("div");
@@ -532,8 +514,21 @@ setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.ra
 
 updateUI();
 setupDrag();
+
+const petImg = document.getElementById("pet");
+
+function tapEffect(){
+  petImg.style.transition = "transform 0.4s ease, filter 0.4s ease";
+  petImg.style.transform = "rotateY(15deg) rotateX(6deg) skewX(3deg) scale(1.05)";
+  petImg.style.filter = "drop-shadow(15px 20px 12px rgba(0,0,0,0.6))";
+  setTimeout(()=>{
+    petImg.style.transform = "";
+    petImg.style.filter = "";
+  }, 500);
+}
+
+petImg.addEventListener("click", tapEffect);
+petImg.addEventListener("touchstart", tapEffect);
 </script>
 </body>
 </html>
-
-
