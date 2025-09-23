@@ -6,6 +6,58 @@
   <style>
     body { margin:0; text-align:center; background:#2e7d32; color:white; font-family:sans-serif; overflow-x:hidden; display:flex; flex-direction:column; align-items:center; }
     h2 { margin-top:10px; font-size:6vw; }
+    
+#background {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  z-index: -10; /* di belakang semua */
+}
+
+/* Langit */
+.bg-sky {
+  position: absolute;
+  width: 100%; height: 100%;
+  background: linear-gradient(#87ceeb, #ffffff); /* biru ke putih */
+  z-index: -5;
+}
+
+/* Awan */
+.cloud {
+  position: absolute;
+  top: 40px;
+  width: 220px;
+  animation: moveCloud 60s linear infinite;
+  z-index: -4;
+}
+@keyframes moveCloud {
+  from { left: -250px; }
+  to   { left: 100%; }
+}
+
+/* Pohon goyang */
+.tree {
+  position: absolute;
+  width: 160px;
+  transform-origin: bottom center;
+  animation: sway 4s ease-in-out infinite alternate;
+  z-index: -2;
+}
+@keyframes sway {
+  from { transform: rotate(-2deg); }
+  to   { transform: rotate(2deg); }
+}
+
+/* Rumput di bawah */
+.grass {
+  position: absolute;
+  bottom: 0;
+  width: 120px;
+  transform-origin: bottom center;
+  animation: sway 3s ease-in-out infinite alternate;
+  z-index: -1;
+}
 
     #coinDisplay { position:fixed; top:5px; left:5px; font-size:4vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; transition: transform 0.5s, opacity 0.5s; }
     #shopIcon { position:fixed; top:5px; left:65px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
@@ -162,6 +214,23 @@
   <div id="coinDisplay">💰 0</div>
   <div id="shopIcon" onclick="toggleShop()">🛒</div>
   <div id="statsIcon" onclick="toggleStats()">📊</div>
+
+  <!-- Background Layer -->
+<div id="background">
+  <div class="bg-sky"></div>
+
+  <!-- Awan bergerak -->
+  <img src="images/cloud.png" class="cloud">
+
+  <!-- Pohon goyang -->
+  <img src="images/tree.png" class="tree" style="left:15%; bottom:60px;">
+  <img src="images/tree.png" class="tree" style="left:70%; bottom:60px;">
+
+  <!-- Rumput -->
+  <img src="images/grass.png" class="grass" style="left:10%;">
+  <img src="images/grass.png" class="grass" style="left:40%;">
+  <img src="images/grass.png" class="grass" style="left:70%;">
+</div>
 
   <div id="shopPopup">
     <h3>Shop</h3>
@@ -579,3 +648,4 @@ petImg.addEventListener("touchstart", tapEffect);
 </script>
 </body>
 </html>
+
