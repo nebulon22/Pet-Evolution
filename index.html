@@ -8,23 +8,25 @@
     h2 { margin-top:10px; font-size:6vw; }
 
     #coinDisplay { position:fixed; top:5px; left:5px; font-size:4vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; transition: transform 0.5s, opacity 0.5s; }
-
     #shopIcon { position:fixed; top:5px; left:65px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
+    #statsIcon { position:fixed; top:5px; right:50px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
 
     #shopPopup {
-      display:none;
-      position:fixed;
-      top:50px; left:10px;
-      background:rgba(51,51,51,0.9);
-      padding:15px;
-      border-radius:12px;
-      z-index:20;
-      text-align:left;
-      width:160px;
+      display:none; position:fixed; top:50px; left:10px;
+      background:rgba(51,51,51,0.9); padding:15px; border-radius:12px; z-index:20;
+      text-align:left; width:160px;
     }
     #shopPopup h3 { margin:0 0 10px; font-size:4vw; }
     .shopItem { margin:10px 0; }
     .shopItem button { padding:6px 12px; font-size:3.5vw; }
+
+    #statsPopup {
+      display:none; position:fixed; top:60px; right:10px;
+      background:rgba(51,51,51,0.95); padding:15px; border-radius:12px; z-index:30;
+      text-align:center; width:220px; font-size: 3.2vw;
+    }
+    #statsPopup h3 { margin-top:0; font-size:4vw; }
+    #statButtons button { margin:3px; font-size:3.2vw; }
 
     .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; }
     .glow { position:absolute; width:200px; height:200px; background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%); animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; }
@@ -87,22 +89,22 @@
   <h2>🐣 Game Pet</h2>
   <div id="coinDisplay">💰 0</div>
   <div id="shopIcon" onclick="toggleShop()">🛒</div>
+  <div id="statsIcon" onclick="toggleStats()">📊</div>
 
   <div id="shopPopup">
     <h3>Shop</h3>
-    <div class="shopItem">
-      <span>🍖 Daging - 10 koin</span><br>
-      <button onclick="buyItem('meat',10)">Beli</button>
-    </div>
-    <div class="shopItem">
-      <span>🍎 Buah - 5 koin</span><br>
-      <button onclick="buyItem('fruit',5)">Beli</button>
-    </div>
-    <div class="shopItem">
-      <span>🌿 Daun - 3 koin</span><br>
-      <button onclick="buyItem('leaf',3)">Beli</button>
-    </div>
+    <div class="shopItem"><span>🍖 Daging - 10 koin</span><br><button onclick="buyItem('meat',10)">Beli</button></div>
+    <div class="shopItem"><span>🍎 Buah - 5 koin</span><br><button onclick="buyItem('fruit',5)">Beli</button></div>
+    <div class="shopItem"><span>🌿 Daun - 3 koin</span><br><button onclick="buyItem('leaf',3)">Beli</button></div>
     <button onclick="toggleShop()">Tutup</button>
+  </div>
+
+  <div id="statsPopup">
+    <h3>Stats</h3>
+    <canvas id="statsChart" width="200" height="200"></canvas>
+    <p>Sisa Poin: <span id="statPoints">0</span></p>
+    <div id="statButtons"></div>
+    <button onclick="toggleStats()">Tutup</button>
   </div>
 
   <div class="pet-wrapper" id="petWrapper">
@@ -122,7 +124,6 @@
 
   <button onclick="feedPet()" id="feedBtn">🍖 Feed</button>
   <button id="playBtn" onclick="playWithPet()">🎮 Play</button>
-
   <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
 
   <div id="plateWrapper">
@@ -131,18 +132,9 @@
   </div>
 
   <div id="foodItems">
-    <div class="foodItem" data-food="meat">
-      <img src="images/meat.png">
-      <div class="count" id="count-meat">100</div>
-    </div>
-    <div class="foodItem" data-food="fruit">
-      <img src="images/fruit.png">
-      <div class="count" id="count-fruit">100</div>
-    </div>
-    <div class="foodItem" data-food="leaf">
-      <img src="images/leaf.png">
-      <div class="count" id="count-leaf">100</div>
-    </div>
+    <div class="foodItem" data-food="meat"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
+    <div class="foodItem" data-food="fruit"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
+    <div class="foodItem" data-food="leaf"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
   </div>
 
   <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
@@ -151,8 +143,13 @@
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
   <audio id="soundBuy" src="sounds/buy.mp3" preload="auto"></audio>
+
 <script>
-let pet = JSON.parse(localStorage.getItem("petData")) || { level:1, exp:0, stage:"egg", hunger:30, coins:0 };
+let pet = JSON.parse(localStorage.getItem("petData")) || { 
+  level:1, exp:0, stage:"egg", hunger:30, coins:0,
+  stats:{att:10,def:10,spd:10,acc:10,crit:10},
+  statPoints:0
+};
 let foodStock={meat:100,fruit:100,leaf:100};
 let selectedFood=null;
 let evoAnimating=false;
@@ -216,6 +213,7 @@ function feedPet(){
       showBubble("EXP penuh — kasih makan sekali lagi untuk naik level!");
     } else {
       pet.exp = 0; pet.level++;
+      pet.statPoints += 10; // ✅ tambah poin saat level up
       playSound("soundLevel");
       showBubble("Level naik! Sekarang level "+pet.level);
 
@@ -252,17 +250,20 @@ function evolvePet(){
     if(pet.level>=10 && oldStage==='egg'){
       pet.stage='chick';
       pet.coins+=50;
-      showBubble('✨ Evolusi jadi Anak Ayam 🐥 +50 koin!');
+      pet.statPoints += 25;
+      showBubble('✨ Evolusi jadi Anak Ayam 🐥 +50 koin! +25 Poin Stats!');
     }
     else if(pet.level>=20 && oldStage==='chick'){
       pet.stage='rooster';
       pet.coins+=50;
-      showBubble('✨ Evolusi jadi Ayam Jantan 🐓 +50 koin!');
+      pet.statPoints += 25;
+      showBubble('✨ Evolusi jadi Ayam Jantan 🐓 +50 koin! +25 Poin Stats!');
     }
     else if(pet.level>=30 && oldStage==='rooster'){
       pet.stage='phoenix';
       pet.coins+=50;
-      showBubble('🔥 Evolusi jadi Phoenix! +50 koin!');
+      pet.statPoints += 25;
+      showBubble('🔥 Evolusi jadi Phoenix! +50 koin! +25 Poin Stats!');
     }
 
     pet.exp=0;
@@ -286,7 +287,7 @@ function evolvePet(){
 
 function resetGame(){
   localStorage.removeItem("petData");
-  pet={level:1,exp:0,stage:"egg",hunger:30,coins:0};
+  pet={level:1,exp:0,stage:"egg",hunger:30,coins:0,stats:{att:10,def:10,spd:10,acc:10,crit:10},statPoints:0};
   foodStock={meat:100,fruit:100,leaf:100};
   selectedFood=null;
   updateUI();
@@ -361,18 +362,6 @@ function toggleShop(){
 }
 
 function buyItem(type,price){
-  if(pet.coins<price){ showBubble("Koin tidak cukup!"); return; }
-  pet.coins-=price;
-  foodStock[type]++;
-  showBubble("Beli "+type+" berhasil! -"+price+" koin");
-  updateUI();
-
-  const coinDisplay=document.getElementById("coinDisplay");
-  coinDisplay.style.transform="scale(1.2)";
-  coinDisplay.style.opacity="0.5";
-  setTimeout(()=>{ coinDisplay.style.transform="scale(1)"; coinDisplay.style.opacity="1"; },300);
-}
-function buyItem(type,price){
   if(pet.coins < price){
     showBubble("Koin tidak cukup!");
     return;
@@ -394,6 +383,80 @@ function buyItem(type,price){
     coinDisplay.style.opacity="1";
   },300);
 }
+
+// ===================== STATS =====================
+
+function toggleStats(){
+  const p=document.getElementById("statsPopup");
+  p.style.display=(p.style.display==="block"?"none":"block");
+  if(p.style.display==="block"){ drawStatsChart(); updateStatUI(); }
+}
+
+
+function updateStatUI(){
+  document.getElementById("statPoints").textContent = pet.statPoints;
+  const btns = document.getElementById("statButtons");
+  btns.innerHTML = "";
+
+  Object.keys(pet.stats).forEach(key=>{
+    const row = document.createElement("div");
+    row.style.margin = "5px 0";
+
+    // label jumlah stat
+    const label = document.createElement("span");
+    label.textContent = key.toUpperCase() + ": " + pet.stats[key] + " ";
+
+    // tombol tambah
+    const b = document.createElement("button");
+    b.textContent = "+";
+    b.disabled = pet.statPoints <= 0;
+    b.onclick = ()=>{
+      pet.stats[key]++;
+      pet.statPoints--;
+      updateStatUI();
+      drawStatsChart();
+      updateUI();
+    };
+
+    row.appendChild(label);
+    row.appendChild(b);
+    btns.appendChild(row);
+  });
+}
+
+
+function drawStatsChart(){
+  const c=document.getElementById("statsChart");
+  const ctx=c.getContext("2d");
+  ctx.clearRect(0,0,c.width,c.height);
+  const keys=Object.keys(pet.stats);
+  const maxVal=50; // skala maksimum
+  const cx=c.width/2, cy=c.height/2, r=80;
+
+  // draw polygon background
+  ctx.strokeStyle="gray"; ctx.beginPath();
+  keys.forEach((k,i)=>{
+    const angle=(Math.PI*2/keys.length)*i - Math.PI/2;
+    const x=cx+Math.cos(angle)*r;
+    const y=cy+Math.sin(angle)*r;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath(); ctx.stroke();
+
+  // draw stat area
+  ctx.fillStyle="rgba(0,150,255,0.5)"; ctx.beginPath();
+  keys.forEach((k,i)=>{
+    const val=pet.stats[k];
+    const ratio=Math.min(1,val/maxVal);
+    const angle=(Math.PI*2/keys.length)*i - Math.PI/2;
+    const x=cx+Math.cos(angle)*r*ratio;
+    const y=cy+Math.sin(angle)*r*ratio;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath(); ctx.fill();
+}
+
+// =================================================
 
 setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
 
