@@ -6,59 +6,6 @@
   <style>
     body { margin:0; text-align:center; background:#2e7d32; color:white; font-family:sans-serif; overflow-x:hidden; display:flex; flex-direction:column; align-items:center; }
     h2 { margin-top:10px; font-size:6vw; }
-    
-#background {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  overflow: hidden;
-  z-index: -10; /* di belakang semua */
-}
-
-/* Langit */
-.bg-sky {
-  position: absolute;
-  width: 100%; height: 100%;
-  background: url("images/background.png") no-repeat center bottom;
-  background-size: cover;
-  z-index: -5;
-}
-
-/* Awan */
-.cloud {
-  position: absolute;
-  top: 40px;
-  width: 220px;
-  animation: moveCloud 60s linear infinite;
-  z-index: -4;
-}
-@keyframes moveCloud {
-  from { left: -250px; }
-  to   { left: 100%; }
-}
-
-/* Pohon goyang */
-.tree {
-  position: absolute;
-  width: 160px;
-  transform-origin: bottom center;
-  animation: sway 4s ease-in-out infinite alternate;
-  z-index: -2;
-}
-@keyframes sway {
-  from { transform: rotate(-2deg); }
-  to   { transform: rotate(2deg); }
-}
-
-/* Rumput di bawah */
-.grass {
-  position: absolute;
-  bottom: 0;
-  width: 120px;
-  transform-origin: bottom center;
-  animation: sway 3s ease-in-out infinite alternate;
-  z-index: -1;
-}
 
     #coinDisplay { position:fixed; top:5px; left:5px; font-size:4vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; transition: transform 0.5s, opacity 0.5s; }
     #shopIcon { position:fixed; top:5px; left:65px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
@@ -102,6 +49,9 @@
     .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; perspective:800px; }
     .glow { position:absolute; width:200px; height:200px; background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%); animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; }
     @keyframes glow { 0%,100%{opacity:0; transform:scale(1);} 50%{opacity:0.8; transform:scale(1.2);} }
+#thermometer {
+  margin-right: 100px; /* tambah angka sesuai kebutuhan */
+}
 
     /* ✨ Pet 2,5D effect */
     #pet {
@@ -160,7 +110,7 @@
     .bar:nth-child(9).active{background:#7fff00;}
     .bar:nth-child(10).active{background:#32cd32;}
     .bar:nth-child(11).active{background:#00ff00;}
-    .thermo-label { position:absolute; left:50%; transform:translateX(-50%); font-size:2.8vw; color:white; text-shadow:1px 1px 2px black; }
+    .thermo-label { position:absolute; left:20%; transform:translateX(-70%); font-size:2.8vw; color:white; text-shadow:1px 1px 2px black; }
     #labelTop { top:2px; } #labelBottom { bottom:2px; }
 
     .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444; border-radius:10px; overflow:hidden; height:24px; }
@@ -200,14 +150,110 @@
     #plate { width:180px; }
     #plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; display:none; }
 
-    #foodItems { display:flex; gap:15px; justify-content:center; margin-top:10px; touch-action: none; }
-    .foodItem { position:relative; width:60px; }
-    .foodItem img { width:100%; user-select: none; }
-    .count { position:absolute; bottom:0; right:0; background:rgba(0,0,0,0.7); font-size:14px; padding:2px 5px; border-radius:8px; }
-    .foodItem.disabled img { opacity:0.3; }
+    #foodGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 40px); /* 5 kotak per baris */
+  grid-gap: 2px;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+.slot {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #999;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.slot .count {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  font-size: 12px;
+  padding: 1px 4px;
+  border-radius: 6px;
+}
+
+.slot.empty {
+  background: rgba(255,255,255,0.05);
+  border: 2px dashed #666;
+}
+.slot.disabled {
+  opacity: 0.4;
+  pointer-events: none; /* tidak bisa di-drag */
+  filter: grayscale(60%);
+}
+
 
     .flytext { position:absolute; left:50%; transform:translateX(-50%) translateY(0); bottom:110%; font-size:12px; color:#fff; text-shadow:1px 1px 2px black; opacity:0; animation:flyUp 1s forwards; pointer-events:none; }
     @keyframes flyUp { 0% { transform:translateX(-50%) translateY(0); opacity:1; } 100% { transform:translateX(-50%) translateY(-30px); opacity:0; } }
+  #background {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  z-index: -10; /* di belakang semua */
+}
+
+/* Langit */
+.bg-sky {
+  position: absolute;
+  width: 100%; height: 100%;
+  background: url("images/background.png") no-repeat center bottom;
+  background-size: cover;
+  z-index: -5;
+}
+
+
+/* Awan */
+.cloud {
+  position: absolute;
+  top: 40px;
+  width: 220px;
+  animation: moveCloud 60s linear infinite;
+  z-index: -4;
+}
+@keyframes moveCloud {
+  from { left: -250px; }
+  to   { left: 100%; }
+}
+
+/* Pohon goyang */
+.tree {
+  position: absolute;
+  width: 160px;
+  transform-origin: bottom center;
+  animation: sway 4s ease-in-out infinite alternate;
+  z-index: -2;
+}
+@keyframes sway {
+  from { transform: rotate(-2deg); }
+  to   { transform: rotate(2deg); }
+}
+
+/* Rumput di bawah */
+.grass {
+  position: absolute;
+  bottom: 0;
+  width: 120px;
+  transform-origin: bottom center;
+  animation: sway 3s ease-in-out infinite alternate;
+  z-index: -1;
+}
+
   </style>
 </head>
 <body>
@@ -216,7 +262,7 @@
   <div id="shopIcon" onclick="toggleShop()">🛒</div>
   <div id="statsIcon" onclick="toggleStats()">📊</div>
 
-  <!-- Background Layer -->
+<!-- Background Layer -->
 <div id="background">
   <div class="bg-sky"></div>
 
@@ -274,11 +320,15 @@
     <img id="plateFood" src="" alt="">
   </div>
 
-  <div id="foodItems">
-    <div class="foodItem" data-food="meat"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
-    <div class="foodItem" data-food="fruit"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
-    <div class="foodItem" data-food="leaf"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
-  </div>
+  <div id="foodGrid">
+  <div class="slot" data-food="meat"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
+  <div class="slot" data-food="fruit"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
+  <div class="slot" data-food="leaf"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
+  <div class="slot empty"></div>
+  <div class="slot empty"></div>
+
+</div>
+
 
   <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
 
@@ -302,7 +352,7 @@ function showMiniBubble(text){
   b.className = "mini-bubble";
   b.textContent = text;
   document.body.appendChild(b);
-  setTimeout(()=> b.remove(), 3000);
+  setTimeout(()=> b.remove(), 5000);
 }
 
 function updateUI(){
@@ -314,10 +364,15 @@ function updateUI(){
   const expBar=document.getElementById("expBar"); expBar.style.width=Math.min(100,pet.exp)+"%"; expBar.textContent="EXP "+Math.min(100,pet.exp)+"%";
   document.getElementById("coinDisplay").textContent="💰 "+(pet.coins||0);
   Object.keys(foodStock).forEach(f=>{
-    document.getElementById("count-"+f).textContent=foodStock[f];
-    const el=document.querySelector(`.foodItem[data-food='${f}']`);
-    el.classList.toggle("disabled", foodStock[f]<=0);
-  });
+  document.getElementById("count-"+f).textContent = foodStock[f];
+  const slot = document.querySelector(`.slot[data-food='${f}']`);
+  if(foodStock[f] <= 0){
+    slot.classList.add("disabled");
+  } else {
+    slot.classList.remove("disabled");
+  }
+});
+
   localStorage.setItem("petData",JSON.stringify(pet));
   const petImg = document.getElementById("pet");
 if (pet.hunger <= 0) {
@@ -352,38 +407,56 @@ function playSound(id){
 
 // ✅ Perbaikan feedPet
 function feedPet(){
-  if(!selectedFood){showBubble("Pilih makanan dulu!"); return;}
-  if(foodStock[selectedFood]<=0){showBubble("Stok habis!"); return;}
+  if(!selectedFood){
+    showBubble("Pilih makanan dulu!");
+    return;
+  }
+  if(foodStock[selectedFood] <= 0){
+    showBubble("Stok habis!");
+    return;
+  }
 
-  pet.hunger=Math.min(100,pet.hunger+20);
+  // ✅ Naikkan hunger + kurangi stok + tambah koin
+  pet.hunger = Math.min(100, pet.hunger + 20);
   foodStock[selectedFood]--;
   pet.coins++;
 
-  let expGain=selectedFood==='meat'?10:selectedFood==='fruit'?5:2.5;
+  // ✅ LANGSUNG update UI biar stok di slot langsung turun
+  updateUI();
 
-  const foodDiv=document.querySelector(`.foodItem[data-food='${selectedFood}']`);
-  const fly=document.createElement("span"); fly.className="flytext"; fly.textContent=`+${expGain}% EXP`;
-  foodDiv.appendChild(fly); setTimeout(()=>fly.remove(),1000);
+  // Hitung EXP
+  let expGain = selectedFood === 'meat' ? 10 :
+                selectedFood === 'fruit' ? 5 : 2.5;
 
+  // Animasi teks EXP terbang
+  const slotDiv = document.querySelector(`.slot[data-food='${selectedFood}']`);
+  const fly = document.createElement("span");
+  fly.className = "flytext";
+  fly.textContent = `+${expGain}% EXP`;
+  slotDiv.appendChild(fly);
+  setTimeout(()=>fly.remove(), 1000);
+
+  // Tambahkan EXP
   pet.exp = pet.exp + expGain;
 
+  // Cek level up
   if(pet.exp >= 100){
     if(pet.exp === 100){
       showBubble("EXP penuh — kasih makan sekali lagi untuk naik level!");
     } else {
-      pet.exp = 0; 
+      pet.exp = 0;
       pet.level++;
-      pet.statPoints += 10; // ✅ tambah poin saat level up
+      pet.statPoints += 10;
       playSound("soundLevel");
-      showBubble("Level naik! Sekarang level "+pet.level
-      );
-      showMiniBubble("+10 POIN STATS"); // ✨ ini ganti bubble poin
-      // 🔥 Cek apakah saatnya evolusi
+      showBubble("Level naik! Sekarang level " + pet.level);
+      showMiniBubble("+10 POIN STATS");
+
+      // Cek evolusi
       if((pet.level === 10 && pet.stage === "egg") ||
          (pet.level === 20 && pet.stage === "chick") ||
          (pet.level === 30 && pet.stage === "rooster")){
-        document.getElementById("evoBtn").style.display="inline-block";
-        document.getElementById("evoGlow").style.display="block";
+        document.getElementById("evoBtn").style.display = "inline-block";
+        document.getElementById("evoGlow").style.display = "block";
         document.getElementById("feedBtn").disabled = true;
         startSparkle();
         showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
@@ -394,9 +467,14 @@ function feedPet(){
     showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
   }
 
-  if(foodStock[selectedFood]<=0){ document.getElementById("plateFood").style.display="none"; selectedFood=null; }
+  // Kalau stok habis, bersihkan piring
+  if(foodStock[selectedFood] <= 0){
+    document.getElementById("plateFood").style.display = "none";
+    selectedFood = null;
+  }
 
-  updateUI();
+  // ✅ terakhir simpan data
+  localStorage.setItem("petData", JSON.stringify(pet));
 }
 
 function evolvePet(){
@@ -500,13 +578,14 @@ function startSparkle(){
 }
 
 function setupDrag(){
-  document.querySelectorAll('.foodItem').forEach(item=>{
+  document.querySelectorAll('.slot[data-food]').forEach(item=>{
     const foodType=item.dataset.food;
     const handler=(ev)=>{ ev.preventDefault(); startDrag(ev,foodType); };
     item.addEventListener('touchstart',handler);
     item.addEventListener('mousedown',handler);
   });
 }
+
 
 function startDrag(ev,foodType){
   ev.preventDefault();
@@ -649,7 +728,3 @@ petImg.addEventListener("touchstart", tapEffect);
 </script>
 </body>
 </html>
-
-
-
-
