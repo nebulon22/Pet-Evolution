@@ -449,7 +449,7 @@ function feedPet(){
 
   // Tambahkan EXP
   pet.exp = pet.exp + expGain;
-
+  updateUI();
   // Cek level up
   if(pet.exp >= 100){
     if(pet.exp === 100){
@@ -486,6 +486,8 @@ function feedPet(){
 
   // ✅ terakhir simpan data
   localStorage.setItem("petData", JSON.stringify(pet));
+
+updateUI();
 }
 
 function evolvePet(){
@@ -739,3 +741,4 @@ petImg.addEventListener("touchstart", tapEffect);
 </script>
 </body>
 </html>
+
