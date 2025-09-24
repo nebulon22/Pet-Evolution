@@ -85,13 +85,13 @@
       position: fixed;
       right: 55px;
       top: 55px;
-      background: rgba(0,150,255,0.9);
-      color: white;
+      background: rgba(250,250,0,0.9);
+      color: blue;
       padding: 2px 6px;
       border-radius: 6px;
       font-size: 2.8vw;
       opacity: 0;
-      animation: fadeUp 1s forwards;
+      animation: fadeUp 3s forwards;
       z-index: 999;
     }
     @keyframes fadeUp {
@@ -302,7 +302,7 @@ function showMiniBubble(text){
   b.className = "mini-bubble";
   b.textContent = text;
   document.body.appendChild(b);
-  setTimeout(()=> b.remove(), 1000);
+  setTimeout(()=> b.remove(), 3000);
 }
 
 function updateUI(){
@@ -649,6 +649,7 @@ petImg.addEventListener("touchstart", tapEffect);
 </script>
 </body>
 </html>
+
 
 
 
