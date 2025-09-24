@@ -461,18 +461,16 @@ function feedPet(){
       playSound("soundLevel");
       showBubble("Level naik! Sekarang level " + pet.level);
       showMiniBubble("+10 POIN STATS");
-
+}
       // Cek evolusi
-      if((pet.level === 10 && pet.stage === "egg") ||
-         (pet.level === 20 && pet.stage === "chick") ||
-         (pet.level === 30 && pet.stage === "rooster")){
-        document.getElementById("evoBtn").style.display = "inline-block";
-        document.getElementById("evoGlow").style.display = "block";
-        document.getElementById("feedBtn").disabled = true;
-        startSparkle();
-        showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
-      }
-    }
+      // Setelah update EXP
+if (pet.level === 10 && pet.exp >= 100 && pet.stage === "egg") {
+  document.getElementById("evoBtn").style.display = "inline-block";
+  document.getElementById("evoGlow").style.display = "block";
+  document.getElementById("feedBtn").disabled = true;
+  startSparkle();
+  showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
+}
   } else {
     playSound("soundFeed");
     showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
@@ -486,8 +484,7 @@ function feedPet(){
 
   // ✅ terakhir simpan data
   localStorage.setItem("petData", JSON.stringify(pet));
-
-updateUI();
+  updateUI();
 }
 
 function evolvePet(){
@@ -499,29 +496,28 @@ function evolvePet(){
   document.getElementById('evoBtn').disabled=true;
 
   setTimeout(()=>{
-    if(pet.level>=10 && oldStage==='egg'){
+    if(pet.level===10 && oldStage==='egg'){
       pet.stage='chick';
-      pet.coins+=50;
-      pet.statPoints += 25;
-      showBubble('✨ Evolusi jadi Anak Ayam 🐥 +50 koin! +25 Poin Stats!');
+      pet.level = 11;   // ✅ level +1
+      pet.exp = 0;      // ✅ reset exp
+      showBubble('✨ Evolusi jadi Anak Ayam 🐥 (Level 11, EXP 0%)');
     }
-    else if(pet.level>=20 && oldStage==='chick'){
+    else if(pet.level===20 && oldStage==='chick'){
       pet.stage='rooster';
-      pet.coins+=50;
-      pet.statPoints += 25;
-      showBubble('✨ Evolusi jadi Ayam Jantan 🐓 +50 koin! +25 Poin Stats!');
+      pet.level = 21;
+      pet.exp = 0;
+      showBubble('✨ Evolusi jadi Ayam Jantan 🐓 (Level 21, EXP 0%)');
     }
-    else if(pet.level>=30 && oldStage==='rooster'){
+    else if(pet.level===30 && oldStage==='rooster'){
       pet.stage='phoenix';
-      pet.coins+=50;
-      pet.statPoints += 25;
-      showBubble('🔥 Evolusi jadi Phoenix! +50 koin! +25 Poin Stats!');
+      pet.level = 31;
+      pet.exp = 0;
+      showBubble('🔥 Evolusi jadi Phoenix! (Level 31, EXP 0%)');
     }
 
-    pet.exp=0;
     document.getElementById('evoBtn').style.display='none';
     document.getElementById('evoGlow').style.display='none';
-    document.getElementById('feedBtn').disabled=false; // ✅ feed aktif lagi
+    document.getElementById('feedBtn').disabled=false;
 
     petImg.src=getPetImage(pet.stage);
     petImg.classList.remove('evo-pulse');
@@ -536,6 +532,7 @@ function evolvePet(){
     },1000);
   },2000);
 }
+
 
 function resetGame(){
   localStorage.removeItem("petData");
@@ -741,4 +738,3 @@ petImg.addEventListener("touchstart", tapEffect);
 </script>
 </body>
 </html>
-
