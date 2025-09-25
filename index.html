@@ -4,95 +4,155 @@
   <title>Game Pet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { margin:0; text-align:center; background:#2e7d32; color:white; font-family:sans-serif; overflow-x:hidden; display:flex; flex-direction:column; align-items:center; }
-    h2 { margin-top:10px; font-size:6vw; }
+  body {
+    margin:0; text-align:center; background:#2e7d32; color:white;
+    font-family:sans-serif; overflow-x:hidden;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  h2 { margin-top:10px; font-size:6vw; }
 
-    #coinDisplay { position:fixed; top:5px; left:5px; font-size:4vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; transition: transform 0.5s, opacity 0.5s; }
-    #shopIcon { position:fixed; top:5px; left:65px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
-    #statsIcon { position:fixed; top:5px; right:50px; font-size:5vw; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:6px; z-index:10; cursor:pointer; }
-
-    #shopPopup {
-      display:none; position:fixed; top:50px; left:10px;
-      background:rgba(51,51,51,0.9); padding:15px; border-radius:12px; z-index:20;
-      text-align:left; width:160px;
-    }
-    #shopPopup h3 { margin:0 0 10px; font-size:4vw; }
-    .shopItem { margin:10px 0; }
-    .shopItem button { padding:6px 12px; font-size:3.5vw; }
-
-    #statsPopup {
-      display:none; position:fixed; top:60px; right:10px;
-      background:rgba(51,51,51,0.95); padding:15px; border-radius:12px; z-index:30;
-      text-align:center; width:220px; font-size: 3.2vw;
-    }
-    #statsPopup h3 { margin-top:0; font-size:4vw; }
-    #statButtons button { margin:3px; font-size:3.2vw; }
-
-    .mini-bubble {
-      position: fixed;
-      right: 55px;
-      top: 55px;
-      background: rgba(250,250,0,0.9);
-      color: blue;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-size: 2.8vw;
-      opacity: 0;
-      animation: fadeUp 3s forwards;
-      z-index: 999;
-    }
-    @keyframes fadeUp {
-      0% { transform: translateY(0); opacity:1; }
-      100% { transform: translateY(-20px); opacity:0; }
-    }
-
-    .pet-wrapper { position:relative; display:flex; align-items:center; justify-content:center; margin-top:20px; gap:20px; perspective:800px;transform: translateX(-30px);
-    }
-    .glow { position:absolute; width:200px; height:200px; background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%); animation:glow 2s infinite; border-radius:50%; z-index:0; display:none; }
-    @keyframes glow { 0%,100%{opacity:0; transform:scale(1);} 50%{opacity:0.8; transform:scale(1.2);} }
-#thermometer {
-  margin-right: 50px; /* tambah angka sesuai kebutuhan */
-
-  margin-top: 40px;
-
+  /* ===== TOP BAR ===== */
+  #topBar {
+    position:fixed;
+    top:5px; left:5px; right:5px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:20;
+  }
+  #leftIcons, #rightIcons {
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+  }
+  #coinDisplay, #shopIcon, #statsIcon, #emailIcon {
+    font-size:4.5vw;
+    background:rgba(0,0,0,0.3);
+    padding:4px 8px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  #resetWrapper {
+  margin-left:5px;
+  margin-top:30px;   /* ✅ geser agak kebawah */
 }
 
-    /* ✨ Pet 2,5D effect */
-    #pet {
-      width:40vw; max-width:220px; height:auto; z-index:1;
-      transition: transform 0.6s ease, filter 0.3s ease;
-      transform-style: preserve-3d;
-      filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-      animation: idleTilt 6s ease-in-out infinite, breathing 3s infinite;
-    }
-    @keyframes breathing {
-      0%,100%{transform:scale(1);}
-      50%{transform:scale(1.05);}
-    }
-    /* Idle motion gabungan breathing + tilt */
-@keyframes idleMotion {
-  0%   { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
-  25%  { transform: rotateY(5deg) rotateX(2deg) skewX(1deg) scale(1.05); }
-  50%  { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
-  75%  { transform: rotateY(-5deg) rotateX(-2deg) skewX(-1deg) scale(1.05); }
-  100% { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
-}
 
-#pet {
-  animation: idleMotion 6s ease-in-out infinite;
-}
+  #resetBtn {
+    font-size:2.5vw;
+    padding:4px 6px;
+    border-radius:6px;
+    opacity:0.6;
+  }
+  #resetBtn:hover { opacity:1; }
 
-/* Animasi loncat saat Play */
-@keyframes petJump {
-  0%   { transform: translateY(0) scale(1); }
-  30%  { transform: translateY(-80px) scale(1.05); }
-  50%  { transform: translateY(-100px) scale(1.05); }
-  70%  { transform: translateY(-80px) scale(1.05); }
-  100% { transform: translateY(0) scale(1); }
-}
-.pet-fly {
-  animation: petJump 1s ease-out;
-}
+  /* ===== BATTLE ICON ===== */
+  #battleIcon {
+    position:fixed;
+    bottom:10px; right:10px;
+    font-size:6vw;
+    background:rgba(0,0,0,0.3);
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    z-index:15;
+  }
+
+  /* Popup Shop */
+  #shopPopup {
+    display:none; position:fixed; top:50px; left:10px;
+    background:rgba(51,51,51,0.9); padding:15px;
+    border-radius:12px; z-index:20;
+    text-align:left; width:160px;
+  }
+  #shopPopup h3 { margin:0 0 10px; font-size:4vw; }
+  .shopItem { margin:10px 0; }
+  .shopItem button { padding:6px 12px; font-size:3.5vw; }
+
+  /* Popup Stats */
+  #statsPopup {
+    display:none; position:fixed; top:60px; right:10px;
+    background:rgba(51,51,51,0.95); padding:15px;
+    border-radius:12px; z-index:30;
+    text-align:center; width:220px; font-size: 3.2vw;
+  }
+  #statsPopup h3 { margin-top:0; font-size:4vw; }
+  #statButtons button { margin:3px; font-size:3.2vw; }
+
+  /* Mini bubble */
+  .mini-bubble {
+    position: fixed;
+    right: 55px; top: 55px;
+    background: rgba(250,250,0,0.9);
+    color: blue;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 2.8vw;
+    opacity: 0;
+    animation: fadeUp 3s forwards;
+    z-index: 999;
+  }
+  @keyframes fadeUp {
+    0% { transform: translateY(0); opacity:1; }
+    100% { transform: translateY(-20px); opacity:0; }
+  }
+
+  /* Pet wrapper */
+  .pet-wrapper {
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:20px;
+    gap:20px;
+    perspective:800px;
+    transform: translateX(-30px);
+  }
+  .glow {
+    position:absolute; width:200px; height:200px;
+    background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%);
+    animation:glow 2s infinite;
+    border-radius:50%; z-index:0; display:none;
+  }
+  @keyframes glow {
+    0%,100%{opacity:0; transform:scale(1);}
+    50%{opacity:0.8; transform:scale(1.2);}
+  }
+
+  #thermometer {
+    margin-right: 50px;
+    margin-top: 40px;
+  }
+
+  /* Pet idle effect */
+  #pet {
+    width:40vw; max-width:220px; height:auto; z-index:1;
+    transition: transform 0.6s ease, filter 0.3s ease;
+    transform-style: preserve-3d;
+    filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
+    animation: idleMotion 6s ease-in-out infinite, breathing 3s infinite;
+  }
+  @keyframes breathing {
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+  }
+  @keyframes idleMotion {
+    0%   { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+    25%  { transform: rotateY(5deg) rotateX(2deg) skewX(1deg) scale(1.05); }
+    50%  { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+    75%  { transform: rotateY(-5deg) rotateX(-2deg) skewX(-1deg) scale(1.05); }
+    100% { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+  }
+  @keyframes petJump {
+    0%   { transform: translateY(0) scale(1); }
+    30%  { transform: translateY(-80px) scale(1.05); }
+    50%  { transform: translateY(-100px) scale(1.05); }
+    70%  { transform: translateY(-80px) scale(1.05); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .pet-fly { animation: petJump 1s ease-out; }
+
+  /* dst… (lanjutan tetap sama seperti versi lama) */
 
 
     .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.8; animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
@@ -269,27 +329,44 @@
 </head>
 <body>
   <h2>🐣 Game Pet</h2>
-  <div id="coinDisplay">💰 0</div>
-  <div id="shopIcon" onclick="toggleShop()">🛒</div>
-  <div id="statsIcon" onclick="toggleStats()">📊</div>
 
-<!-- Background Layer -->
-<div id="background">
-  <div class="bg-sky"></div>
+  <!-- TOP BAR -->
+  <div id="topBar">
+    <div id="leftIcons">
+      <div id="coinDisplay">💰 0</div>
+      <div id="shopIcon" onclick="toggleShop()">🛒</div>
+    </div>
+    <div id="rightIcons">
+      <div id="statsIcon" onclick="toggleStats()">📊</div>
+      <div id="emailIcon">📧</div>
+      <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
+    </div>
+  </div>
 
-  <!-- Awan bergerak -->
-  <img src="images/cloud.png" class="cloud">
+  <!-- POPUP LOGIN EMAIL -->
+  <div id="loginBox" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%);
+    background:rgba(0,0,0,0.85); padding:20px; border-radius:12px; color:white; z-index:100;">
+    <h3>🔑 Login dengan Email</h3>
+    <input id="emailInput" type="email" placeholder="Masukkan email" style="padding:8px; font-size:3.5vw;">
+    <button onclick="sendLoginLink()">Kirim Link OTP</button>
+    <button onclick="document.getElementById('loginBox').style.display='none'">Tutup</button>
+  </div>
 
-  <!-- Pohon goyang -->
-  <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
-  <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
+  <!-- BATTLE ICON -->
+  <div id="battleIcon" onclick="toggleBattle()">⚔️</div>
 
-  <!-- Rumput -->
-  <img src="images/grass.png" class="grass" style="left:10%;">
-  <img src="images/grass.png" class="grass" style="left:40%;">
-  <img src="images/grass.png" class="grass" style="left:70%;">
-</div>
+  <!-- Background Layer -->
+  <div id="background">
+    <div class="bg-sky"></div>
+    <img src="images/cloud.png" class="cloud">
+    <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
+    <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
+    <img src="images/grass.png" class="grass" style="left:10%;">
+    <img src="images/grass.png" class="grass" style="left:40%;">
+    <img src="images/grass.png" class="grass" style="left:70%;">
+  </div>
 
+  <!-- Popup Shop -->
   <div id="shopPopup">
     <h3>Shop</h3>
     <div class="shopItem"><span>🍖 Daging - 10 koin</span><br><button onclick="buyItem('meat',10)">Beli</button></div>
@@ -298,6 +375,7 @@
     <button onclick="toggleShop()">Tutup</button>
   </div>
 
+  <!-- Popup Stats -->
   <div id="statsPopup">
     <h3>Stats</h3>
     <canvas id="statsChart" width="200" height="200"></canvas>
@@ -306,20 +384,38 @@
     <button onclick="toggleStats()">Tutup</button>
   </div>
 
+  <!-- Popup Battle -->
+  <div id="battlePopup" style="display:none; position:fixed; top:60px; left:50%; transform:translateX(-50%);
+    background:rgba(51,51,51,0.95); padding:15px; border-radius:12px; z-index:40;
+    text-align:center; width:240px; font-size:3.2vw;">
+    <h3>⚔️ Arena Battle</h3>
+    <p>Pet: <span id="battlePetName"></span><br>
+       Power: <span id="battlePetPower"></span></p>
+    <p>Musuh Dummy<br>Power: <span id="enemyPower">100</span></p>
+    <button onclick="startBattle()">Mulai</button>
+    <button onclick="toggleBattle()">Tutup</button>
+  </div>
+
+  <!-- Pet area -->
   <div class="pet-wrapper" id="petWrapper">
     <div class="thermometer" id="thermometer">
-  <div id="labelTop" class="thermo-label">Kenyang</div>
-  <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-  <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-  <div id="labelBottom" class="thermo-label">Lapar</div>
-</div>
-
+      <div id="labelTop" class="thermo-label">Kenyang</div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      <div id="labelBottom" class="thermo-label">Lapar</div>
+    </div>
     <div class="glow" id="evoGlow"></div>
-    <!-- 🐣 class breathing DIHAPUS -->
     <img id="pet" src="images/egg.png">
     <div id="bubble"></div>
   </div>
- <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
+
+  <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
+  <p style="font-size:3.8vw;">
+    🐾 Nama Pet: <span id="petName"></span><br>
+    👤 Pemilik: <span id="ownerName"></span><br>
+    ⚔️ Total Power: <span id="totalPower"></span>
+  </p>
+
   <div class="bar-container"><div id="expBar">EXP 0%</div></div>
 
   <button onclick="feedPet()" id="feedBtn">🍖 Feed</button>
@@ -332,31 +428,76 @@
   </div>
 
   <div id="foodGrid">
-  <div class="slot" data-food="meat"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
-  <div class="slot" data-food="fruit"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
-  <div class="slot" data-food="leaf"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
-  <div class="slot empty"></div>
-  <div class="slot empty"></div>
+    <div class="slot" data-food="meat"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
+    <div class="slot" data-food="fruit"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
+    <div class="slot" data-food="leaf"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
+    <div class="slot empty"></div>
+    <div class="slot empty"></div>
+  </div>
 
-</div>
-
-
-  <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
-
+  <!-- Suara -->
   <audio id="soundFeed" src="sounds/feed.mp3" preload="auto"></audio>
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
   <audio id="soundBuy" src="sounds/buy.mp3" preload="auto"></audio>
 
+  <script>
+    // Klik ikon email untuk buka/tutup popup login
+    document.getElementById("emailIcon").onclick = function(){
+      const box = document.getElementById("loginBox");
+      box.style.display = (box.style.display==="block" ? "none" : "block");
+    };
+  </script>
+</body>
+
+
 <script>
 let pet = JSON.parse(localStorage.getItem("petData")) || { 
   level:1, exp:0, stage:"egg", hunger:30, coins:0,
   stats:{att:10,def:10,spd:10,acc:10,crit:10},
-  statPoints:0
+  statPoints:0,
+  name:"Petku",          // 🐾 nama pet
+  owner:"Player1"        // 👤 pemilik
 };
 let foodStock={meat:100,fruit:100,leaf:100};
 let selectedFood=null;
 let evoAnimating=false;
+
+function toggleLogin(){
+  const p=document.getElementById("loginBox");
+  p.style.display = (p.style.display==="block" ? "none" : "block");
+}
+
+function getTotalPower(){
+  let s = pet.stats;
+  // total power = jumlah semua stats
+  return s.att + s.def + s.spd + s.acc + s.crit;
+}
+function toggleBattle(){
+  const p=document.getElementById("battlePopup");
+  if(p.style.display==="block"){
+    p.style.display="none";
+  } else {
+    p.style.display="block";
+    document.getElementById("battlePetName").textContent = pet.name;
+    document.getElementById("battlePetPower").textContent = getTotalPower();
+  }
+}
+
+function startBattle(){
+  let myPower = getTotalPower();
+  let enemyPower = 100; // dummy sementara
+  
+  if(myPower >= enemyPower){
+    showBubble("🏆 Kamu menang! +20 koin");
+    pet.coins += 20;
+  } else {
+    showBubble("💀 Kalah... coba lagi!");
+  }
+  updateUI();
+  toggleBattle();
+}
+
 
 function showMiniBubble(text){
   const b = document.createElement("div");
@@ -369,6 +510,10 @@ function showMiniBubble(text){
 function updateUI(){
   document.getElementById("level").textContent=pet.level;
   document.getElementById("pet").src=getPetImage(pet.stage);
+  document.getElementById("petName").textContent = pet.name;
+document.getElementById("ownerName").textContent = pet.owner;
+document.getElementById("totalPower").textContent = getTotalPower();
+
   const bars=document.querySelectorAll("#thermometer .bar");
   const activeBars=Math.round(pet.hunger/10);
   bars.forEach((bar,i)=>{ i<activeBars?bar.classList.add("active"):bar.classList.remove("active"); });
@@ -464,16 +609,13 @@ function feedPet(){
 }
       // Cek evolusi
       // Setelah update EXP
-if((pet.level === 10 && pet.exp >= 100 && pet.stage === "egg") ||
-   (pet.level === 20 && pet.exp >= 100 && pet.stage === "chick") ||
-   (pet.level === 30 && pet.exp >= 100 && pet.stage === "rooster")) {
-   document.getElementById("evoBtn").style.display = "inline-block";
-   document.getElementById("evoGlow").style.display = "block";
-   document.getElementById("feedBtn").disabled = true;
-   startSparkle();
-   showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
+if (pet.level === 10 && pet.exp >= 100 && pet.stage === "egg") {
+  document.getElementById("evoBtn").style.display = "inline-block";
+  document.getElementById("evoGlow").style.display = "block";
+  document.getElementById("feedBtn").disabled = true;
+  startSparkle();
+  showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
 }
-
   } else {
     playSound("soundFeed");
     showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
@@ -738,7 +880,19 @@ function tapEffect(){
 
 petImg.addEventListener("click", tapEffect);
 petImg.addEventListener("touchstart", tapEffect);
+
+const firebaseConfig = {
+    apiKey: "AIzaSyATd8wK3YMH9zQd-7HN9KT5cHnGgdPdKgU",
+    authDomain: "game-pet-57451.firebaseapp.com",
+    projectId: "game-pet-57451",
+    storageBucket: "game-pet-57451.firebasestorage.app",
+    messagingSenderId: "191423922230",
+    appId: "1:191423922230:web:63ec169db83005cad05897",
+    measurementId: "G-V3J8BRN5DZ"
+  };
+  firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
 </script>
 </body>
 </html>
-
