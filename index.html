@@ -617,7 +617,7 @@ if (
 ) {
   document.getElementById("evoBtn").style.display = "inline-block";
   document.getElementById("evoGlow").style.display = "block";
-  document.getElementById("feedBtn").disabled = true;
+  document.getElementById("Btn").disabled = true;
   startSparkle();
   showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
 }
@@ -668,7 +668,7 @@ function evolvePet(){
 
     document.getElementById('evoBtn').style.display='none';
     document.getElementById('evoGlow').style.display='none';
-    document.getElementById('Btn').disabled=true;
+    document.getElementById('Btn').disabled=false;
 
     petImg.src=getPetImage(pet.stage);
     petImg.classList.remove('evo-pulse');
@@ -902,5 +902,6 @@ const db   = firebase.firestore();
 </script>
 </body>
 </html>
+
 
 
