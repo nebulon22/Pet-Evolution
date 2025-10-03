@@ -1802,8 +1802,9 @@ function sendLoginLink() {
     return;
   }
 
+  // URL tujuan setelah klik link OTP
   const actionCodeSettings = {
-    url: window.location.href,   // balik lagi ke game ini
+    url: window.location.origin + window.location.pathname, // balik ke halaman ini
     handleCodeInApp: true
   };
 
@@ -1818,7 +1819,7 @@ function sendLoginLink() {
     });
 }
 
-// Cek apakah halaman dibuka lewat link OTP dari email
+// === CEK JIKA HALAMAN DIBUKA LEWAT LINK OTP ===
 if (auth.isSignInWithEmailLink(window.location.href)) {
   let email = window.localStorage.getItem("emailForSignIn");
   if (!email) {
@@ -1829,6 +1830,9 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
     .then((result) => {
       alert("✅ Login berhasil sebagai " + result.user.email);
       document.getElementById("loginBox").style.display = "none";
+      // Simpan email user ke data pet → jadi "Pemilik"
+      pet.owner = result.user.email;
+      updateUI();
     })
     .catch((error) => {
       console.error("Error login:", error);
