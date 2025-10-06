@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Game Pet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+  body {
+    margin:0; text-align:center; background:#2e7d32; color:white;
+    font-family:sans-serif; overflow-x:hidden;
+    display:flex; flex-direction:column; align-items:center;
+  }
+
+  h2 { margin-top:10px; font-size:6vw; }
+
+  /* ===== TOP BAR ===== */
+  #topBar {
+    position:fixed;
+    top:5px; left:5px; right:5px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    z-index:20;
+  }
+
+  #leftIcons, #rightIcons {
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  #coinDisplay, #shopIcon, #statsIcon, #emailIcon {
+    font-size:4.5vw;
+    background:rgba(0,0,0,0.3);
+    padding:4px 8px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+
+  #resetWrapper {
+  margin-left:5px;
+  margin-top:30px;   /* ✅ geser agak kebawah */
+  }
+  #resetBtn {
+    font-size:2.5vw;
+    padding:4px 6px;
+    border-radius:6px;
+    opacity:0.6;
+  }
+
+  #resetBtn:hover { opacity:1; }
+  /* ===== BATTLE ICON ===== */
+  #battleIcon {
+    position:fixed;
+    bottom:10px; right:10px;
+    font-size:6vw;
+    background:rgba(0,0,0,0.3);
+    padding:6px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    z-index:15;
+  }
+  /* Popup Shop */
+  #shopPopup {
+    display:none; position:fixed; top:50px; left:10px;
+    background:rgba(51,51,51,0.9); padding:15px;
+    border-radius:12px; z-index:20;
+    text-align:left; width:160px;
+  }
+
+  #shopPopup h3 { margin:0 0 10px; font-size:4vw; }
+  .shopItem { margin:10px 0; }
+  .shopItem button { padding:6px 12px; font-size:3.5vw; }
+  /* Popup Stats */
+  #statsPopup {
+    display:none; position:fixed; top:60px; right:10px;
+    background:rgba(51,51,51,0.95); padding:15px;
+    border-radius:12px; z-index:30;
+    text-align:center; width:220px; font-size: 3.2vw;
+  }
+
+  #statsPopup h3 { margin-top:0; font-size:4vw; }
+  #statButtons button { margin:3px; font-size:3.2vw; }
+  /* Mini bubble */
+  .mini-bubble {
+    position: fixed;
+    right: 55px; top: 55px;
+    background: rgba(250,250,0,0.9);
+    color: blue;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 2.8vw;
+    opacity: 0;
+    animation: fadeUp 3s forwards;
+    z-index: 999;
+  }
+  @keyframes fadeUp {
+    0% { transform: translateY(0); opacity:1; }
+    100% { transform: translateY(-20px); opacity:0; }
+  }
+
+  /* Pet wrapper */
+  .pet-wrapper {
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:20px;
+    gap:20px;
+    perspective:800px;
+    transform: translateX(-30px);
+  }
+
+  .glow {
+    position:absolute; width:200px; height:200px;
+    background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%);
+    animation:glow 2s infinite;
+    border-radius:50%; z-index:0; display:none;
+  }
+
+  @keyframes glow {
+    0%,100%{opacity:0; transform:scale(1);}
+    50%{opacity:0.8; transform:scale(1.2);}
+  }
+
+  #thermometer {
+    margin-right: 50px;
+    margin-top: 40px;
+  }
+  /* Pet idle effect */
+  #pet {
+    width:40vw; max-width:220px; height:auto; z-index:1;
+    transition: transform 0.6s ease, filter 0.3s ease;
+    transform-style: preserve-3d;
+    filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
+    animation: idleMotion 6s ease-in-out infinite, breathing 3s infinite;
+  }
+
+  @keyframes breathing {
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+  }
+
+  @keyframes idleMotion {
+    0%   { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+    25%  { transform: rotateY(5deg) rotateX(2deg) skewX(1deg) scale(1.05); }
+    50%  { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+    75%  { transform: rotateY(-5deg) rotateX(-2deg) skewX(-1deg) scale(1.05); }
+    100% { transform: rotateY(0deg) rotateX(0deg) skewX(0deg) scale(1); }
+  }
+
+  @keyframes petJump {
+    0%   { transform: translateY(0) scale(1); }
+    30%  { transform: translateY(-80px) scale(1.05); }
+    50%  { transform: translateY(-100px) scale(1.05); }
+    70%  { transform: translateY(-80px) scale(1.05); }
+    100% { transform: translateY(0) scale(1); }
+  }
+
+  .pet-fly { animation: petJump 1s ease-out; }
+  /* dst… (lanjutan tetap sama seperti versi lama) */
+    .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.8; animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
+    @keyframes sparkleMove { 0%{transform:translateY(0) scale(1);opacity:1;} 100%{transform:translateY(-50px) scale(0.5);opacity:0;} }
+
+    #bubble { position:absolute; left:60%; top:20%; background:white; color:black; padding:8px 12px; border-radius:12px; display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
+    #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid; border-color:transparent white transparent transparent; }
+
+
+
+    .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start; width:30px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; }
+    .bar { flex:1; margin:1px 0; background:#666; }
+    .bar.active { opacity:1; }
+    .bar:nth-child(2).active{background:#800000;}
+    .bar:nth-child(3).active{background:#b22222;}
+    .bar:nth-child(4).active{background:#ff4500;}
+    .bar:nth-child(5).active{background:#ff8c00;}
+    .bar:nth-child(6).active{background:#ffd700;}
+    .bar:nth-child(7).active{background:#f0e68c;}
+    .bar:nth-child(8).active{background:#adff2f;}
+    .bar:nth-child(9).active{background:#7fff00;}
+    .bar:nth-child(10).active{background:#32cd32;}
+    .bar:nth-child(11).active{background:#00ff00;}
+    .thermo-label { position:absolute; left:10%; transform:translateX(-10%); font-size:2vw; color:white;
+
+    text-shadow:1px 1px 2px black;
+    white-space: nowrap;
+    }
+
+    #labelTop { top:1px; } #labelBottom { bottom:1px; }
+    .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444; border-radius:10px; overflow:hidden; height:24px; }
+    #expBar { height:100%; width:0%; text-align:center; color:white; font-size:3.5vw; line-height:24px; background:dodgerblue; transition:width 0.5s ease; }
+    button { margin:10px; padding:12px 24px; font-size:4vw; border-radius:10px; }
+    button:disabled { opacity:0.5; background:#777 !important; cursor:not-allowed; }
+    #resetWrapper { position:fixed; top:5px; right:5px; z-index:10; }
+    #resetBtn { font-size:2.5vw; padding:4px 8px; border-radius:6px; opacity:0.6; }
+    #resetBtn:hover { opacity:1; }
+
+    @keyframes breathing { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+    .breathing{animation:breathing 3s infinite;}
+    @keyframes hungry-shake {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(1); }
+  10%  { transform: translate(-5px, -2px) rotate(-2deg) scale(1.02); }
+  20%  { transform: translate(4px, 2px) rotate(2deg) scale(1.02); }
+  30%  { transform: translate(-3px, 1px) rotate(-1deg) scale(1.02); }
+  40%  { transform: translate(5px, -1px) rotate(2deg) scale(1.02); }
+  50%  { transform: translate(-4px, 2px) rotate(-2deg) scale(1.02); }
+  60%  { transform: translate(3px, -2px) rotate(1deg) scale(1.02); }
+  70%  { transform: translate(-5px, 1px) rotate(-1deg) scale(1.02); }
+  80%  { transform: translate(4px, -2px) rotate(2deg) scale(1.02); }
+  90%  { transform: translate(-3px, 2px) rotate(-2deg) scale(1.02); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+}
+
+.hungry { }
+    @keyframes evoPulse { 0%,100% { transform: scale(1);} 25%{transform:scale(1.3);} 50%{transform:scale(0.7);} 75%{transform:scale(1.4);} }
+
+    @keyframes evoPop { 0%{transform:scale(0);opacity:0;} 80%{transform:scale(1.2);opacity:1;} 100%{transform:scale(1);} }
+
+    .evo-pulse { animation:evoPulse 2s ease-in-out; }
+
+    .evo-pop   { animation:evoPop 0.8s ease-out; }
+
+    #plateWrapper { position:relative; margin-top:20px; }
+    #plate { width:180px; }
+    #plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; display:none; }
+
+    #foodGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 40px); /* 5 kotak per baris */
+
+  grid-gap: 2px;
+  justify-content: center;
+  margin: 20px auto;
+
+}
+
+
+
+.slot {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #999;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot img {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+}
+
+.slot .count {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: none;
+  color: red;
+  font-weight: bold;
+  font-style: italic;
+  font-size: 12px;
+  padding: 0;
+  border-radius: 0;
+  text-shadow: black;
+}
+
+.slot.empty {
+  background: rgba(255,255,255,0.05);
+  border: 2px dashed #666;
+}
+
+.slot.disabled {
+  opacity: 0.4;
+  pointer-events: none; /* tidak bisa di-drag */
+  filter: grayscale(60%);
+}
+
+    .flytext { position:absolute; left:50%; transform:translateX(-50%) translateY(0); bottom:110%; font-size:12px; color:#fff; text-shadow:1px 1px 2px black; opacity:0; animation:flyUp 1s forwards; pointer-events:none; }
+
+    @keyframes flyUp { 0% { transform:translateX(-50%) translateY(0); opacity:1; } 100% { transform:translateX(-50%) translateY(-30px); opacity:0; } }
+
+  #background {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  overflow: hidden;
+  z-index: -10; /* di belakang semua */
+}
+
+/* Langit */
+.bg-sky {
+  position: absolute;
+  width: 100%; height: 100%;
+  background: url("images/background.png") no-repeat center bottom;
+  background-size: cover;
+  z-index: -5;
+}
+
+/* Awan */
+.cloud {
+  position: absolute;
+  top: 40px;
+  width: 220px;
+  animation: moveCloud 60s linear infinite;
+  z-index: -4;
+}
+
+@keyframes moveCloud {
+  from { left: -250px; }
+  to   { left: 100%; }
+}
+
+/* Pohon goyang */
+
+.tree {
+
+  position: absolute;
+
+  width: 160px;
+
+  transform-origin: bottom center;
+
+  animation: sway 4s ease-in-out infinite alternate;
+
+  z-index: -2;
+
+}
+
+@keyframes sway {
+
+  from { transform: rotate(-2deg); }
+
+  to   { transform: rotate(2deg); }
+
+}
+
+
+
+/* Rumput di bawah */
+
+.grass {
+
+  position: absolute;
+
+  bottom: 0;
+
+  width: 120px;
+
+  transform-origin: bottom center;
+
+  animation: sway 3s ease-in-out infinite alternate;
+
+  z-index: -1;
+
+}
+
+
+
+  </style>
+
+</head>
+
+<body>
+
+  <h2>🐣 Game Pet</h2>
+
+
+
+  <!-- TOP BAR -->
+
+  <div id="topBar">
+
+    <div id="leftIcons">
+
+      <div id="coinDisplay">💰 0</div>
+
+      <div id="shopIcon" onclick="toggleShop()">🛒</div>
+
+    </div>
+
+    <div id="rightIcons">
+
+      <div id="statsIcon" onclick="toggleStats()">📊</div>
+
+      <div id="emailIcon">📧</div>
+
+      <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- POPUP LOGIN EMAIL -->
+
+  <div id="loginBox" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%);
+
+    background:rgba(0,0,0,0.85); padding:20px; border-radius:12px; color:white; z-index:100;">
+
+    <h3>🔑 Login dengan Email</h3>
+
+    <input id="emailInput" type="email" placeholder="Masukkan email" style="padding:8px; font-size:3.5vw;">
+
+    <button onclick="sendLoginLink()">Kirim Link OTP</button>
+
+    <button onclick="document.getElementById('loginBox').style.display='none'">Tutup</button>
+
+  </div>
+
+
+
+  <!-- BATTLE ICON -->
+
+  <div id="battleIcon" onclick="toggleBattle()">⚔️</div>
+
+
+
+  <!-- Background Layer -->
+
+  <div id="background">
+
+    <div class="bg-sky"></div>
+
+    <img src="images/cloud.png" class="cloud">
+
+    <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
+
+    <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
+
+    <img src="images/grass.png" class="grass" style="left:10%;">
+
+    <img src="images/grass.png" class="grass" style="left:40%;">
+
+    <img src="images/grass.png" class="grass" style="left:70%;">
+
+  </div>
+
+
+
+  <!-- Popup Shop -->
+
+  <div id="shopPopup">
+
+    <h3>Shop</h3>
+
+    <div class="shopItem"><span>🍖 Daging - 10 koin</span><br><button onclick="buyItem('meat',10)">Beli</button></div>
+
+    <div class="shopItem"><span>🍎 Buah - 5 koin</span><br><button onclick="buyItem('fruit',5)">Beli</button></div>
+
+    <div class="shopItem"><span>🌿 Daun - 3 koin</span><br><button onclick="buyItem('leaf',3)">Beli</button></div>
+
+    <button onclick="toggleShop()">Tutup</button>
+
+  </div>
+
+
+
+  <!-- Popup Stats -->
+
+  <div id="statsPopup">
+
+    <h3>Stats</h3>
+
+    <canvas id="statsChart" width="200" height="200"></canvas>
+
+    <p>Sisa Poin: <span id="statPoints">0</span></p>
+
+    <div id="statButtons"></div>
+
+    <button onclick="toggleStats()">Tutup</button>
+
+  </div>
+
+
+
+  <!-- Popup Battle -->
+
+  <div id="battlePopup" style="display:none; position:fixed; top:60px; left:50%; transform:translateX(-50%);
+
+    background:rgba(51,51,51,0.95); padding:15px; border-radius:12px; z-index:40;
+
+    text-align:center; width:240px; font-size:3.2vw;">
+
+    <h3>⚔️ Arena Battle</h3>
+
+    <p>Pet: <span id="battlePetName"></span><br>
+
+       Power: <span id="battlePetPower"></span></p>
+
+    <p>Musuh Dummy<br>Power: <span id="enemyPower">100</span></p>
+
+    <button onclick="startBattle()">Mulai</button>
+
+    <button onclick="toggleBattle()">Tutup</button>
+
+  </div>
+
+
+
+  <!-- Pet area -->
+
+  <div class="pet-wrapper" id="petWrapper">
+
+    <div class="thermometer" id="thermometer">
+
+      <div id="labelTop" class="thermo-label">Kenyang</div>
+
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+
+      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+
+      <div id="labelBottom" class="thermo-label">Lapar</div>
+
+    </div>
+
+    <div class="glow" id="evoGlow"></div>
+
+    <img id="pet" src="images/egg.png">
+
+    <div id="bubble"></div>
+
+  </div>
+
+
+
+  <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
+
+  <p style="font-size:3.8vw;">
+
+    🐾 Nama Pet: <span id="petName"></span><br>
+
+    👤 Pemilik: <span id="ownerName"></span><br>
+
+    ⚔️ Total Power: <span id="totalPower"></span>
+
+  </p>
+
+
+
+  <div class="bar-container"><div id="expBar">EXP 0%</div></div>
+
+
+
+  <button onclick="Pet()" id="feedBtn">Feed 🍖 </button>
+
+  <button id="playBtn" onclick="playWithPet()">🎮 Play</button>
+
+  <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
+
+
+
+  <div id="plateWrapper">
+
+    <img id="plate" src="images/plate.png" alt="Piring">
+
+    <img id="plateFood" src="" alt="">
+
+  </div>
+
+
+
+  <div id="foodGrid">
+
+    <div class="slot" data-food="meat"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
+
+    <div class="slot" data-food="fruit"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
+
+    <div class="slot" data-food="leaf"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
+    <div class="slot empty"></div>
+    <div class="slot empty"></div>
+  </div>
+
+  <!-- Suara -->
+
+  <audio id="sound" src="sounds/feed.mp3" preload="auto"></audio>
+
+  <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
+
+  <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
+
+  <audio id="soundBuy" src="sounds/buy.mp3" preload="auto"></audio>
+
+  <script>
+
+    // Klik ikon email untuk buka/tutup popup login
+
+    document.getElementById("emailIcon").onclick = function(){
+
+      const box = document.getElementById("loginBox");
+
+      box.style.display = (box.style.display==="block" ? "none" : "block");
+
+    };
+
+  </script>
+
+
+
+<script>
+let pet = JSON.parse(localStorage.getItem("petData")) || { 
+
+  level:1, exp:0, stage:"egg", hunger:30, coins:0,
+
+  stats:{att:10,def:10,spd:10,acc:10,crit:10},
+
+  statPoints:0,
+
+  name:"Petku",          // 🐾 nama pet
+
+  owner:"Player1"        // 👤 pemilik
+
+};
+
+let foodStock = JSON.parse(localStorage.getItem("foodStock")) || {
+
+  meat:100, fruit:100, leaf:100
+
+};
+
+
+
+let selectedFood=null;
+
+let evoAnimating=false;
+
+
+
+// === Bubble untuk coins & stats ===
+
+function showCoinBubble(text){
+
+  const b = document.createElement("div");
+
+  b.className = "mini-bubble";
+
+  b.style.right = "55px"; 
+
+  b.style.top = "55px";   // dekat coinDisplay
+
+  b.textContent = text;
+
+  document.body.appendChild(b);
+
+  setTimeout(()=> b.remove(), 3000);
+
+}
+
+
+
+function showStatBubble(text){
+
+  const rect = document.getElementById("statsIcon").getBoundingClientRect();
+
+  const b = document.createElement("div");
+
+  b.className = "mini-bubble";
+
+  b.style.left = (rect.left + window.scrollX) + "px";
+
+  b.style.top = (rect.top + window.scrollY - 20) + "px";
+
+  b.textContent = text;
+
+  document.body.appendChild(b);
+
+  setTimeout(()=> b.remove(), 3000);
+
+}
+
+
+
+
+
+function toggleLogin(){
+
+  const p=document.getElementById("loginBox");
+
+  p.style.display = (p.style.display==="block" ? "none" : "block");
+
+}
+
+
+
+function getTotalPower(){
+
+  let s = pet.stats;
+
+  // total power = jumlah semua stats
+
+  return s.att + s.def + s.spd + s.acc + s.crit;
+
+}
+
+function toggleBattle(){
+
+  const p=document.getElementById("battlePopup");
+
+  if(p.style.display==="block"){
+
+    p.style.display="none";
+
+  } else {
+
+    p.style.display="block";
+
+    document.getElementById("battlePetName").textContent = pet.name;
+
+    document.getElementById("battlePetPower").textContent = getTotalPower();
+
+  }
+
+}
+
+
+
+function startBattle(){
+
+  let myPower = getTotalPower();
+
+  let enemyPower = 100; // dummy sementara
+
+  
+
+  if(myPower >= enemyPower){
+
+    showBubble("🏆 Kamu menang! +20 koin");
+
+    pet.coins += 20;
+
+  } else {
+
+    showBubble("💀 Kalah... coba lagi!");
+
+  }
+
+  updateUI();
+
+  toggleBattle();
+
+}
+
+
+
+
+
+function showMiniBubble(text){
+
+  const b = document.createElement("div");
+
+  b.className = "mini-bubble";
+
+  b.textContent = text;
+
+  document.body.appendChild(b);
+
+  setTimeout(()=> b.remove(), 5000);
+
+}
+
+
+
+function updateUI(){
+
+  document.getElementById("level").textContent=pet.level;
+
+  document.getElementById("pet").src=getPetImage(pet.stage);
+
+  document.getElementById("petName").textContent = pet.name;
+
+document.getElementById("ownerName").textContent = pet.owner;
+
+document.getElementById("totalPower").textContent = getTotalPower();
+
+
+
+  const bars=document.querySelectorAll("#thermometer .bar");
+
+  const activeBars=Math.round(pet.hunger/10);
+
+  bars.forEach((bar,i)=>{ i<activeBars?bar.classList.add("active"):bar.classList.remove("active"); });
+
+  const expBar=document.getElementById("expBar"); expBar.style.width=Math.min(100,pet.exp)+"%"; expBar.textContent="EXP "+Math.min(100,pet.exp)+"%";
+
+  document.getElementById("coinDisplay").textContent="💰 "+(pet.coins||0);
+
+  Object.keys(foodStock).forEach(f=>{
+
+  document.getElementById("count-"+f).textContent = foodStock[f];
+
+  const slot = document.querySelector(`.slot[data-food='${f}']`);
+
+  if(foodStock[f] <= 0){
+
+    slot.classList.add("disabled");
+
+  } else {
+
+    slot.classList.remove("disabled");
+
+  }
+
+});
+
+
+
+  localStorage.setItem("petData",JSON.stringify(pet));
+
+  const petImg = document.getElementById("pet");
+
+if (pet.hunger <= 0) {
+
+  petImg.classList.add("hungry");
+
+  petImg.style.animation = "hungry-shake 0.5s infinite";
+
+} else {
+
+  petImg.classList.remove("hungry");
+
+  petImg.style.animation = "idleMotion 6s ease-in-out infinite";
+
+}
+
+}
+
+
+
+function getPetImage(stage){
+
+  switch(stage){
+
+    case "egg": return "images/egg.png";
+
+    case "chick": return "images/chick.png";
+
+    case "rooster": return "images/rooster.png";
+
+    case "phoenix": return "images/phoenix.png";
+
+  }
+
+}
+
+
+
+function showBubble(text){
+
+  const b=document.getElementById("bubble");
+
+  b.textContent=text;
+
+  b.style.display="block";
+
+  setTimeout(()=>b.style.display="none",2500);
+
+}
+
+
+
+function playSound(id){
+
+  const s=document.getElementById(id);
+
+  if(s){ try{s.currentTime=0;s.play();} catch(e){} }
+
+}
+
+
+
+// ✅ Perbaikan Pet
+
+function Pet(){
+
+  if(!selectedFood){
+    showBubble("Pilih makanan dulu!");
+    return;
+  }
+  if(foodStock[selectedFood] <= 0){
+    showBubble("Stok habis!");
+    return;
+  }
+  // ✅ Naikkan hunger + kurangi stok + tambah koin
+  pet.hunger = Math.min(100, pet.hunger + 20);
+  foodStock[selectedFood]--;
+  pet.coins++;
+
+  // ✅ LANGSUNG update UI biar stok di slot langsung turun
+  updateUI();
+  // Hitung EXP
+  let expGain = selectedFood === 'meat' ? 10 :
+                selectedFood === 'fruit' ? 5 : 2.5;
+  // Animasi teks EXP terbang
+  const slotDiv = document.querySelector(`.slot[data-food='${selectedFood}']`);
+  const fly = document.createElement("span");
+  fly.className = "flytext";
+  fly.textContent = `+${expGain}% EXP`;
+  slotDiv.appendChild(fly);
+  setTimeout(()=>fly.remove(), 1000);
+  // Tambahkan EXP
+  pet.exp = pet.exp + expGain;
+  updateUI();
+  // Cek level up
+  if(pet.exp >= 100){
+    if(pet.exp === 100){
+      showBubble("EXP penuh — kasih makan sekali lagi untuk naik level!");
+    } else {
+      pet.exp = 0;
+      pet.level++;
+      // Tambahan reward saat naik level
+      pet.coins += 5;
+      pet.statPoints += 10;
+      playSound("soundLevel");
+      showBubble("Level naik! Sekarang level " + pet.level);
+      // Tampilkan bubble coins & stats
+      showCoinBubble("+5 💰");
+      showStatBubble("+10 📊 Stats");
+    }
+
+      // Cek evolusi
+      // Setelah update EXP
+if (
+   (pet.level === 10 && pet.exp >= 100 && pet.stage === "egg") ||
+   (pet.level === 20 && pet.exp >= 100 && pet.stage === "chick") ||
+   (pet.level === 30 && pet.exp >= 100 && pet.stage === "rooster")
+) {
+  document.getElementById("evoBtn").style.display = "inline-block";
+  document.getElementById("evoGlow").style.display = "block";
+  document.getElementById("feedBtn").disabled = true;
+  document.getElementById("playBtn").disabled = true;
+  startSparkle();
+  showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
+}
+
+function evolvePet(){
+  if(evoAnimating) return;
+  evoAnimating = true;
+  document.getElementById("feedBtn").disabled = true;
+  document.getElementById("playBtn").disabled = true;
+  document.getElementById("evoBtn").style.display = "none";
+  const petImg = document.getElementById("pet");
+  const glow = document.getElementById("evoGlow");
+  glow.style.display = "block";
+  playSound("soundEvo");
+  petImg.classList.add("evo-pulse");
+
+  setTimeout(()=>{
+    petImg.classList.remove("evo-pulse");
+    if(pet.stage==="egg"){ pet.stage="chick"; }
+    else if(pet.stage==="chick"){ pet.stage="rooster"; }
+    else if(pet.stage==="rooster"){ pet.stage="phoenix"; }
+
+
+
+    // Reward evolusi
+
+    pet.coins += 100;
+    pet.statPoints += 15;
+
+    showCoinBubble("+100 💰");
+    showStatBubble("+15 📊 Stats");
+
+
+
+    updateUI();
+
+
+setTimeout(()=>{
+  petImg.classList.remove('evo-pop');
+  evoAnimating= false;
+  document.getElementById('evoBtn').disabled=false;
+  document.getElementById("feedBtn").disabled= false;        // Feed aktif lagi
+  document.getElementById("playBtn").disabled= false;    // Play aktif lagi
+},1000);
+  },3000);
+}
+
+
+  } else {
+    playSound("sound");
+    showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
+  }
+
+  // Kalau stok habis, bersihkan piring
+
+  if(foodStock[selectedFood] <= 0){
+
+    document.getElementById("plateFood").style.display = "none";
+
+    selectedFood = null;
+
+  }
+
+
+
+  // ✅ terakhir simpan data
+
+  localStorage.setItem("petData", JSON.stringify(pet));
+
+  localStorage.setItem("foodStock", JSON.stringify(foodStock));
+
+
+
+  updateUI();
+
+}
+
+
+
+function evolvePet(){
+  if(evoAnimating) return;
+  evoAnimating=true;
+  const petImg=document.getElementById('pet');
+  const oldStage=pet.stage;
+  petImg.classList.add('evo-pulse');
+
+  document.getElementById('evoBtn').disabled=true;
+
+  setTimeout(()=>{
+    if(pet.level===10 && oldStage==='egg'){
+      pet.stage='chick';
+      pet.level = 11;   // ✅ level +1
+      pet.exp = 0;      // ✅ reset exp
+
+      showBubble('✨ Evolusi jadi Anak Ayam 🐥 (Level 11, EXP 0%)');
+    }
+    else if(pet.level===20 && oldStage==='chick'){
+      pet.stage='rooster';
+      pet.level = 21;
+      pet.exp = 0;
+
+      showBubble('✨ Evolusi jadi Ayam Jantan 🐓 (Level 21, EXP 0%)');
+    }
+    else if(pet.level===30 && oldStage==='rooster'){
+      pet.stage='phoenix';
+      pet.level = 31;
+      pet.exp = 0;
+      showBubble('🔥 Evolusi jadi Phoenix! (Level 31, EXP 0%)');
+    }
+    document.getElementById('evoBtn').style.display='none';
+    document.getElementById('evoGlow').style.display='none';
+    document.getElementById('feedBtn').disabled=false;
+  document.getElementById('playBtn').disabled= false;
+  
+    petImg.src=getPetImage(pet.stage);
+    petImg.classList.remove('evo-pulse');
+    petImg.classList.add('evo-pop');
+    playSound('soundEvo');
+    updateUI();
+
+    setTimeout(()=>{
+      petImg.classList.remove('evo-pop');
+      evoAnimating=false;
+      document.getElementById('evoBtn').disabled=false;
+    },1000);
+  },2000);
+}
+
+
+
+function resetGame(){
+  // Hapus semua data di localStorage
+  localStorage.removeItem("petData");
+
+  localStorage.removeItem("foodStock");
+
+
+
+  // Reset pet
+
+  pet = {
+
+    level:1, exp:0, hunger:50, stage:"egg", coins:0,
+
+    stats:{att:10,def:10,spd:10,acc:10,crit:10},
+
+    statPoints:0, name:"Petku", owner:"Player1"
+
+  };
+
+
+
+  // Reset stok makanan
+
+  foodStock = {meat:100, fruit:100, leaf:100};
+
+  localStorage.setItem("foodStock", JSON.stringify(foodStock));
+
+
+
+  updateUI();
+
+}
+
+
+
+function playWithPet(){
+  const btn = document.getElementById("playBtn");
+  if(btn.disabled) return; // kalau masih cooldown
+
+
+
+  // Kurangi hunger
+
+  pet.hunger = Math.max(0, pet.hunger - 10);
+
+  updateUI();
+
+
+
+  // Ambil pet
+
+  const petImg = document.getElementById("pet");
+
+
+
+  // Stop animasi idle/hungry, lalu jalankan jump
+
+  petImg.style.animation = "petJump 1s ease-out";
+
+  showBubble("🎮 Bermain seru! Hunger -10%");
+
+
+
+  setTimeout(()=>{
+
+    // kembalikan ke idleMotion atau hungry-shake sesuai kondisi
+
+    if(pet.hunger <= 0){
+
+      petImg.style.animation = "hungry-shake 0.6s infinite";
+
+    } else {
+
+      petImg.style.animation = "idleMotion 6s ease-in-out infinite";
+
+    }
+
+  },1000);
+
+
+
+  // Cooldown 5 detik
+
+  btn.disabled = true;
+
+  btn.textContent = "⏳ Tunggu...";
+
+  setTimeout(()=>{
+
+    btn.disabled = false;
+
+    btn.textContent = "🎮 Play";
+
+  },5000);
+
+}
+
+function startSparkle(){
+
+  const w=document.getElementById("petWrapper");
+
+  for(let i=0;i<15;i++){
+
+    setTimeout(()=>{
+
+      const spark=document.createElement("div");
+
+      spark.className="sparkle";
+
+      spark.style.left=(Math.random()*200)+"px";
+
+      spark.style.top=(Math.random()*200)+"px";
+
+      w.appendChild(spark);
+
+      setTimeout(()=>spark.remove(),1500);
+
+    },i*180);
+
+  }
+
+}
+
+
+
+function setupDrag(){
+
+  document.querySelectorAll('.slot[data-food]').forEach(item=>{
+
+    const foodType=item.dataset.food;
+
+    const handler=(ev)=>{ ev.preventDefault(); startDrag(ev,foodType); };
+
+    item.addEventListener('touchstart',handler);
+
+    item.addEventListener('mousedown',handler);
+
+  });
+
+}
+
+
+
+
+
+function startDrag(ev,foodType){
+
+  ev.preventDefault();
+
+  const clone=document.createElement('img'); clone.src='images/'+foodType+'.png'; clone.style.position='fixed'; clone.style.width='60px'; clone.style.opacity=0.8; clone.style.zIndex=1000; document.body.appendChild(clone);
+
+  function moveHandler(e){ const t=e.touches?e.touches[0]:e; clone.style.left=t.clientX-30+'px'; clone.style.top=t.clientY-30+'px'; }
+
+  function endHandler(e){ const t=e.changedTouches?e.changedTouches[0]:e;
+
+    const plate=document.getElementById('plateWrapper').getBoundingClientRect();
+
+    const dx=t.clientX-(plate.left+plate.width/2); const dy=t.clientY-(plate.top+plate.height/2-15);
+
+    if(Math.sqrt(dx*dx+dy*dy)<=plate.width*0.4 && foodStock[foodType]>0){ selectedFood=foodType; const pf=document.getElementById('plateFood'); pf.src='images/'+foodType+'.png'; pf.style.display='block'; showBubble('🍽️ '+foodType+' siap di piring!'); }
+
+    clone.remove(); document.removeEventListener('mousemove',moveHandler); document.removeEventListener('mouseup',endHandler);
+
+    document.removeEventListener('touchmove',moveHandler); document.removeEventListener('touchend',endHandler);
+
+  }
+
+  document.addEventListener('mousemove',moveHandler); document.addEventListener('mouseup',endHandler);
+
+  document.addEventListener('touchmove',moveHandler); document.addEventListener('touchend',endHandler);
+
+}
+
+
+
+function toggleShop(){
+
+  const popup=document.getElementById("shopPopup");
+
+  popup.style.display=(popup.style.display==="block"?"none":"block");
+
+}
+
+
+
+function buyItem(type,price){
+
+  if(pet.coins < price){
+
+    showBubble("Koin tidak cukup!");
+
+    return;
+
+  }
+
+  pet.coins -= price;
+
+  foodStock[type]++;
+
+
+
+  // 🔊 Mainkan suara beli
+
+  playSound("soundBuy");
+
+
+
+  showBubble("Beli "+type+" berhasil! -"+price+" koin");
+
+  updateUI();
+
+
+
+  const coinDisplay=document.getElementById("coinDisplay");
+
+  coinDisplay.style.transform="scale(1.2)";
+
+  coinDisplay.style.opacity="0.5";
+
+  setTimeout(()=>{
+
+    coinDisplay.style.transform="scale(1)";
+
+    coinDisplay.style.opacity="1";
+
+  },300);
+
+}
+
+
+
+// ===================== STATS =====================
+
+
+
+function toggleStats(){
+
+  const p=document.getElementById("statsPopup");
+
+  p.style.display=(p.style.display==="block"?"none":"block");
+
+  if(p.style.display==="block"){ drawStatsChart(); updateStatUI(); }
+
+}
+
+
+
+
+
+function updateStatUI(){
+
+  document.getElementById("statPoints").textContent = pet.statPoints;
+
+  const btns = document.getElementById("statButtons");
+
+  btns.innerHTML = "";
+
+
+
+  Object.keys(pet.stats).forEach(key=>{
+
+    const row = document.createElement("div");
+
+    row.style.margin = "5px 0";
+
+
+
+    // label jumlah stat
+
+    const label = document.createElement("span");
+
+    label.textContent = key.toUpperCase() + ": " + pet.stats[key] + " ";
+
+
+
+    // tombol tambah
+
+    const b = document.createElement("button");
+
+    b.textContent = "+";
+
+    b.disabled = pet.statPoints <= 0;
+
+    b.onclick = ()=>{
+
+  pet.stats[key]++;
+
+  pet.statPoints--;
+
+  updateStatUI();
+
+  drawStatsChart();
+
+  updateUI();
+
+  showMiniBubble("+"+key.toUpperCase()); // ✅ mini bubble muncul
+
+};
+
+
+
+
+
+    row.appendChild(label);
+
+    row.appendChild(b);
+
+    btns.appendChild(row);
+
+  });
+
+}
+
+
+
+
+
+function drawStatsChart(){
+
+  const c=document.getElementById("statsChart");
+
+  const ctx=c.getContext("2d");
+
+  ctx.clearRect(0,0,c.width,c.height);
+
+  const keys=Object.keys(pet.stats);
+
+  const maxVal=50; // skala maksimum
+
+  const cx=c.width/2, cy=c.height/2, r=80;
+
+
+
+  // draw polygon background
+
+  ctx.strokeStyle="gray"; ctx.beginPath();
+
+  keys.forEach((k,i)=>{
+
+    const angle=(Math.PI*2/keys.length)*i - Math.PI/2;
+
+    const x=cx+Math.cos(angle)*r;
+
+    const y=cy+Math.sin(angle)*r;
+
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+
+  });
+
+  ctx.closePath(); ctx.stroke();
+
+
+
+  // draw stat area
+
+  ctx.fillStyle="rgba(0,150,255,0.5)"; ctx.beginPath();
+
+  keys.forEach((k,i)=>{
+
+    const val=pet.stats[k];
+
+    const ratio=Math.min(1,val/maxVal);
+
+    const angle=(Math.PI*2/keys.length)*i - Math.PI/2;
+
+    const x=cx+Math.cos(angle)*r*ratio;
+
+    const y=cy+Math.sin(angle)*r*ratio;
+
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+
+  });
+
+  ctx.closePath(); ctx.fill();
+
+}
+
+
+
+// =================================================
+
+
+
+setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
+
+
+
+updateUI();
+
+setupDrag();
+
+
+
+const petImg = document.getElementById("pet");
+
+
+
+function tapEffect(){
+
+  petImg.style.transition = "transform 0.4s ease, filter 0.4s ease";
+
+  petImg.style.transform = "rotateY(15deg) rotateX(6deg) skewX(3deg) scale(1.05)";
+
+  petImg.style.filter = "drop-shadow(15px 20px 12px rgba(0,0,0,0.6))";
+
+  setTimeout(()=>{
+
+    petImg.style.transform = "";
+
+    petImg.style.filter = "";
+
+  }, 500);
+
+}
+
+
+
+petImg.addEventListener("click", tapEffect);
+
+petImg.addEventListener("touchstart", tapEffect);
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+
+<script>
+  // Konfigurasi Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyATd8wK3YMH9zQd-7HN9KT5cHnGgdPdKgU",
+    authDomain: "game-pet-57451.firebaseapp.com",
+    projectId: "game-pet-57451",
+    storageBucket: "game-pet-57451.firebasestorage.app",
+    messagingSenderId: "191423922230",
+    appId: "1:191423922230:web:63ec169db83005cad05897",
+    measurementId: "G-V3J8BRN5DZ"
+  };
+
+  // Inisialisasi Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  // === LOGIN EMAIL OTP ===
+  function sendLoginLink() {
+    const email = document.getElementById("emailInput").value.trim();
+    if (!email) {
+      alert("Masukkan email terlebih dahulu!");
+      return;
+    }
+
+    const actionCodeSettings = {
+      url: window.location.origin + window.location.pathname, // kembali ke halaman ini
+      handleCodeInApp: true
+    };
+
+    auth.sendSignInLinkToEmail(email, actionCodeSettings)
+      .then(() => {
+        alert("✅ Link OTP sudah dikirim ke " + email + "\nSilakan cek inbox atau folder spam.");
+        window.localStorage.setItem("emailForSignIn", email);
+      })
+      .catch((error) => {
+        alert("❌ Gagal kirim OTP:\n" + error.message);
+      });
+  }
+
+  // === CEK JIKA HALAMAN DIBUKA LEWAT LINK OTP ===
+  if (auth.isSignInWithEmailLink(window.location.href)) {
+    let email = window.localStorage.getItem("emailForSignIn");
+    if (!email) {
+      email = window.prompt("Masukkan email Anda untuk verifikasi:");
+    }
+
+    auth.signInWithEmailLink(email, window.location.href)
+      .then((result) => {
+        alert("✅ Login berhasil sebagai: " + result.user.email);
+        document.getElementById("loginBox").style.display = "none";
+        pet.owner = result.user.email;
+        updateUI();
+      })
+      .catch((error) => {
+        alert("❌ Login gagal:\n" + error.message);
+      });
+  }
+</script>
+</body>
+</html>
