@@ -1593,8 +1593,7 @@ const firebaseConfig = {
     measurementId: "G-V3J8BRN5DZ"
 
   };
-
-  firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db   = firebase.firestore();
@@ -1615,12 +1614,11 @@ function sendLoginLink() {
 
   auth.sendSignInLinkToEmail(email, actionCodeSettings)
     .then(() => {
-      alert("✅ Link OTP sudah dikirim ke " + email + ". Cek inbox / spam.");
+      alert("✅ Link OTP sudah dikirim ke " + email + "\nSilakan cek inbox atau folder spam.");
       window.localStorage.setItem("emailForSignIn", email);
     })
     .catch((error) => {
-      console.error("Error kirim OTP:", error);
-      alert("❌ Gagal kirim OTP: " + error.message);
+      alert("❌ Gagal kirim OTP:\n" + error.message);
     });
 }
 
@@ -1633,18 +1631,16 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
 
   auth.signInWithEmailLink(email, window.location.href)
     .then((result) => {
-      alert("✅ Login berhasil sebagai " + result.user.email);
+      alert("✅ Login berhasil sebagai: " + result.user.email);
       document.getElementById("loginBox").style.display = "none";
       // Simpan email user ke data pet → jadi "Pemilik"
       pet.owner = result.user.email;
       updateUI();
     })
     .catch((error) => {
-      console.error("Error login:", error);
-      alert("❌ Login gagal: " + error.message);
+      alert("❌ Login gagal:\n" + error.message);
     });
 }
-
   
 </script>
 </body>
