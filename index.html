@@ -633,64 +633,21 @@ function toggleLogin(){
 
 }
 
-function logout() {
-  auth.signOut().then(() => {
-    alert("👋 Anda telah logout.");
-
-    // Reset semua data game ke default guest
-    coins = 0;
-    pet = {
-      name: "Pet",
-      level: 1,
-      exp: 0,
-      stage: "egg",
-      owner: "Guest"
-    };
-    inventory = {}; // kosongkan item
-
-    // Perbarui tampilan
-    updateUI();
-
-    // Sembunyikan tombol logout, tampilkan login box
-    document.getElementById("logoutBtn").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
-
-    // Bersihkan cache login
-    window.localStorage.removeItem("emailForSignIn");
-  }).catch((error) => {
-    alert("❌ Gagal logout: " + error.message);
-  });
-}
-
-
 function getTotalPower(){
-
   let s = pet.stats;
-
   // total power = jumlah semua stats
-
   return s.att + s.def + s.spd + s.acc + s.crit;
-
 }
 
 function toggleBattle(){
-
   const p=document.getElementById("battlePopup");
-
   if(p.style.display==="block"){
-
     p.style.display="none";
-
   } else {
-
     p.style.display="block";
-
     document.getElementById("battlePetName").textContent = pet.name;
-
     document.getElementById("battlePetPower").textContent = getTotalPower();
-
   }
-
 }
 
 
