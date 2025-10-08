@@ -405,9 +405,11 @@
     <button onclick="sendLoginLink()">Kirim Link OTP</button>
     <button onclick="document.getElementById('loginBox').style.display='none'">Tutup</button>
   </div>
-<!-- Tombol Logout -->
-<button id="logoutBtn" onclick="logout()" style="display:none; position:fixed; top:10px; right:10px; z-index:200;">
-  🔒 Logout
+<!-- Tombol Logout (ikon kecil di pojok kanan atas) -->
+<button id="logoutBtn" onclick="logout()" 
+  style="display:none; position:fixed; top:12px; right:12px; 
+  background:none; border:none; font-size:24px; cursor:pointer; z-index:200; color:white;">
+  🔓
 </button>
 
   <!-- BATTLE ICON -->
@@ -624,6 +626,34 @@ function toggleLogin(){
 
 }
 
+function logout() {
+  auth.signOut().then(() => {
+    alert("👋 Anda telah logout.");
+
+    // Reset semua data game ke default guest
+    coins = 0;
+    pet = {
+      name: "Pet",
+      level: 1,
+      exp: 0,
+      stage: "egg",
+      owner: "Guest"
+    };
+    inventory = {}; // kosongkan item
+
+    // Perbarui tampilan
+    updateUI();
+
+    // Sembunyikan tombol logout, tampilkan login box
+    document.getElementById("logoutBtn").style.display = "none";
+    document.getElementById("loginBox").style.display = "block";
+
+    // Bersihkan cache login
+    window.localStorage.removeItem("emailForSignIn");
+  }).catch((error) => {
+    alert("❌ Gagal logout: " + error.message);
+  });
+}
 
 
 function getTotalPower(){
@@ -705,45 +735,31 @@ function showMiniBubble(text){
 
 
 function updateUI(){
-
+  document.getElementById("coinLabel").innerText = coins;
+  document.getElementById("petName").innerText = pet.name;
+  document.getElementById("levelLabel").innerText = "Lv " + pet.level;
+  document.getElementById("ownerLabel").innerText = "👤 " + pet.owner;
+  
   document.getElementById("level").textContent=pet.level;
-
   document.getElementById("pet").src=getPetImage(pet.stage);
-
   document.getElementById("petName").textContent = pet.name;
-
 document.getElementById("ownerName").textContent = pet.owner;
-
 document.getElementById("totalPower").textContent = getTotalPower();
 
 
-
   const bars=document.querySelectorAll("#thermometer .bar");
-
   const activeBars=Math.round(pet.hunger/10);
-
   bars.forEach((bar,i)=>{ i<activeBars?bar.classList.add("active"):bar.classList.remove("active"); });
-
   const expBar=document.getElementById("expBar"); expBar.style.width=Math.min(100,pet.exp)+"%"; expBar.textContent="EXP "+Math.min(100,pet.exp)+"%";
-
   document.getElementById("coinDisplay").textContent="💰 "+(pet.coins||0);
-
   Object.keys(foodStock).forEach(f=>{
-
   document.getElementById("count-"+f).textContent = foodStock[f];
-
   const slot = document.querySelector(`.slot[data-food='${f}']`);
-
   if(foodStock[f] <= 0){
-
     slot.classList.add("disabled");
-
   } else {
-
     slot.classList.remove("disabled");
-
   }
-
 });
 
 
@@ -1531,7 +1547,21 @@ function loadUserData(uid) {
     }
   });
 }
-
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "block";
+    loadUserData(user.uid);
+  } else {
+    // Reset otomatis jika tidak ada user
+    pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
+    coins = 0;
+    inventory = {};
+    updateUI();
+    document.getElementById("loginBox").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "none";
+  }
+});
 
 // === AUTO-SAVE SETIAP 30 DETIK (opsional) ===
 setInterval(() => {
