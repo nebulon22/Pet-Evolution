@@ -784,6 +784,7 @@ if (pet.hunger <= 0) {
   petImg.style.animation = "idleMotion 6s ease-in-out infinite";
 
 }
+setupDrag(); // pastikan drag aktif ulang setiap update UI
 
 }
 
@@ -1340,11 +1341,11 @@ function drawStatsChart(){
 
 setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
 
+window.onload = () => {
+  updateUI();
+  setupDrag();
+};
 
-
-updateUI();
-
-setupDrag();
 
 
 
