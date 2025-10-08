@@ -714,6 +714,8 @@ if (pet.hunger <= 0) {
 
 }
 setupDrag(); // pastikan drag aktif ulang setiap update UI
+document.getElementById("feedBtn").disabled = false;
+document.getElementById("playBtn").disabled = false;
 
 }
 
@@ -848,16 +850,22 @@ function evolvePet() {
   if (evoAnimating) return;
   evoAnimating = true;
 
-  document.getElementById("feedBtn").disabled = true;
-  document.getElementById("playBtn").disabled = true;
-  document.getElementById("evoBtn").style.display = "none";
+  const feedBtn = document.getElementById("feedBtn");
+  const playBtn = document.getElementById("playBtn");
+  const evoBtn  = document.getElementById("evoBtn");
+  const petImg  = document.getElementById("pet");
+  const glow    = document.getElementById("evoGlow");
 
-  const petImg = document.getElementById("pet");
-  const glow = document.getElementById("evoGlow");
+  feedBtn.disabled = true;
+  playBtn.disabled = true;
+  evoBtn.disabled = true;
+  evoBtn.style.display = "none";
   glow.style.display = "block";
+
   playSound("soundEvo");
   petImg.classList.add("evo-pulse");
 
+  // === Animasi evolusi 3 detik ===
   setTimeout(() => {
     petImg.classList.remove("evo-pulse");
 
@@ -873,16 +881,14 @@ function evolvePet() {
 
     updateUI();
 
+    // === Aktifkan tombol kembali setelah animasi selesai ===
     setTimeout(() => {
-      petImg.classList.remove('evo-pop');
       evoAnimating = false;
-      document.getElementById('evoBtn').disabled = false;
-      document.getElementById("feedBtn").disabled = false;
-      document.getElementById("playBtn").disabled = false;
+      feedBtn.disabled = false;
+      playBtn.disabled = false;
     }, 1000);
   }, 3000);
 }
-
 
 function resetGame(){
   // Hapus semua data di localStorage
