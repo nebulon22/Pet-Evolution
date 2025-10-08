@@ -1086,6 +1086,20 @@ function startDrag(ev,foodType){
 
 }
 
+function setupButtons() {
+  const feedBtn = document.getElementById("feedBtn");
+  const playBtn = document.getElementById("playBtn");
+
+  if (feedBtn && !feedBtn.dataset.bound) {
+    feedBtn.addEventListener("click", Pet);
+    feedBtn.dataset.bound = "true";
+  }
+
+  if (playBtn && !playBtn.dataset.bound) {
+    playBtn.addEventListener("click", playPet);
+    playBtn.dataset.bound = "true";
+  }
+}
 
 
 function toggleShop(){
@@ -1301,6 +1315,7 @@ setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.ra
 window.onload = () => {
   updateUI();
   setupDrag();
+  setupButtons();
 };
 
 
