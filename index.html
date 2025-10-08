@@ -1461,14 +1461,14 @@ function sendLoginLink() {
   }
 
   const actionCodeSettings = {
-    url: "https://nebulon22.github.io/Pet-Evolution/index.html", // domain tujuan kamu
+    url: "https://nebulon22.github.io/Pet-Evolution/index.html",
     handleCodeInApp: true
   };
 
   auth.sendSignInLinkToEmail(email, actionCodeSettings)
     .then(() => {
       alert("✅ Link OTP sudah dikirim ke " + email + "\nCek inbox atau folder spam.");
-      window.localStorage.setItem("emailForSignIn", email);
+      localStorage.setItem("emailForSignIn", email);
     })
     .catch((error) => {
       alert("❌ Gagal kirim OTP: " + error.message);
@@ -1478,15 +1478,13 @@ function sendLoginLink() {
 
 // === CEK LINK LOGIN (saat user klik dari email) ===
 if (auth.isSignInWithEmailLink(window.location.href)) {
-  let email = window.localStorage.getItem("emailForSignIn");
-  if (!email) {
-    email = window.prompt("Masukkan email Anda untuk verifikasi:");
-  }
+  let email = localStorage.getItem("emailForSignIn");
+  if (!email) email = prompt("Masukkan email Anda untuk verifikasi:");
 
   auth.signInWithEmailLink(email, window.location.href)
     .then((result) => {
       alert("✅ Login berhasil sebagai: " + result.user.email);
-      window.localStorage.removeItem("emailForSignIn");
+      localStorage.removeItem("emailForSignIn");
       document.getElementById("loginBox").style.display = "none";
       document.getElementById("logoutBtn").style.display = "block";
       loadUserData(result.user.uid);
@@ -1497,13 +1495,25 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
 }
 
 
-// === OBSERVER LOGIN STATE (agar tetap login setelah reload) ===
+// === OBSERVER LOGIN STATE ===
 auth.onAuthStateChanged((user) => {
   if (user) {
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("logoutBtn").style.display = "block";
     loadUserData(user.uid);
   } else {
+    // 🧩 RESET OTOMATIS SAAT LOGOUT
+    pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
+    coins = 0;
+    inventory = {};
+    foodStock = { meat: 100, fruit: 100, leaf: 100 };
+    evoAnimating = false;
+    selectedFood = null;
+
+    // bersihkan localstorage supaya game benar-benar kosong
+    localStorage.clear();
+
+    updateUI();
     document.getElementById("loginBox").style.display = "block";
     document.getElementById("logoutBtn").style.display = "none";
   }
@@ -1514,8 +1524,20 @@ auth.onAuthStateChanged((user) => {
 function logout() {
   auth.signOut().then(() => {
     alert("👋 Anda telah logout.");
-    document.getElementById("loginBox").style.display = "block";
+
+    // reset data ke mode guest
+    pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
+    coins = 0;
+    inventory = {};
+    foodStock = { meat: 100, fruit: 100, leaf: 100 };
+    evoAnimating = false;
+    selectedFood = null;
+    localStorage.clear();
+
+    updateUI();
+
     document.getElementById("logoutBtn").style.display = "none";
+    document.getElementById("loginBox").style.display = "block";
   }).catch((error) => {
     alert("❌ Gagal logout: " + error.message);
   });
@@ -1525,11 +1547,11 @@ function logout() {
 // === SIMPAN DATA USER KE FIRESTORE ===
 function saveUserData(uid) {
   db.collection("users").doc(uid).set({
-    coins: coins,
-    inventory: inventory,
-    pet: pet
+    pet: pet,
+    foodStock: foodStock,
+    coins: pet.coins
   })
-  .then(() => console.log("Data tersimpan ke cloud"))
+  .then(() => console.log("☁️ Data tersimpan ke cloud"))
   .catch((err) => console.error("Gagal simpan data:", err));
 }
 
@@ -1539,41 +1561,25 @@ function loadUserData(uid) {
   db.collection("users").doc(uid).get().then((doc) => {
     if (doc.exists) {
       const data = doc.data();
-      coins = data.coins || 0;
-      inventory = data.inventory || {};
       pet = data.pet || pet;
+      foodStock = data.foodStock || foodStock;
+      pet.coins = data.coins || 0;
       updateUI();
       console.log("✅ Data user dimuat dari cloud");
     } else {
-      console.log("🔰 User baru, buat data default");
+      console.log("🔰 User baru — membuat data default");
       saveUserData(uid);
     }
   });
 }
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "block";
-    loadUserData(user.uid);
-  } else {
-    // Reset otomatis jika tidak ada user
-    pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
-    coins = 0;
-    inventory = {};
-    updateUI();
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("logoutBtn").style.display = "none";
-  }
-});
 
-// === AUTO-SAVE SETIAP 30 DETIK (opsional) ===
+
+// === AUTO-SAVE SETIAP 30 DETIK ===
 setInterval(() => {
   const user = auth.currentUser;
   if (user) saveUserData(user.uid);
 }, 30000);
-
 </script>
-
   
 </body>
 </html>
