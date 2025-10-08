@@ -1312,18 +1312,9 @@ function drawStatsChart(){
 
 setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
 
-window.onload = () => {
-  updateUI();
-  setupDrag();
-  setupButtons();
 };
 
-
-
-
 const petImg = document.getElementById("pet");
-
-
 
 function tapEffect(){
   petImg.style.transition = "transform 0.4s ease, filter 0.4s ease";
@@ -1337,6 +1328,11 @@ function tapEffect(){
 
 petImg.addEventListener("click", tapEffect);
 petImg.addEventListener("touchstart", tapEffect);
+  window.onload = () => {
+  updateUI();
+  setupDrag();
+  setupButtons();
+  };
 </script>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
