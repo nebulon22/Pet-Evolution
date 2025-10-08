@@ -735,16 +735,12 @@ function showMiniBubble(text){
 
 
 function updateUI(){
-  document.getElementById("coinLabel").innerText = coins;
-  document.getElementById("petName").innerText = pet.name;
-  document.getElementById("levelLabel").innerText = "Lv " + pet.level;
-  document.getElementById("ownerLabel").innerText = "👤 " + pet.owner;
   
   document.getElementById("level").textContent=pet.level;
   document.getElementById("pet").src=getPetImage(pet.stage);
   document.getElementById("petName").textContent = pet.name;
-document.getElementById("ownerName").textContent = pet.owner;
-document.getElementById("totalPower").textContent = getTotalPower();
+  document.getElementById("ownerName").textContent = pet.owner;
+  document.getElementById("totalPower").textContent = getTotalPower();
 
 
   const bars=document.querySelectorAll("#thermometer .bar");
