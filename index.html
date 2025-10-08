@@ -405,11 +405,18 @@
     <button onclick="sendLoginLink()">Kirim Link OTP</button>
     <button onclick="document.getElementById('loginBox').style.display='none'">Tutup</button>
   </div>
-<!-- Tombol Logout (ikon kecil di pojok kanan atas) -->
+
+<!-- Tombol Logout (ikon SVG kecil) -->
 <button id="logoutBtn" onclick="logout()" 
   style="display:none; position:fixed; top:12px; right:12px; 
-  background:none; border:none; font-size:24px; cursor:pointer; z-index:200; color:white;">
-  🔓
+  background:none; border:none; cursor:pointer; z-index:200;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" 
+       fill="none" stroke="white" stroke-width="2" stroke-linecap="round" 
+       stroke-linejoin="round" width="28" height="28">
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+    <polyline points="16 17 21 12 16 7"/>
+    <line x1="21" y1="12" x2="9" y2="12"/>
+  </svg>
 </button>
 
   <!-- BATTLE ICON -->
