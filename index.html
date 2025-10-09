@@ -3,7 +3,7 @@
 <head>
 
   <title>Game Pet</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
   body {
     margin:0; text-align:center; background:#2e7d32; color:white;
@@ -434,7 +434,9 @@
     <button onclick="startBattle()">Mulai</button>
     <button onclick="toggleBattle()">Tutup</button>
   </div>
-
+  
+ <div id="gameContainer">
+    <div id="gameContent">
   <!-- Pet area -->
 <div class="pet-wrapper" id="petWrapper">
   <div class="thermometer" id="thermometer">
@@ -487,7 +489,8 @@
     <div class="slot empty"></div>
     <div class="slot empty"></div>
   </div>
-
+</div>
+  
   <!-- Suara -->
   <audio id="sound" src="sounds/feed.mp3" preload="auto"></audio>
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
