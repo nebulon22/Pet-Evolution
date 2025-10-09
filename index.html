@@ -625,114 +625,35 @@ function toggleBattle(){
 
 
 function startBattle(){
-
   let myPower = getTotalPower();
-
   let enemyPower = 100; // dummy sementara
 
-  
-
   if(myPower >= enemyPower){
-
     showBubble("🏆 Kamu menang! +20 koin");
-
     pet.coins += 20;
-
   } else {
-
     showBubble("💀 Kalah... coba lagi!");
-
   }
-
   updateUI();
-
   toggleBattle();
-
 }
-
-
-
-
 
 function showMiniBubble(text){
-
   const b = document.createElement("div");
-
   b.className = "mini-bubble";
-
   b.textContent = text;
-
   document.body.appendChild(b);
-
   setTimeout(()=> b.remove(), 5000);
-
-}
-
-
-
-function updateUI(){
-  
-  document.getElementById("level").textContent=pet.level;
-  document.getElementById("pet").src=getPetImage(pet.stage);
-  document.getElementById("petName").textContent = pet.name;
-  document.getElementById("ownerName").textContent = pet.owner;
-  document.getElementById("totalPower").textContent = getTotalPower();
-
-
-  const bars=document.querySelectorAll("#thermometer .bar");
-  const activeBars=Math.round(pet.hunger/10);
-  bars.forEach((bar,i)=>{ i<activeBars?bar.classList.add("active"):bar.classList.remove("active"); });
-  const expBar=document.getElementById("expBar"); expBar.style.width=Math.min(100,pet.exp)+"%"; expBar.textContent="EXP "+Math.min(100,pet.exp)+"%";
-  document.getElementById("coinDisplay").textContent="💰 "+(pet.coins||0);
-  Object.keys(foodStock).forEach(f=>{
-  document.getElementById("count-"+f).textContent = foodStock[f];
-  const slot = document.querySelector(`.slot[data-food='${f}']`);
-  if(foodStock[f] <= 0){
-    slot.classList.add("disabled");
-  } else {
-    slot.classList.remove("disabled");
-  }
-});
-
-
-
-  localStorage.setItem("petData",JSON.stringify(pet));
-
-  const petImg = document.getElementById("pet");
-
-if (pet.hunger <= 0) {
-
-  petImg.classList.add("hungry");
-
-  petImg.style.animation = "hungry-shake 0.5s infinite";
-
-} else {
-
-  petImg.classList.remove("hungry");
-
-  petImg.style.animation = "idleMotion 6s ease-in-out infinite";
-
-}
-setupDrag(); // pastikan drag aktif ulang setiap update UI
-document.getElementById("feedBtn").disabled = false;
-document.getElementById("playBtn").disabled = false;
-
 }
 
 
 
 function getPetImage(stage){
-
   switch(stage){
-
     case "egg": return "images/egg.png";
-
     case "chick": return "images/chick.png";
-
     case "rooster": return "images/rooster.png";
-
     case "phoenix": return "images/phoenix.png";
-
   }
 
 }
@@ -890,39 +811,7 @@ function evolvePet() {
   }, 3000);
 }
 
-function resetGame(){
-  // Hapus semua data di localStorage
-  localStorage.removeItem("petData");
 
-  localStorage.removeItem("foodStock");
-
-
-
-  // Reset pet
-
-  pet = {
-
-    level:1, exp:0, hunger:50, stage:"egg", coins:0,
-
-    stats:{att:10,def:10,spd:10,acc:10,crit:10},
-
-    statPoints:0, name:"Petku", owner:"Player1"
-
-  };
-
-
-
-  // Reset stok makanan
-
-  foodStock = {meat:100, fruit:100, leaf:100};
-
-  localStorage.setItem("foodStock", JSON.stringify(foodStock));
-
-
-
-  updateUI();
-
-}
 
 
 
@@ -930,68 +819,98 @@ function playWithPet(){
   const btn = document.getElementById("playBtn");
   if(btn.disabled) return; // kalau masih cooldown
 
-
-
   // Kurangi hunger
-
   pet.hunger = Math.max(0, pet.hunger - 10);
-
   updateUI();
 
-
-
   // Ambil pet
-
   const petImg = document.getElementById("pet");
-
-
-
   // Stop animasi idle/hungry, lalu jalankan jump
-
   petImg.style.animation = "petJump 1s ease-out";
-
   showBubble("🎮 Bermain seru! Hunger -10%");
-
-
-
   setTimeout(()=>{
-
     // kembalikan ke idleMotion atau hungry-shake sesuai kondisi
-
     if(pet.hunger <= 0){
-
       petImg.style.animation = "hungry-shake 0.6s infinite";
-
     } else {
-
       petImg.style.animation = "idleMotion 6s ease-in-out infinite";
-
     }
-
   },1000);
 
-
-
   // Cooldown 5 detik
-
   btn.disabled = true;
-
   btn.textContent = "⏳ Tunggu...";
-
   setTimeout(()=>{
-
     btn.disabled = false;
-
     btn.textContent = "🎮 Play";
-
   },5000);
-
 }
 
+function updateUI() {
+  // === STATUS DASAR PET ===
+  document.getElementById("levelText").textContent = "Lv " + pet.level;
+  document.getElementById("coinText").textContent = pet.coins;
+  document.getElementById("hungerBar").style.width = pet.hunger + "%";
+  document.getElementById("expBar").style.width = pet.exp + "%";
+
+  // === STAGE PET ===
+  const petImg = document.getElementById("pet");
+  if (pet.stage === "egg") petImg.src = "images/pet_egg.png";
+  else if (pet.stage === "chick") petImg.src = "images/pet_chick.png";
+  else if (pet.stage === "rooster") petImg.src = "images/pet_rooster.png";
+  else if (pet.stage === "phoenix") petImg.src = "images/pet_phoenix.png";
+
+  // === STOK MAKANAN DI SLOT ===
+  document.querySelectorAll(".slot[data-food]").forEach(slot => {
+    const type = slot.dataset.food;
+    const count = foodStock[type] || 0;
+    slot.querySelector(".count").textContent = count;
+  });
+
+  // === TAMPILAN PELAT MAKANAN ===
+  const plateFood = document.getElementById("plateFood");
+  if (selectedFood && foodStock[selectedFood] > 0) {
+    plateFood.src = "images/" + selectedFood + ".png";
+    plateFood.style.display = "block";
+  } else {
+    plateFood.style.display = "none";
+  }
+
+  // === TAMPILKAN TOMBOL EVO ===
+  const evoBtn = document.getElementById("evoBtn");
+  const evoGlow = document.getElementById("evoGlow");
+  if (
+    (pet.level === 10 && pet.stage === "egg" && pet.exp >= 100) ||
+    (pet.level === 20 && pet.stage === "chick" && pet.exp >= 100) ||
+    (pet.level === 30 && pet.stage === "rooster" && pet.exp >= 100)
+  ) {
+    evoBtn.style.display = "inline-block";
+    evoGlow.style.display = "block";
+  } else {
+    evoBtn.style.display = "none";
+    evoGlow.style.display = "none";
+  }
+
+  // === PERBARUI TAMPILAN NAMA PET (JIKA ADA LABEL) ===
+  const petNameEl = document.getElementById("petName");
+  if (petNameEl) petNameEl.textContent = pet.name;
+
+  // === AKTIFKAN ULANG TOMBOL FEED & PLAY (FIX) ===
+  if (!evoAnimating) {
+    const feedBtn = document.getElementById("feedBtn");
+    const playBtn = document.getElementById("playBtn");
+    if (feedBtn) feedBtn.disabled = false;
+    if (playBtn) playBtn.disabled = false;
+  }
+
+  // === SIMPAN DATA OTOMATIS KE LOCAL STORAGE ===
+  localStorage.setItem("petData", JSON.stringify(pet));
+  localStorage.setItem("foodStock", JSON.stringify(foodStock));
+}
+
+ 
 function startSparkle(){
-
   const w=document.getElementById("petWrapper");
-
   for(let i=0;i<15;i++){
 
     setTimeout(()=>{
@@ -1017,19 +936,12 @@ function startSparkle(){
 
 
 function setupDrag(){
-
   document.querySelectorAll('.slot[data-food]').forEach(item=>{
-
     const foodType=item.dataset.food;
-
     const handler=(ev)=>{ ev.preventDefault(); startDrag(ev,foodType); };
-
     item.addEventListener('touchstart',handler);
-
     item.addEventListener('mousedown',handler);
-
   });
-
 }
 
 // === LOGOUT SYSTEM ===
@@ -1048,35 +960,21 @@ function cancelLogout() {
   document.getElementById("logoutPopup").style.display = "none";
 }
 
-
-
-
 function startDrag(ev,foodType){
-
   ev.preventDefault();
-
   const clone=document.createElement('img'); clone.src='images/'+foodType+'.png'; clone.style.position='fixed'; clone.style.width='60px'; clone.style.opacity=0.8; clone.style.zIndex=1000; document.body.appendChild(clone);
-
   function moveHandler(e){ const t=e.touches?e.touches[0]:e; clone.style.left=t.clientX-30+'px'; clone.style.top=t.clientY-30+'px'; }
-
   function endHandler(e){ const t=e.changedTouches?e.changedTouches[0]:e;
 
     const plate=document.getElementById('plateWrapper').getBoundingClientRect();
-
     const dx=t.clientX-(plate.left+plate.width/2); const dy=t.clientY-(plate.top+plate.height/2-15);
-
     if(Math.sqrt(dx*dx+dy*dy)<=plate.width*0.4 && foodStock[foodType]>0){ selectedFood=foodType; const pf=document.getElementById('plateFood'); pf.src='images/'+foodType+'.png'; pf.style.display='block'; showBubble('🍽️ '+foodType+' siap di piring!'); }
-
     clone.remove(); document.removeEventListener('mousemove',moveHandler); document.removeEventListener('mouseup',endHandler);
-
     document.removeEventListener('touchmove',moveHandler); document.removeEventListener('touchend',endHandler);
 
   }
-
   document.addEventListener('mousemove',moveHandler); document.addEventListener('mouseup',endHandler);
-
   document.addEventListener('touchmove',moveHandler); document.addEventListener('touchend',endHandler);
-
 }
 
 function setupButtons() {
@@ -1094,32 +992,37 @@ function setupButtons() {
   }
 }
 
+function resetGame(){
+  // Hapus semua data di localStorage
+  localStorage.removeItem("petData");
+  localStorage.removeItem("foodStock");
 
+  // Reset pet
+  pet = {
+    level:1, exp:0, hunger:50, stage:"egg", coins:0,
+    stats:{att:10,def:10,spd:10,acc:10,crit:10},
+    statPoints:0, name:"Petku", owner:"Player1"
+  };
+
+  // Reset stok makanan
+  foodStock = {meat:100, fruit:100, leaf:100};
+  localStorage.setItem("foodStock", JSON.stringify(foodStock));
+
+  updateUI();
+}
+  
 function toggleShop(){
-
   const popup=document.getElementById("shopPopup");
-
   popup.style.display=(popup.style.display==="block"?"none":"block");
-
 }
 
-
-
 function buyItem(type,price){
-
   if(pet.coins < price){
-
     showBubble("Koin tidak cukup!");
-
     return;
-
   }
-
   pet.coins -= price;
-
   foodStock[type]++;
-
-
 
   // 🔊 Mainkan suara beli
 
