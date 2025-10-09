@@ -932,18 +932,19 @@ function setupDrag(){
   });
 }
   
-  function resizeGame() {
-  const baseWidth = 800;
-  const baseHeight = 600;
+function resizeGame() {
+  // Ukuran dasar disesuaikan ke rasio tinggi HP (portrait)
+  const baseWidth = 540;   // ukuran lebar dasar game
+  const baseHeight = 960;  // ukuran tinggi dasar game
+
   const scaleX = window.innerWidth / baseWidth;
   const scaleY = window.innerHeight / baseHeight;
   const scale = Math.min(scaleX, scaleY);
+
+  // Terapkan skala ke CSS
   document.documentElement.style.setProperty('--scale', scale);
 }
 
-window.addEventListener('resize', resizeGame);
-window.addEventListener('orientationchange', resizeGame);
-window.addEventListener('load', resizeGame);
 
 // === LOGOUT SYSTEM ===
 document.getElementById("logoutBtn").onclick = function() {
@@ -1096,47 +1097,26 @@ function updateStatUI(){
     // label jumlah stat
 
     const label = document.createElement("span");
-
     label.textContent = key.toUpperCase() + ": " + pet.stats[key] + " ";
 
-
-
     // tombol tambah
-
     const b = document.createElement("button");
-
     b.textContent = "+";
-
     b.disabled = pet.statPoints <= 0;
-
     b.onclick = ()=>{
-
   pet.stats[key]++;
-
   pet.statPoints--;
-
   updateStatUI();
-
   drawStatsChart();
-
   updateUI();
-
   showMiniBubble("+"+key.toUpperCase()); // ✅ mini bubble muncul
 
 };
 
-
-
-
-
     row.appendChild(label);
-
     row.appendChild(b);
-
     btns.appendChild(row);
-
   });
-
 }
 
 
@@ -1144,75 +1124,38 @@ function updateStatUI(){
 
 
 function drawStatsChart(){
-
   const c=document.getElementById("statsChart");
-
   const ctx=c.getContext("2d");
-
   ctx.clearRect(0,0,c.width,c.height);
-
   const keys=Object.keys(pet.stats);
-
   const maxVal=50; // skala maksimum
-
   const cx=c.width/2, cy=c.height/2, r=80;
-
-
-
   // draw polygon background
-
   ctx.strokeStyle="gray"; ctx.beginPath();
-
   keys.forEach((k,i)=>{
-
     const angle=(Math.PI*2/keys.length)*i - Math.PI/2;
-
     const x=cx+Math.cos(angle)*r;
-
     const y=cy+Math.sin(angle)*r;
-
     i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-
   });
 
   ctx.closePath(); ctx.stroke();
 
-
-
   // draw stat area
-
   ctx.fillStyle="rgba(0,150,255,0.5)"; ctx.beginPath();
-
   keys.forEach((k,i)=>{
-
     const val=pet.stats[k];
-
     const ratio=Math.min(1,val/maxVal);
-
     const angle=(Math.PI*2/keys.length)*i - Math.PI/2;
-
     const x=cx+Math.cos(angle)*r*ratio;
-
     const y=cy+Math.sin(angle)*r*ratio;
-
     i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-
   });
-
   ctx.closePath(); ctx.fill();
-
 }
 
-
-
 // =================================================
-
-
-
 setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
-
-
-
 const petImg = document.getElementById("pet");
 
 function tapEffect(){
