@@ -1340,23 +1340,46 @@ function logout() {
   if (!confirm("Apakah yakin ingin logout?")) return;
 
   auth.signOut().then(() => {
-    alert("👋 Anda telah logout.");
-    // reset data ke mode guest
+    // === Bersihkan data game ===
     pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
     coins = 0;
     inventory = {};
     foodStock = { meat: 100, fruit: 100, leaf: 100 };
     evoAnimating = false;
     selectedFood = null;
+
+    // === Hapus semua data lokal ===
     localStorage.clear();
 
+    // === Tambahan penting: hapus cache Firebase Auth (Chrome fix) ===
+    try {
+      const key = "firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey;
+      localStorage.removeItem(key);
+    } catch (e) {
+      console.warn("Tidak bisa hapus cache Firebase:", e);
+    }
+
+    // === Reset tampilan ===
     updateUI();
-    document.getElementById("logoutBtn").style.display = "none";
-    document.getElementById("loginBox").style.display = "block";
-  }).catch((error) => {
+    const logoutBtn = document.getElementById("logoutBtn");
+    const loginBox = document.getElementById("loginBox");
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (loginBox) loginBox.style.display = "block";
+
+    alert("👋 Anda telah logout.");
+    showBubble("Anda keluar dari akun.");
+  })
+  .catch((error) => {
     alert("❌ Gagal logout: " + error.message);
+  })
+  .finally(() => {
+    // Pastikan status auth di-refresh untuk Chrome
+    setTimeout(() => {
+      location.reload();
+    }, 300);
   });
 }
+
 
 
 // === SIMPAN DATA USER KE FIRESTORE ===
