@@ -346,14 +346,7 @@
 .thermo-label {
   pointer-events: none;
 }
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #222;
-}
+
 
 #gameContainer {
   position: relative;
@@ -420,16 +413,6 @@ html, body {
 
   <!-- BATTLE ICON -->
   <div id="battleIcon" onclick="toggleBattle()">⚔️</div>
-  <!-- Background Layer -->
-  <div id="background">
-    <div class="bg-sky"></div>
-    <img src="images/cloud.png" class="cloud">
-    <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
-    <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
-    <img src="images/grass.png" class="grass" style="left:10%;">
-    <img src="images/grass.png" class="grass" style="left:40%;">
-    <img src="images/grass.png" class="grass" style="left:70%;">
-  </div>
 
   <!-- Popup Shop -->
   <div id="shopPopup">
@@ -462,6 +445,16 @@ html, body {
   
  <div id="gameContainer">
     <div id="gameContent">
+      <!-- Background Layer -->
+  <div id="background">
+    <div class="bg-sky"></div>
+    <img src="images/cloud.png" class="cloud">
+    <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
+    <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
+    <img src="images/grass.png" class="grass" style="left:10%;">
+    <img src="images/grass.png" class="grass" style="left:40%;">
+    <img src="images/grass.png" class="grass" style="left:70%;">
+  </div>
   <!-- Pet area -->
 <div class="pet-wrapper" id="petWrapper">
   <div class="thermometer" id="thermometer">
