@@ -185,6 +185,9 @@
     text-shadow:1px 1px 2px black;
     white-space: nowrap;
     }
+.bar {
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
 
     #labelTop { top:1px; } #labelBottom { bottom:1px; }
     .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444; border-radius:10px; overflow:hidden; height:24px; }
@@ -844,12 +847,27 @@ function updateUI() {
   const expBar = document.getElementById("expBar");
   expBar.style.width = pet.exp + "%";
   expBar.textContent = "EXP " + pet.exp.toFixed(1) + "%";
+// === BAR HUNGER (THERMOMETER) ===
+const thermo = document.getElementById("thermometer");
+if (thermo) {
+  const bars = thermo.querySelectorAll(".bar");
+  const label = thermo.querySelector(".thermo-label");
+  const hungerVal = isNaN(pet.hunger) ? 0 : pet.hunger;
 
-  // === BAR HUNGER (THERMOMETER) ===
-  const thermo = document.getElementById("thermometer");
-  thermo.style.height = pet.hunger + "%";
-  thermo.textContent = Math.floor(pet.hunger) + "%";
+  // Hitung berapa batang aktif
+  const activeCount = Math.round((hungerVal / 100) * bars.length);
 
+  // Aktifkan batang sesuai nilai hunger
+  bars.forEach((bar, i) => {
+    if (i < activeCount) bar.classList.add("active");
+    else bar.classList.remove("active");
+  });
+
+  // Perbarui angka % di tengah thermometer
+  if (label) label.textContent = Math.floor(hungerVal) + "%";
+}
+
+  
   // === Gambar Pet ===
   const petImg = document.getElementById("pet");
   petImg.src = getPetImage(pet.stage);
