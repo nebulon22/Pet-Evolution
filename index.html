@@ -682,61 +682,38 @@ function getPetImage(stage){
     case "rooster": return "images/rooster.png";
     case "phoenix": return "images/phoenix.png";
   }
-
 }
-
-
 
 function showBubble(text){
-
   const b=document.getElementById("bubble");
-
   b.textContent=text;
-
   b.style.display="block";
-
   setTimeout(()=>b.style.display="none",2500);
-
 }
-
-
 
 function playSound(id){
-
   const s=document.getElementById(id);
-
   if(s){ try{s.currentTime=0;s.play();} catch(e){} }
-
 }
-
-
 
 // ✅ Perbaikan Pet
 // === 5. Fungsi utama memberi makan Pet ===
 function Pet() {
-  if (!selectedFood) {
-    showBubble("Pilih makanan dulu!");
-    return;
-  }
-  if (foodStock[selectedFood] <= 0) {
-    showBubble("Stok habis!");
-    return;
-  }
+  if (!selectedFood) return showBubble("Pilih makanan dulu!");
+  if (foodStock[selectedFood] <= 0) return showBubble("Stok habis!");
 
-  // ✅ Naikkan hunger + kurangi stok + tambah koin
   const hungerGain = 20;
-  pet.hunger = Math.min(100, pet.hunger + hungerGain);
-  foodStock[selectedFood]--;
-  pet.coins++;
-
-  // Hitung EXP
   const expGain =
     selectedFood === "meat" ? 10 :
     selectedFood === "fruit" ? 5 : 2.5;
 
+  // Tambah hunger dan EXP
+  pet.hunger = Math.min(100, pet.hunger + hungerGain);
   pet.exp = Math.min(100, pet.exp + expGain);
+  foodStock[selectedFood]--;
+  pet.coins++;
 
-  // Animasi teks EXP terbang
+  // Efek teks
   const slotDiv = document.querySelector(`.slot[data-food='${selectedFood}']`);
   const fly = document.createElement("span");
   fly.className = "flytext";
@@ -744,8 +721,16 @@ function Pet() {
   slotDiv.appendChild(fly);
   setTimeout(() => fly.remove(), 1000);
 
-  // === Level up ===
-  if (pet.exp >= 100) {
+  playSound("sound");
+  showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
+
+  // Jika EXP penuh tapi belum naik level
+  if (pet.exp === 100) {
+    showBubble("EXP penuh — kasih makan sekali lagi untuk naik level!");
+  }
+
+  // Jika lewat dari 100, baru naik level
+  if (pet.exp > 100) {
     pet.exp = 0;
     pet.level++;
     pet.coins += 5;
@@ -754,48 +739,38 @@ function Pet() {
     showBubble("Level naik! Sekarang level " + pet.level);
     showCoinBubble("+5 💰");
     showStatBubble("+10 📊 Stats");
-
-    // Cek evolusi
-    if (
-      (pet.level === 10 && pet.stage === "egg") ||
-      (pet.level === 20 && pet.stage === "chick") ||
-      (pet.level === 30 && pet.stage === "rooster")
-    ) {
-      document.getElementById("evoBtn").style.display = "inline-block";
-      document.getElementById("evoGlow").style.display = "block";
-      document.getElementById("feedBtn").disabled = true;
-      document.getElementById("playBtn").disabled = true;
-      startSparkle();
-      showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
-    }
-  } else {
-    playSound("sound");
-    showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +${hungerGain}% Hunger!`);
   }
 
-  // Kalau stok habis, bersihkan piring
-  if (foodStock[selectedFood] <= 0) {
-    document.getElementById("plateFood").style.display = "none";
-    selectedFood = null;
+  // Cek evolusi (level 10/20/30 + exp 100%)
+  if (
+    (pet.level === 10 && pet.stage === "egg" && pet.exp >= 100) ||
+    (pet.level === 20 && pet.stage === "chick" && pet.exp >= 100) ||
+    (pet.level === 30 && pet.stage === "rooster" && pet.exp >= 100)
+  ) {
+    document.getElementById("evoBtn").style.display = "inline-block";
+    document.getElementById("evoGlow").style.display = "block";
+    document.getElementById("feedBtn").disabled = true;
+    document.getElementById("playBtn").disabled = true;
+    startSparkle();
+    showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
   }
 
-  // ✅ Simpan dan update UI sekali di akhir
+  // Simpan & update UI
   localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
   updateUI();
 }
 
-
-// === 6. Fungsi evolusi Pet ===
+// === Fungsi evolusi Pet ===
 function evolvePet() {
   if (evoAnimating) return;
   evoAnimating = true;
 
   const feedBtn = document.getElementById("feedBtn");
   const playBtn = document.getElementById("playBtn");
-  const evoBtn  = document.getElementById("evoBtn");
-  const petImg  = document.getElementById("pet");
-  const glow    = document.getElementById("evoGlow");
+  const evoBtn = document.getElementById("evoBtn");
+  const petImg = document.getElementById("pet");
+  const glow = document.getElementById("evoGlow");
 
   feedBtn.disabled = true;
   playBtn.disabled = true;
@@ -806,15 +781,20 @@ function evolvePet() {
   playSound("soundEvo");
   petImg.classList.add("evo-pulse");
 
-  // === Animasi evolusi 3 detik ===
+  // Animasi evolusi
   setTimeout(() => {
     petImg.classList.remove("evo-pulse");
 
+    // Ganti bentuk
     if (pet.stage === "egg") pet.stage = "chick";
     else if (pet.stage === "chick") pet.stage = "rooster";
     else if (pet.stage === "rooster") pet.stage = "phoenix";
 
-    // Reward evolusi
+    // Naik 1 level setelah evolusi
+    pet.level++;
+    pet.exp = 0;
+
+    // Bonus evolusi
     pet.coins += 100;
     pet.statPoints += 15;
     showCoinBubble("+100 💰");
@@ -822,12 +802,12 @@ function evolvePet() {
 
     updateUI();
 
-    // === Aktifkan tombol kembali setelah animasi selesai ===
     setTimeout(() => {
       evoAnimating = false;
       feedBtn.disabled = false;
       playBtn.disabled = false;
-    }, 1000);
+      glow.style.display = "none";
+    }, 1200);
   }, 3000);
 }
 
