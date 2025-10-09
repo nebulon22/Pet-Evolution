@@ -848,26 +848,23 @@ function playWithPet(){
 
 function updateUI() {
   // === STATUS DASAR PET ===
-  document.getElementById("levelText").textContent = "Lv " + pet.level;
-  document.getElementById("coinText").textContent = pet.coins;
-  document.getElementById("hungerBar").style.width = pet.hunger + "%";
+  document.getElementById("level").textContent = pet.level;
+  document.getElementById("coinDisplay").textContent = "💰 " + pet.coins;
   document.getElementById("expBar").style.width = pet.exp + "%";
+  document.getElementById("expBar").textContent = "EXP " + Math.floor(pet.exp) + "%";
 
-  // === STAGE PET ===
+  // === Gambar Pet ===
   const petImg = document.getElementById("pet");
-  if (pet.stage === "egg") petImg.src = "images/pet_egg.png";
-  else if (pet.stage === "chick") petImg.src = "images/pet_chick.png";
-  else if (pet.stage === "rooster") petImg.src = "images/pet_rooster.png";
-  else if (pet.stage === "phoenix") petImg.src = "images/pet_phoenix.png";
+  petImg.src = getPetImage(pet.stage);
 
-  // === STOK MAKANAN DI SLOT ===
+  // === STOK MAKANAN ===
   document.querySelectorAll(".slot[data-food]").forEach(slot => {
     const type = slot.dataset.food;
     const count = foodStock[type] || 0;
     slot.querySelector(".count").textContent = count;
   });
 
-  // === TAMPILAN PELAT MAKANAN ===
+  // === TAMPILKAN MAKANAN DI PIRING ===
   const plateFood = document.getElementById("plateFood");
   if (selectedFood && foodStock[selectedFood] > 0) {
     plateFood.src = "images/" + selectedFood + ".png";
@@ -876,7 +873,7 @@ function updateUI() {
     plateFood.style.display = "none";
   }
 
-  // === TAMPILKAN TOMBOL EVO ===
+  // === CEK KONDISI EVOLUSI ===
   const evoBtn = document.getElementById("evoBtn");
   const evoGlow = document.getElementById("evoGlow");
   if (
@@ -891,24 +888,18 @@ function updateUI() {
     evoGlow.style.display = "none";
   }
 
-  // === PERBARUI TAMPILAN NAMA PET (JIKA ADA LABEL) ===
-  const petNameEl = document.getElementById("petName");
-  if (petNameEl) petNameEl.textContent = pet.name;
-
-  // === AKTIFKAN ULANG TOMBOL FEED & PLAY (FIX) ===
+  // === REAKTIFKAN TOMBOL FEED & PLAY JIKA BUKAN EVOLUSI ===
   if (!evoAnimating) {
-    const feedBtn = document.getElementById("feedBtn");
-    const playBtn = document.getElementById("playBtn");
-    if (feedBtn) feedBtn.disabled = false;
-    if (playBtn) playBtn.disabled = false;
+    document.getElementById("feedBtn").disabled = false;
+    document.getElementById("playBtn").disabled = false;
   }
 
-  // === SIMPAN DATA OTOMATIS KE LOCAL STORAGE ===
+  // === SIMPAN DATA ===
   localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
 }
 
- 
+
 function startSparkle(){
   const w=document.getElementById("petWrapper");
   for(let i=0;i<15;i++){
@@ -987,7 +978,7 @@ function setupButtons() {
   }
 
   if (playBtn && !playBtn.dataset.bound) {
-    playBtn.addEventListener("click", playPet);
+    playBtn.addEventListener("click", playWithPet);
     playBtn.dataset.bound = "true";
   }
 }
