@@ -697,15 +697,17 @@ function Pet() {
   }
 
   // ✅ Naikkan hunger + kurangi stok + tambah koin
-  pet.hunger = Math.min(100, pet.hunger + 20);
+  const hungerGain = 20;
+  pet.hunger = Math.min(100, pet.hunger + hungerGain);
   foodStock[selectedFood]--;
   pet.coins++;
 
-  updateUI(); // update stok slot langsung
-
   // Hitung EXP
-  let expGain = selectedFood === 'meat' ? 10 :
-                selectedFood === 'fruit' ? 5 : 2.5;
+  const expGain =
+    selectedFood === "meat" ? 10 :
+    selectedFood === "fruit" ? 5 : 2.5;
+
+  pet.exp = Math.min(100, pet.exp + expGain);
 
   // Animasi teks EXP terbang
   const slotDiv = document.querySelector(`.slot[data-food='${selectedFood}']`);
@@ -715,30 +717,22 @@ function Pet() {
   slotDiv.appendChild(fly);
   setTimeout(() => fly.remove(), 1000);
 
-  // Tambahkan EXP
-  pet.exp += expGain;
-  updateUI();
-
-  // Cek level up
+  // === Level up ===
   if (pet.exp >= 100) {
-    if (pet.exp === 100) {
-      showBubble("EXP penuh — kasih makan sekali lagi untuk naik level!");
-    } else {
-      pet.exp = 0;
-      pet.level++;
-      pet.coins += 5;
-      pet.statPoints += 10;
-      playSound("soundLevel");
-      showBubble("Level naik! Sekarang level " + pet.level);
-      showCoinBubble("+5 💰");
-      showStatBubble("+10 📊 Stats");
-    }
+    pet.exp = 0;
+    pet.level++;
+    pet.coins += 5;
+    pet.statPoints += 10;
+    playSound("soundLevel");
+    showBubble("Level naik! Sekarang level " + pet.level);
+    showCoinBubble("+5 💰");
+    showStatBubble("+10 📊 Stats");
 
-    // === Cek evolusi ===
+    // Cek evolusi
     if (
-      (pet.level === 10 && pet.exp >= 100 && pet.stage === "egg") ||
-      (pet.level === 20 && pet.exp >= 100 && pet.stage === "chick") ||
-      (pet.level === 30 && pet.exp >= 100 && pet.stage === "rooster")
+      (pet.level === 10 && pet.stage === "egg") ||
+      (pet.level === 20 && pet.stage === "chick") ||
+      (pet.level === 30 && pet.stage === "rooster")
     ) {
       document.getElementById("evoBtn").style.display = "inline-block";
       document.getElementById("evoGlow").style.display = "block";
@@ -749,7 +743,7 @@ function Pet() {
     }
   } else {
     playSound("sound");
-    showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
+    showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +${hungerGain}% Hunger!`);
   }
 
   // Kalau stok habis, bersihkan piring
@@ -758,10 +752,9 @@ function Pet() {
     selectedFood = null;
   }
 
-  // ✅ Simpan data
+  // ✅ Simpan dan update UI sekali di akhir
   localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
-
   updateUI();
 }
 
@@ -811,10 +804,6 @@ function evolvePet() {
   }, 3000);
 }
 
-
-
-
-
 function playWithPet(){
   const btn = document.getElementById("playBtn");
   if(btn.disabled) return; // kalau masih cooldown
@@ -850,21 +839,29 @@ function updateUI() {
   // === STATUS DASAR PET ===
   document.getElementById("level").textContent = pet.level;
   document.getElementById("coinDisplay").textContent = "💰 " + pet.coins;
-  document.getElementById("expBar").style.width = pet.exp + "%";
-  document.getElementById("expBar").textContent = "EXP " + Math.floor(pet.exp) + "%";
+
+  // === BAR EXP ===
+  const expBar = document.getElementById("expBar");
+  expBar.style.width = pet.exp + "%";
+  expBar.textContent = "EXP " + pet.exp.toFixed(1) + "%";
+
+  // === BAR HUNGER (THERMOMETER) ===
+  const thermo = document.getElementById("thermometer");
+  thermo.style.height = pet.hunger + "%";
+  thermo.textContent = Math.floor(pet.hunger) + "%";
 
   // === Gambar Pet ===
   const petImg = document.getElementById("pet");
   petImg.src = getPetImage(pet.stage);
 
-  // === STOK MAKANAN ===
+  // === STOK MAKANAN DI SLOT ===
   document.querySelectorAll(".slot[data-food]").forEach(slot => {
     const type = slot.dataset.food;
     const count = foodStock[type] || 0;
     slot.querySelector(".count").textContent = count;
   });
 
-  // === TAMPILKAN MAKANAN DI PIRING ===
+  // === PELAT MAKANAN ===
   const plateFood = document.getElementById("plateFood");
   if (selectedFood && foodStock[selectedFood] > 0) {
     plateFood.src = "images/" + selectedFood + ".png";
@@ -873,7 +870,7 @@ function updateUI() {
     plateFood.style.display = "none";
   }
 
-  // === CEK KONDISI EVOLUSI ===
+  // === TOMBOL EVOLUSI ===
   const evoBtn = document.getElementById("evoBtn");
   const evoGlow = document.getElementById("evoGlow");
   if (
@@ -888,43 +885,30 @@ function updateUI() {
     evoGlow.style.display = "none";
   }
 
-  // === REAKTIFKAN TOMBOL FEED & PLAY JIKA BUKAN EVOLUSI ===
+  // === AKTIFKAN TOMBOL JIKA TIDAK EVOLUSI ===
   if (!evoAnimating) {
     document.getElementById("feedBtn").disabled = false;
     document.getElementById("playBtn").disabled = false;
   }
 
-  // === SIMPAN DATA ===
+  // === SIMPAN KE LOCAL STORAGE ===
   localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
 }
 
-
 function startSparkle(){
   const w=document.getElementById("petWrapper");
   for(let i=0;i<15;i++){
-
     setTimeout(()=>{
-
       const spark=document.createElement("div");
-
       spark.className="sparkle";
-
       spark.style.left=(Math.random()*200)+"px";
-
       spark.style.top=(Math.random()*200)+"px";
-
       w.appendChild(spark);
-
       setTimeout(()=>spark.remove(),1500);
-
     },i*180);
-
   }
-
 }
-
-
 
 function setupDrag(){
   document.querySelectorAll('.slot[data-food]').forEach(item=>{
