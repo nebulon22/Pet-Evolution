@@ -941,6 +941,8 @@ if (thermo) {
   // === SIMPAN KE LOCAL STORAGE ===
   localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
+if (auth.currentUser) saveUserData(auth.currentUser.uid);
+
 }
 
 function startSparkle(){
@@ -1378,12 +1380,16 @@ function logout() {
 
 
 // === SIMPAN DATA USER KE FIRESTORE ===
+
 function saveUserData(uid) {
+  if (!uid || !pet) return;
+
   db.collection("users").doc(uid).set({
     pet: pet,
     foodStock: foodStock,
-    coins: pet.coins
-  })
+    coins: pet.coins,
+    updatedAt: Date.now()
+  }, { merge: true })
   .then(() => console.log("☁️ Data tersimpan ke cloud"))
   .catch((err) => console.error("Gagal simpan data:", err));
 }
@@ -1394,13 +1400,27 @@ function loadUserData(uid) {
   db.collection("users").doc(uid).get().then((doc) => {
     if (doc.exists) {
       const data = doc.data();
-      pet = data.pet || pet;
-      foodStock = data.foodStock || foodStock;
-      pet.coins = data.coins || 0;
+
+      // Periksa mana yang lebih tinggi: lokal vs cloud
+      const localPet = JSON.parse(localStorage.getItem("petData") || "{}");
+      const localLevel = localPet.level || 1;
+      const cloudLevel = data.pet?.level || 1;
+
+      if (localLevel > cloudLevel) {
+        console.log("📡 Cloud lebih rendah, kirim data lokal ke cloud");
+        saveUserData(uid); // kirim ke cloud data lokal
+      } else {
+        console.log("☁️ Data cloud dimuat (level " + cloudLevel + ")");
+        pet = data.pet || pet;
+        foodStock = data.foodStock || foodStock;
+        pet.coins = data.coins || pet.coins;
+        localStorage.setItem("petData", JSON.stringify(pet));
+        localStorage.setItem("foodStock", JSON.stringify(foodStock));
+      }
+
       updateUI();
-      console.log("✅ Data user dimuat dari cloud");
     } else {
-      console.log("🔰 User baru — membuat data default");
+      console.log("🔰 User baru — membuat data default di cloud");
       saveUserData(uid);
     }
   });
