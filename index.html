@@ -185,9 +185,7 @@
     text-shadow:1px 1px 2px black;
     white-space: nowrap;
     }
-.bar {
-  transition: background 0.3s ease, opacity 0.3s ease;
-}
+
 
     #labelTop { top:1px; } #labelBottom { bottom:1px; }
     .bar-container { width:80vw; max-width:500px; margin:10px auto; background:#444; border-radius:10px; overflow:hidden; height:24px; }
@@ -347,6 +345,13 @@
   animation: sway 3s ease-in-out infinite alternate;
   z-index: -1;
 }
+    
+.bar {
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
+.thermo-label {
+  pointer-events: none;
+}
 
   </style>
 </head>
@@ -366,20 +371,6 @@
       <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
     </div>
   </div>
-
-  <div id="thermometer" class="thermometer">
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <span class="thermo-label">50%</span>
-</div>
 
 
   <!-- POPUP LOGIN EMAIL -->
@@ -451,18 +442,31 @@
   </div>
 
   <!-- Pet area -->
-  <div class="pet-wrapper" id="petWrapper">
-    <div class="thermometer" id="thermometer">
-      <div id="labelTop" class="thermo-label">Kenyang</div>
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-      <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-      <div id="labelBottom" class="thermo-label">Lapar</div>
-    </div>
+<div class="pet-wrapper" id="petWrapper">
+  <div class="thermometer" id="thermometer">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+
+    <!-- label % muncul di tengah -->
+    <span class="thermo-label">0%</span>
+
+    <!-- label teks di bawah -->
+    <div id="labelBottom" class="thermo-label" style="bottom: -1.5em;">Lapar</div>
+  </div>
+</div>
 
     <div class="glow" id="evoGlow"></div>
     <img id="pet" src="images/egg.png">
     <div id="bubble"></div>
-  </div>
+</div>
 
 
 
@@ -853,6 +857,10 @@ function playWithPet(){
 }
 
 function updateUI() {
+  if (isNaN(pet.hunger)) pet.hunger = 0;
+if (isNaN(pet.exp)) pet.exp = 0;
+if (isNaN(pet.coins)) pet.coins = 0;
+
   // === STATUS DASAR PET ===
   document.getElementById("level").textContent = pet.level;
   document.getElementById("coinDisplay").textContent = "💰 " + pet.coins;
@@ -861,26 +869,27 @@ function updateUI() {
   const expBar = document.getElementById("expBar");
   expBar.style.width = pet.exp + "%";
   expBar.textContent = "EXP " + pet.exp.toFixed(1) + "%";
-// === BAR HUNGER (THERMOMETER) ===
+
+  // === BAR HUNGER (THERMOMETER) ===
 const thermo = document.getElementById("thermometer");
 if (thermo) {
   const bars = thermo.querySelectorAll(".bar");
   const label = thermo.querySelector(".thermo-label");
-  const hungerVal = isNaN(pet.hunger) ? 0 : pet.hunger;
-
-  // Hitung berapa batang aktif
+  
+  // Pastikan nilai hunger valid
+  if (isNaN(pet.hunger)) pet.hunger = 0;
+  const hungerVal = Math.max(0, Math.min(100, pet.hunger));
   const activeCount = Math.round((hungerVal / 100) * bars.length);
 
-  // Aktifkan batang sesuai nilai hunger
+  // Aktifkan batang sesuai hunger
   bars.forEach((bar, i) => {
     if (i < activeCount) bar.classList.add("active");
     else bar.classList.remove("active");
   });
 
-  // Perbarui angka % di tengah thermometer
+  // Tampilkan angka % di tengah
   if (label) label.textContent = Math.floor(hungerVal) + "%";
 }
-
   
   // === Gambar Pet ===
   const petImg = document.getElementById("pet");
