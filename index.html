@@ -837,8 +837,8 @@ function playWithPet(){
  // === UPDATE UI ===
 function updateUI() {
   if (isNaN(pet.hunger)) pet.hunger = 0;
-if (isNaN(pet.exp)) pet.exp = 0;
-if (isNaN(pet.coins)) pet.coins = 0;
+  if (isNaN(pet.exp)) pet.exp = 0;
+  if (isNaN(pet.coins)) pet.coins = 0;
 
   // === STATUS DASAR PET ===
   document.getElementById("level").textContent = pet.level;
@@ -850,26 +850,20 @@ if (isNaN(pet.coins)) pet.coins = 0;
   expBar.textContent = "EXP " + pet.exp.toFixed(1) + "%";
 
   // === BAR HUNGER (THERMOMETER) ===
-const thermo = document.getElementById("thermometer");
-if (thermo) {
-  const bars = thermo.querySelectorAll(".bar");
-  const label = thermo.querySelector(".thermo-label");
-  
-  // Pastikan nilai hunger valid
-  if (isNaN(pet.hunger)) pet.hunger = 0;
-  const hungerVal = Math.max(0, Math.min(100, pet.hunger));
-  const activeCount = Math.round((hungerVal / 100) * bars.length);
+  const thermo = document.getElementById("thermometer");
+  if (thermo) {
+    const bars = thermo.querySelectorAll(".bar");
+    const label = thermo.querySelector(".thermo-label");
+    if (isNaN(pet.hunger)) pet.hunger = 0;
+    const hungerVal = Math.max(0, Math.min(100, pet.hunger));
+    const activeCount = Math.round((hungerVal / 100) * bars.length);
+    bars.forEach((bar, i) => {
+      if (i < activeCount) bar.classList.add("active");
+      else bar.classList.remove("active");
+    });
+    if (label) label.textContent = Math.floor(hungerVal) + "%";
+  }
 
-  // Aktifkan batang sesuai hunger
-  bars.forEach((bar, i) => {
-    if (i < activeCount) bar.classList.add("active");
-    else bar.classList.remove("active");
-  });
-
-  // Tampilkan angka % di tengah
-  if (label) label.textContent = Math.floor(hungerVal) + "%";
-}
-  
   // === Gambar Pet ===
   const petImg = document.getElementById("pet");
   petImg.src = getPetImage(pet.stage);
@@ -905,35 +899,29 @@ if (thermo) {
     evoGlow.style.display = "none";
   }
 
-  // === AKTIFKAN TOMBOL JIKA TIDAK EVOLUSI ===
-  if (!evoAnimating) {
-    document.getElementById("feedBtn").disabled = false;
-    document.getElementById("playBtn").disabled = false;
-  }
-
   // === SIMPAN KE LOCAL STORAGE ===
   localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
-if (auth.currentUser) saveUserData(auth.currentUser.uid);
+  if (auth.currentUser) saveUserData(auth.currentUser.uid);
 
   // === KUNCI TAMBAHAN: Matikan Feed & Play saat Evo aktif ===
-const evoBtn = document.getElementById("evoBtn");
-const glow = document.getElementById("evoGlow");
-const feedBtn = document.getElementById("feedBtn");
-const playBtn = document.getElementById("playBtn");
+  const glow = document.getElementById("evoGlow");
+  const feedBtn = document.getElementById("feedBtn");
+  const playBtn = document.getElementById("playBtn");
 
-// Jika tombol Evo sedang muncul dan glow aktif, maka Feed & Play harus nonaktif
-if (
-  evoBtn.style.display === "inline-block" &&
-  glow.style.display === "block"
-) {
-  feedBtn.disabled = true;
-  playBtn.disabled = true;
-} else {
-  feedBtn.disabled = false;
-  playBtn.disabled = false;
-}
-
+  if (
+    evoBtn.style.display === "inline-block" &&
+    glow.style.display === "block"
+  ) {
+    feedBtn.disabled = true;
+    playBtn.disabled = true;
+  } else if (evoAnimating) {
+    feedBtn.disabled = true;
+    playBtn.disabled = true;
+  } else {
+    feedBtn.disabled = false;
+    playBtn.disabled = false;
+  }
 }
 
 function startSparkle(){
