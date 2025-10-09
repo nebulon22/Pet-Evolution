@@ -1299,42 +1299,41 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
 
 
 // === OBSERVER LOGIN STATE ===
-auth.onAuthStateChanged((user) => {
+ auth.onAuthStateChanged((user) => {
+  const loginBox = document.getElementById("loginBox");
+  const logoutBtn = document.getElementById("logoutBtn");
+
   if (user) {
-    // Saat user login: gabungkan (merge) local -> cloud (atau sebaliknya) sesuai kebutuhan
-    // Pertama, muat lokal kalau ada (agar tidak kehilangan progress jika offline)
+    // === Saat user login ===
     const storedPet = localStorage.getItem("petData");
     const storedFood = localStorage.getItem("foodStock");
-    if (storedPet) {
-      try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
-    }
-    if (storedFood) {
-      try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
-    }
+    if (storedPet) try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
+    if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
 
-    // Lalu muat data cloud dan pilih strategi merge (misal: pakai cloud, atau pakai nilai yang lebih tinggi)
-    loadUserData(user.uid); // loadUserData harus melakukan merge atau overwrite sesuai kebijakanmu
+    // Muat data cloud
+    loadUserData(user.uid);
 
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "block";
-  } else {
-    // Guest mode: pakai data lokal jika ada, jangan clear storage
+    if (loginBox) loginBox.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "block";
+  } 
+  else {
+    // === Guest / Logout ===
     const storedPet = localStorage.getItem("petData");
     const storedFood = localStorage.getItem("foodStock");
-    if (storedPet) {
-      try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
-    }
-    if (storedFood) {
-      try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
-    }
+    if (storedPet) try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
+    if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
+
     evoAnimating = false;
     updateUI();
-    document.getElementById("loginBox").style.display = "block";
-    document.getElementById("logoutBtn").style.display = "none";
+
+    // Pastikan elemen tampil sesuai mode guest
+    if (loginBox) loginBox.style.display = "block";
+    if (logoutBtn) logoutBtn.style.display = "none";
+
+    // Tambahan anti-cache Chrome: hapus semua auth data lokal
+    localStorage.removeItem("firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey);
   }
 });
-
-
 
 // === LOGOUT ===
 function logout() {
