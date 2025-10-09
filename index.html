@@ -702,18 +702,21 @@ function Pet() {
   if (!selectedFood) return showBubble("Pilih makanan dulu!");
   if (foodStock[selectedFood] <= 0) return showBubble("Stok habis!");
 
+  // ===== Tambah Hunger & Kurangi Stok =====
   const hungerGain = 20;
   const expGain =
     selectedFood === "meat" ? 10 :
     selectedFood === "fruit" ? 5 : 2.5;
 
-  // Tambah hunger dan EXP
   pet.hunger = Math.min(100, pet.hunger + hungerGain);
-  pet.exp = Math.min(100, pet.exp + expGain);
-  foodStock[selectedFood]--;
+  foodStock[selectedFood]--; // ✅ stok hanya berkurang 1x
   pet.coins++;
 
-  // Efek teks
+  // ===== Tambah EXP =====
+  const prevExp = pet.exp;
+  pet.exp = Math.min(100, pet.exp + expGain);
+
+  // Animasi teks EXP
   const slotDiv = document.querySelector(`.slot[data-food='${selectedFood}']`);
   const fly = document.createElement("span");
   fly.className = "flytext";
@@ -724,13 +727,21 @@ function Pet() {
   playSound("sound");
   showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
 
-  // Jika EXP penuh tapi belum naik level
-  if (pet.exp === 100) {
-    showBubble("EXP penuh — kasih makan sekali lagi untuk naik level!");
-  }
-
-  // Jika lewat dari 100, baru naik level
-  if (pet.exp > 100) {
+  // ===== Cek kondisi EVO =====
+  if (
+    (pet.level === 10 && pet.stage === "egg" && pet.exp >= 100) ||
+    (pet.level === 20 && pet.stage === "chick" && pet.exp >= 100) ||
+    (pet.level === 30 && pet.stage === "rooster" && pet.exp >= 100)
+  ) {
+    // Tampilkan tombol evo
+    document.getElementById("evoBtn").style.display = "inline-block";
+    document.getElementById("evoGlow").style.display = "block";
+    document.getElementById("feedBtn").disabled = true;
+    document.getElementById("playBtn").disabled = true;
+    startSparkle();
+    showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
+  } else if (pet.exp >= 100 && pet.level % 10 !== 0) {
+    // ===== Level up normal =====
     pet.exp = 0;
     pet.level++;
     pet.coins += 5;
@@ -741,21 +752,13 @@ function Pet() {
     showStatBubble("+10 📊 Stats");
   }
 
-  // Cek evolusi (level 10/20/30 + exp 100%)
-  if (
-    (pet.level === 10 && pet.stage === "egg" && pet.exp >= 100) ||
-    (pet.level === 20 && pet.stage === "chick" && pet.exp >= 100) ||
-    (pet.level === 30 && pet.stage === "rooster" && pet.exp >= 100)
-  ) {
-    document.getElementById("evoBtn").style.display = "inline-block";
-    document.getElementById("evoGlow").style.display = "block";
-    document.getElementById("feedBtn").disabled = true;
-    document.getElementById("playBtn").disabled = true;
-    startSparkle();
-    showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
+  // ===== Bersihkan piring jika stok habis =====
+  if (foodStock[selectedFood] <= 0) {
+    document.getElementById("plateFood").style.display = "none";
+    selectedFood = null;
   }
 
-  // Simpan & update UI
+  // ===== Simpan dan update =====
   localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
   updateUI();
