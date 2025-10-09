@@ -544,6 +544,12 @@
 
 
 <script>
+  // Hapus data lama yang rusak / versi lama
+if (!localStorage.getItem("petData") || JSON.parse(localStorage.getItem("petData")).level < 1) {
+  localStorage.removeItem("petData");
+  localStorage.removeItem("foodStock");
+}
+
 let pet = JSON.parse(localStorage.getItem("petData")) || { 
 
   level:1, exp:0, stage:"egg", hunger:30, coins:0,
