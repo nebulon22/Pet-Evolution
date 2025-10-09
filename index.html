@@ -365,6 +365,99 @@
   transform-origin: top left;
 }
 
+/* === Layout & Spacing Scale Adjustment === */
+
+/* Ruang kosong antar bagian utama */
+#gameContent {
+  width: 540px;
+  height: 960px;
+  transform: scale(var(--scale));
+  transform-origin: top left;
+  position: relative;
+  overflow: hidden;
+  background: none;
+}
+
+/* 🐣 Pet Area */
+#petWrapper {
+  margin-top: 60px; /* turunkan sedikit pet dari atas */
+}
+
+/* 🌟 Efek evolusi di tengah pet */
+#evoGlow {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 160px;
+  z-index: 0;
+}
+
+/* ⚡ EXP Bar */
+.bar-container {
+  margin: 25px auto 10px auto;
+  width: 80%;
+  height: 26px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* 🧾 Info text di bawah pet */
+#gameContent p {
+  margin: 6px 0;
+  line-height: 1.4em;
+}
+
+/* 🎮 Tombol utama */
+#feedBtn, #playBtn, #evoBtn {
+  margin: 10px 6px;
+  font-size: 3.8vw;
+  padding: 8px 16px;
+  border-radius: 10px;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+}
+
+/* 🍽️ Piring diatur dengan jarak pas */
+#plateWrapper {
+  margin-top: 35px;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+/* 🍖 Food grid di bawah layar */
+#foodGrid {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Slot makanan lebih besar & rapi */
+.slot img {
+  width: 60px;
+  height: 60px;
+}
+
+/* 🔵 Bubble (pesan pet) sedikit lebih tinggi */
+#bubble {
+  top: -90px;
+  font-size: 3.6vw;
+}
+
+/* 🔥 Tambahan: jaga agar semua elemen center */
+#gameContent p,
+.bar-container,
+#plateWrapper,
+#foodGrid,
+div[style*="text-align:center"] {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+    
   </style>
 </head>
 <body>
