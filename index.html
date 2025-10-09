@@ -475,73 +475,41 @@
   <p style="font-size:3.8vw;">
 
     🐾 Nama Pet: <span id="petName"></span><br>
-
     👤 Pemilik: <span id="ownerName"></span><br>
-
     ⚔️ Total Power: <span id="totalPower"></span>
 
   </p>
 
-
-
   <div class="bar-container"><div id="expBar">EXP 0%</div></div>
-
-
-
-  <button onclick="Pet()" id="feedBtn">Feed 🍖 </button>
-
+  <button id="feedBtn">Feed 🍖</button>
   <button id="playBtn" onclick="playWithPet()">🎮 Play</button>
-
   <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
-
-
-
   <div id="plateWrapper">
-
     <img id="plate" src="images/plate.png" alt="Piring">
-
     <img id="plateFood" src="" alt="">
-
   </div>
 
-
-
   <div id="foodGrid">
-
     <div class="slot" data-food="meat"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
-
     <div class="slot" data-food="fruit"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
-
     <div class="slot" data-food="leaf"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
     <div class="slot empty"></div>
     <div class="slot empty"></div>
   </div>
 
   <!-- Suara -->
-
   <audio id="sound" src="sounds/feed.mp3" preload="auto"></audio>
-
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
-
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
-
   <audio id="soundBuy" src="sounds/buy.mp3" preload="auto"></audio>
-
   <script>
 
     // Klik ikon email untuk buka/tutup popup login
-
     document.getElementById("emailIcon").onclick = function(){
-
       const box = document.getElementById("loginBox");
-
       box.style.display = (box.style.display==="block" ? "none" : "block");
-
     };
-
   </script>
-
-
 
 <script>
   // Hapus data lama yang rusak / versi lama
@@ -956,7 +924,7 @@ function setupDrag(){
     item.addEventListener('mousedown',handler);
   });
 }
-
+  
 // === LOGOUT SYSTEM ===
 document.getElementById("logoutBtn").onclick = function() {
   document.getElementById("logoutPopup").style.display = "block";
@@ -965,8 +933,10 @@ document.getElementById("logoutBtn").onclick = function() {
 function confirmLogout() {
   // Hapus semua data & kembali ke layar awal
   localStorage.clear();
+  document.getElementById("logoutPopup").style.display = "none";
+  document.getElementById("logoutBtn").style.display = "none";
   alert("Anda telah logout.");
-  location.reload();
+  location.reload(); // atau window.location.href = "index.html";
 }
 
 function cancelLogout() {
