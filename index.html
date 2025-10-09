@@ -318,17 +318,11 @@
 /* Pohon goyang */
 
 .tree {
-
   position: absolute;
-
   width: 160px;
-
   transform-origin: bottom center;
-
   animation: sway 4s ease-in-out infinite alternate;
-
   z-index: -2;
-
 }
 
 @keyframes sway {
@@ -385,7 +379,7 @@
   
 <!-- Tombol Logout (ikon gembok terbuka) -->
 <button id="logoutBtn"
-  style="display:block; position:fixed; top:12px; right:12px;
+  style="display:none; position:fixed; top:12px; right:12px;
   background:none; border:none; cursor:pointer; z-index:200;">
   🔓
 </button>
@@ -468,10 +462,7 @@
     <div id="bubble"></div>
 </div>
 
-
-
   <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
-
   <p style="font-size:3.8vw;">
 
     🐾 Nama Pet: <span id="petName"></span><br>
@@ -519,85 +510,47 @@ if (!localStorage.getItem("petData") || JSON.parse(localStorage.getItem("petData
 }
 
 let pet = JSON.parse(localStorage.getItem("petData")) || { 
-
   level:1, exp:0, stage:"egg", hunger:30, coins:0,
-
   stats:{att:10,def:10,spd:10,acc:10,crit:10},
-
   statPoints:0,
-
   name:"Petku",          // 🐾 nama pet
-
   owner:"Player1"        // 👤 pemilik
-
 };
 
 let foodStock = JSON.parse(localStorage.getItem("foodStock")) || {
-
   meat:100, fruit:100, leaf:100
-
 };
 
-
-
 let selectedFood=null;
-
 let evoAnimating=false;
-
-
 
 // === Bubble untuk coins & stats ===
 
 function showCoinBubble(text){
-
   const b = document.createElement("div");
-
   b.className = "mini-bubble";
-
   b.style.right = "55px"; 
-
   b.style.top = "55px";   // dekat coinDisplay
-
   b.textContent = text;
-
   document.body.appendChild(b);
-
   setTimeout(()=> b.remove(), 3000);
-
 }
-
-
 
 function showStatBubble(text){
-
   const rect = document.getElementById("statsIcon").getBoundingClientRect();
-
   const b = document.createElement("div");
-
   b.className = "mini-bubble";
-
   b.style.left = (rect.left + window.scrollX) + "px";
-
   b.style.top = (rect.top + window.scrollY - 20) + "px";
-
   b.textContent = text;
-
   document.body.appendChild(b);
-
   setTimeout(()=> b.remove(), 3000);
-
 }
-
-
-
 
 
 function toggleLogin(){
-
   const p=document.getElementById("loginBox");
-
   p.style.display = (p.style.display==="block" ? "none" : "block");
-
 }
 
 function getTotalPower(){
