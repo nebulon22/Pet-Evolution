@@ -1116,68 +1116,34 @@ function buyItem(type,price){
   // 🔊 Mainkan suara beli
 
   playSound("soundBuy");
-
-
-
   showBubble("Beli "+type+" berhasil! -"+price+" koin");
-
   updateUI();
 
-
-
   const coinDisplay=document.getElementById("coinDisplay");
-
   coinDisplay.style.transform="scale(1.2)";
-
   coinDisplay.style.opacity="0.5";
-
   setTimeout(()=>{
-
     coinDisplay.style.transform="scale(1)";
-
     coinDisplay.style.opacity="1";
-
   },300);
-
 }
-
-
 
 // ===================== STATS =====================
 
-
-
 function toggleStats(){
-
   const p=document.getElementById("statsPopup");
-
   p.style.display=(p.style.display==="block"?"none":"block");
-
   if(p.style.display==="block"){ drawStatsChart(); updateStatUI(); }
-
 }
 
 
-
-
-
 function updateStatUI(){
-
   document.getElementById("statPoints").textContent = pet.statPoints;
-
   const btns = document.getElementById("statButtons");
-
   btns.innerHTML = "";
-
-
-
   Object.keys(pet.stats).forEach(key=>{
-
     const row = document.createElement("div");
-
     row.style.margin = "5px 0";
-
-
 
     // label jumlah stat
 
@@ -1203,10 +1169,6 @@ function updateStatUI(){
     btns.appendChild(row);
   });
 }
-
-
-
-
 
 function drawStatsChart(){
   const c=document.getElementById("statsChart");
@@ -1462,6 +1424,36 @@ setInterval(() => {
   if (user) saveUserData(user.uid);
 }, 30000);
 </script>
-  
+  <script>
+(function(){
+  const gameContent = document.getElementById("gameContent");
+  const baseWidth = 540;  // lebar desain asli
+  const baseHeight = 960; // tinggi desain asli
+
+  function adjustScale() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Hitung scale berdasarkan lebar dan tinggi layar
+    const scaleX = vw / baseWidth;
+    const scaleY = vh / baseHeight;
+
+    // Ambil scale terkecil agar tidak overflow
+    const scale = Math.min(scaleX, scaleY);
+
+    // Terapkan scale ke gameContent
+    gameContent.style.setProperty('--scale', scale);
+
+    // Optional: center content vertikal jika ada ruang ekstra
+    const offsetY = (vh - baseHeight * scale) / 2;
+    gameContent.style.marginTop = offsetY > 0 ? offsetY + 'px' : '0';
+  }
+
+  // Jalankan saat load dan resize
+  window.addEventListener('load', adjustScale);
+  window.addEventListener('resize', adjustScale);
+})();
+</script>
+
 </body>
 </html>
