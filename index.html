@@ -916,6 +916,24 @@ if (thermo) {
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
 if (auth.currentUser) saveUserData(auth.currentUser.uid);
 
+  // === KUNCI TAMBAHAN: Matikan Feed & Play saat Evo aktif ===
+const evoBtn = document.getElementById("evoBtn");
+const glow = document.getElementById("evoGlow");
+const feedBtn = document.getElementById("feedBtn");
+const playBtn = document.getElementById("playBtn");
+
+// Jika tombol Evo sedang muncul dan glow aktif, maka Feed & Play harus nonaktif
+if (
+  evoBtn.style.display === "inline-block" &&
+  glow.style.display === "block"
+) {
+  feedBtn.disabled = true;
+  playBtn.disabled = true;
+} else {
+  feedBtn.disabled = false;
+  playBtn.disabled = false;
+}
+
 }
 
 function startSparkle(){
