@@ -442,72 +442,85 @@
     <button onclick="startBattle()">Mulai</button>
     <button onclick="toggleBattle()">Tutup</button>
   </div>
+
   
- <div id="gameContainer">
-    <div id="gameContent">
-      <!-- Background Layer -->
-  <div id="background">
-    <div class="bg-sky"></div>
-    <img src="images/cloud.png" class="cloud">
-    <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
-    <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
-    <img src="images/grass.png" class="grass" style="left:10%;">
-    <img src="images/grass.png" class="grass" style="left:40%;">
-    <img src="images/grass.png" class="grass" style="left:70%;">
-  </div>
-  <!-- Pet area -->
-<div class="pet-wrapper" id="petWrapper">
-  <div class="thermometer" id="thermometer">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
+<div id="gameContainer">
+  <div id="gameContent">
 
-    <!-- label % muncul di tengah -->
-    <span class="thermo-label">0%</span>
+    <!-- 🌤️ Background Layer -->
+    <div id="background">
+      <div class="bg-sky"></div>
+      <img src="images/cloud.png" class="cloud">
+      <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
+      <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
+      <img src="images/grass.png" class="grass" style="left:10%;">
+      <img src="images/grass.png" class="grass" style="left:40%;">
+      <img src="images/grass.png" class="grass" style="left:70%;">
+    </div>
 
-    <!-- label teks di bawah -->
-    <div id="labelBottom" class="thermo-label" style="bottom: -1.5em;">Lapar</div>
-  </div>
-</div>
+    <!-- 🐣 Pet Area -->
+    <div class="pet-wrapper" id="petWrapper">
+      <div class="thermometer" id="thermometer">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div>
+        <span class="thermo-label">0%</span>
+        <div id="labelBottom" class="thermo-label" style="bottom:-1.5em;">Lapar</div>
+      </div>
 
-    <div class="glow" id="evoGlow"></div>
-    <img id="pet" src="images/egg.png">
-    <div id="bubble"></div>
-</div>
+      <div class="glow" id="evoGlow"></div>
+      <img id="pet" src="images/egg.png">
+      <div id="bubble"></div>
+    </div>
 
-  <p style="font-size:4vw;">Level Pet: <span id="level">1</span></p>
-  <p style="font-size:3.8vw;">
+    <!-- 🧾 Info Panel -->
+    <p style="font-size:4vw; text-align:center;">Level Pet: <span id="level">1</span></p>
+    <p style="font-size:3.8vw; text-align:center;">
+      🐾 Nama Pet: <span id="petName"></span><br>
+      👤 Pemilik: <span id="ownerName"></span><br>
+      ⚔️ Total Power: <span id="totalPower"></span>
+    </p>
 
-    🐾 Nama Pet: <span id="petName"></span><br>
-    👤 Pemilik: <span id="ownerName"></span><br>
-    ⚔️ Total Power: <span id="totalPower"></span>
+    <!-- ⚡ EXP Bar -->
+    <div class="bar-container" style="margin:auto; width:80%;">
+      <div id="expBar">EXP 0%</div>
+    </div>
 
-  </p>
+    <!-- 🎮 Tombol Aksi -->
+    <div style="text-align:center; margin-top:10px;">
+      <button id="feedBtn">Feed 🍖</button>
+      <button id="playBtn" onclick="playWithPet()">🎮 Play</button>
+      <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
+    </div>
 
-  <div class="bar-container"><div id="expBar">EXP 0%</div></div>
-  <button id="feedBtn">Feed 🍖</button>
-  <button id="playBtn" onclick="playWithPet()">🎮 Play</button>
-  <button id="evoBtn" style="display:none;" onclick="evolvePet()">✨ Evo Sekarang!</button>
-  <div id="plateWrapper">
-    <img id="plate" src="images/plate.png" alt="Piring">
-    <img id="plateFood" src="" alt="">
-  </div>
+    <!-- 🍽️ Piring -->
+    <div id="plateWrapper">
+      <img id="plate" src="images/plate.png" alt="Piring">
+      <img id="plateFood" src="" alt="">
+    </div>
 
-  <div id="foodGrid">
-    <div class="slot" data-food="meat"><img src="images/meat.png"><div class="count" id="count-meat">100</div></div>
-    <div class="slot" data-food="fruit"><img src="images/fruit.png"><div class="count" id="count-fruit">100</div></div>
-    <div class="slot" data-food="leaf"><img src="images/leaf.png"><div class="count" id="count-leaf">100</div></div>
-    <div class="slot empty"></div>
-    <div class="slot empty"></div>
-  </div>
-</div>
+    <!-- 🍖 Food Grid -->
+    <div id="foodGrid">
+      <div class="slot" data-food="meat">
+        <img src="images/meat.png">
+        <div class="count" id="count-meat">100</div>
+      </div>
+      <div class="slot" data-food="fruit">
+        <img src="images/fruit.png">
+        <div class="count" id="count-fruit">100</div>
+      </div>
+      <div class="slot" data-food="leaf">
+        <img src="images/leaf.png">
+        <div class="count" id="count-leaf">100</div>
+      </div>
+      <div class="slot empty"></div>
+      <div class="slot empty"></div>
+    </div>
+
+  </div> <!-- end #gameContent -->
+</div> <!-- end #gameContainer -->
+
   
   <!-- Suara -->
   <audio id="sound" src="sounds/feed.mp3" preload="auto"></audio>
