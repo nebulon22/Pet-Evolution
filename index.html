@@ -1428,7 +1428,7 @@ setInterval(() => {
 <script>
 (function(){
   const gameContent = document.getElementById("gameContent");
-  const baseWidth = 540;   // desain awal
+  const baseWidth = 540;
   const baseHeight = 960;
 
   function adjustScale() {
@@ -1448,13 +1448,13 @@ setInterval(() => {
     // ===== Pet & Thermometer =====
     const petWrapper = document.getElementById("petWrapper");
     const thermometer = document.getElementById("thermometer");
+    const verticalOffset = 30; // turunkan sedikit
 
     if(petWrapper && thermometer){
-      // Geser thermometer proporsional ke pet
+      petWrapper.style.marginTop = `${(60 + verticalOffset) * scale}px`;
       thermometer.style.left = `${20 * scale}px`;
-      thermometer.style.top = `${60 * scale}px`;
+      thermometer.style.top = `${(60 + verticalOffset) * scale}px`;
 
-      // Skala pet otomatis (width responsive)
       const pet = document.getElementById("pet");
       if(pet){
         pet.style.width = `${40 * scale}vw`;
@@ -1464,8 +1464,14 @@ setInterval(() => {
 
     // ===== Food slot =====
     document.querySelectorAll(".slot img").forEach(img => {
-      img.style.width = `${60 * scale}px`;
-      img.style.height = `${60 * scale}px`;
+      const foodType = img.parentElement.dataset.food;
+      if(foodType === "fruit"){
+        img.style.width = `${50 * scale}px`; // kecilkan ikon buah
+        img.style.height = `${50 * scale}px`;
+      } else {
+        img.style.width = `${60 * scale}px`;
+        img.style.height = `${60 * scale}px`;
+      }
     });
 
     // ===== Background (cloud, tree, grass) =====
@@ -1514,8 +1520,9 @@ setInterval(() => {
   window.addEventListener('load', adjustScale);
   window.addEventListener('resize', adjustScale);
 })();
-   
 </script>
+
+
 
 </body>
 </html>
