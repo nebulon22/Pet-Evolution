@@ -1372,6 +1372,12 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
 
+   if (!user || !user.email) {
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (loginBox) loginBox.style.display = "block";
+    return;
+  }
+   
   if (user) {
     // === Saat user login ===
     const storedPet = localStorage.getItem("petData");
@@ -1408,7 +1414,7 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
 function logout() {
   if (!confirm("Apakah yakin ingin logout?")) return;
 
-  auth.signOut().then(() => {
+  auth.signOut().then(async () => {
     // === Bersihkan data game ===
     pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
     coins = 0;
@@ -1424,11 +1430,16 @@ function logout() {
     try {
       const key = "firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey;
       localStorage.removeItem(key);
+
+      // Paksa Firebase me-reset currentUser (khusus Chrome)
+      if (auth.currentUser) {
+        await auth.updateCurrentUser(null);
+      }
     } catch (e) {
       console.warn("Tidak bisa hapus cache Firebase:", e);
     }
 
-    // === Reset tampilan ===
+    // === Reset tampilan UI ===
     updateUI();
     const logoutBtn = document.getElementById("logoutBtn");
     const loginBox = document.getElementById("loginBox");
@@ -1437,10 +1448,18 @@ function logout() {
 
     alert("👋 Anda telah logout.");
     showBubble("Anda keluar dari akun.");
+
+    // Pastikan status auth disegarkan ulang setelah pembersihan cache
+    setTimeout(() => {
+      location.reload(true); // paksa reload dari server, bukan cache
+    }, 500);
   })
   .catch((error) => {
     alert("❌ Gagal logout: " + error.message);
-  })
+  });
+}
+
+  
   .finally(() => {
     // Pastikan status auth di-refresh untuk Chrome
     setTimeout(() => {
