@@ -41,12 +41,6 @@
   cursor: pointer;
 }
 
-#loginBox {
-  position: fixed;
-  z-index: 1000;
-  pointer-events: auto;
-}
-
  
 /* === Kanan: tombol reset & logout === */
 #topRightButtons {
@@ -491,6 +485,28 @@ div[style*="text-align:center"] {
   margin-right: auto;
 }
     
+/* === FIX: LOGIN & LOGOUT STATE === */
+#emailIcon {
+  transition: opacity 0.3s ease;
+}
+
+#logoutBtn {
+  display: none; /* sembunyikan logout secara default */
+}
+
+#loginBox {
+  display: none; /* popup login hanya muncul saat diklik */
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.85);
+  padding: 20px;
+  border-radius: 12px;
+  color: white;
+  z-index: 1000;
+  pointer-events: auto;
+}
 
 
     
@@ -1398,32 +1414,30 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
     });
 }
 
-// === OBSERVER LOGIN STATE ===
-
-// === OBSERVER LOGIN STATE (Versi Sederhana dan Stabil) ===
+// === OBSERVER LOGIN STATE (Versi Stabil dan Sederhana) ===
 auth.onAuthStateChanged((user) => {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
   const emailIcon = document.getElementById("emailIcon");
 
   if (user && user.emailVerified) {
-    // === SUDAH LOGIN ===
-    loadUserData(user.uid);  // ambil data cloud
+    // ✅ SUDAH LOGIN
+    loadUserData(user.uid);
 
-    if (loginBox) loginBox.style.display = "none";     // sembunyikan form login
-    if (logoutBtn) logoutBtn.style.display = "block";  // tampilkan logout
+    if (loginBox) loginBox.style.display = "none";     // popup login disembunyikan
+    if (logoutBtn) logoutBtn.style.display = "block";  // tampilkan tombol logout
     if (emailIcon) {
-      emailIcon.style.opacity = "0.4";                 // buat abu-abu
-      emailIcon.style.pointerEvents = "none";          // nonaktifkan klik
+      emailIcon.style.opacity = "0.4";                 // ikon login jadi abu-abu
+      emailIcon.style.pointerEvents = "none";          // tidak bisa diklik lagi
     }
 
   } else {
-    // === BELUM LOGIN ===
-    if (loginBox) loginBox.style.display = "block";    // tampilkan login box
-    if (logoutBtn) logoutBtn.style.display = "none";   // sembunyikan logout
+    // 🚫 BELUM LOGIN
+    if (loginBox) loginBox.style.display = "none";     // popup disembunyikan default
+    if (logoutBtn) logoutBtn.style.display = "none";   // logout disembunyikan
     if (emailIcon) {
-      emailIcon.style.opacity = "1";                   // aktif & normal
-      emailIcon.style.pointerEvents = "auto";          // bisa diklik
+      emailIcon.style.opacity = "1";                   // ikon login normal
+      emailIcon.style.pointerEvents = "auto";          // bisa diklik untuk buka login
     }
   }
 });
