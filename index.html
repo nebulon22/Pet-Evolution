@@ -483,6 +483,17 @@ div[style*="text-align:center"] {
   margin-left: auto;
   margin-right: auto;
 }
+    
+/* === FIX: Login icon tidak bisa diklik === */
+#loginBox, #emailIcon {
+  position: relative;
+  z-index: 500;       /* pastikan di atas layer lainnya */
+  pointer-events: auto;
+}
+
+#loginBox {
+  display: block !important; /* jika observer sempat menyembunyikannya */
+}
 
     
   </style>
@@ -665,6 +676,9 @@ if (!localStorage.getItem("petData") || JSON.parse(localStorage.getItem("petData
   localStorage.removeItem("petData");
   localStorage.removeItem("foodStock");
 }
+
+// === Flag agar prompt offline hanya muncul sekali per sesi ===
+let offlinePromptShown = false;
 
 let pet = JSON.parse(localStorage.getItem("petData")) || { 
   level:1, exp:0, stage:"egg", hunger:30, coins:0,
@@ -1176,48 +1190,24 @@ function buyItem(type,price){
   // 🔊 Mainkan suara beli
 
   playSound("soundBuy");
-
-
-
   showBubble("Beli "+type+" berhasil! -"+price+" koin");
-
   updateUI();
 
-
-
   const coinDisplay=document.getElementById("coinDisplay");
-
   coinDisplay.style.transform="scale(1.2)";
-
   coinDisplay.style.opacity="0.5";
-
   setTimeout(()=>{
-
     coinDisplay.style.transform="scale(1)";
-
     coinDisplay.style.opacity="1";
-
   },300);
-
 }
-
-
 
 // ===================== STATS =====================
-
-
-
 function toggleStats(){
-
   const p=document.getElementById("statsPopup");
-
   p.style.display=(p.style.display==="block"?"none":"block");
-
   if(p.style.display==="block"){ drawStatsChart(); updateStatUI(); }
-
 }
-
-
 
 
 
@@ -1231,7 +1221,7 @@ function updateStatUI(){
 
 
 
-  Object.keys(pet.stats).forEach(key=>{
+  Object.keys(pet.stts).forEach(key=>{
 
     const row = document.createElement("div");
 
@@ -1411,38 +1401,41 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
 }
 
 // === OBSERVER LOGIN STATE ===
+
+//  (Fix Chrome & prompt offline)
 auth.onAuthStateChanged((user) => {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // 🚫 Anti-glitch Chrome + verifikasi email
-  if (!user || !user.emailVerified) {
-    // Jika Chrome menyimpan sesi lama, paksa logout
-    if (auth.currentUser && !user?.emailVerified) {
-      auth.signOut();
+  // Tunggu sebentar agar Firebase sync penuh di Chrome
+  setTimeout(() => {
+    if (!user || !user.emailVerified) {
+      // Belum login → tampilkan box login
+      if (logoutBtn) logoutBtn.style.display = "none";
+      if (loginBox) loginBox.style.display = "block";
+      return;
     }
-    if (logoutBtn) logoutBtn.style.display = "none";
-    if (loginBox) loginBox.style.display = "block";
-    return;
-  }
-if (localStorage.getItem("petData")) {
-  if (confirm("Gunakan data lokal (offline) untuk akun ini?")) {
-    // Kirim data offline ke Firestore
-    saveUserData(user.uid);
-  }
-}
 
-  // ✅ Jika user valid (login sesungguhnya)
-  const storedPet = localStorage.getItem("petData");
-  const storedFood = localStorage.getItem("foodStock");
-  if (storedPet) try { pet = JSON.parse(storedPet); } catch (e) { console.warn(e); }
-  if (storedFood) try { foodStock = JSON.parse(storedFood); } catch (e) { console.warn(e); }
+    // ✅ User valid (login sesungguhnya)
+    const storedPet = localStorage.getItem("petData");
+    const storedFood = localStorage.getItem("foodStock");
+    if (storedPet) try { pet = JSON.parse(storedPet); } catch (e) { console.warn(e); }
+    if (storedFood) try { foodStock = JSON.parse(storedFood); } catch (e) { console.warn(e); }
 
-  // Muat data cloud sesuai user login
-  loadUserData(user.uid);
+    // Muat data cloud
+    loadUserData(user.uid);
 
-  if (loginBox) loginBox.style.display = "none";
-  if (logoutBtn) logoutBtn.style.display = "block";
+    if (loginBox) loginBox.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "block";
+
+    // Tanya sekali saja tentang data offline
+    if (!offlinePromptShown && localStorage.getItem("petData")) {
+      if (confirm("Gunakan data offline untuk akun ini?")) {
+        saveUserData(user.uid);
+      }
+      offlinePromptShown = true;
+    }
+  }, 300);
 });
 
 
