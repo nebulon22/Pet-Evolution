@@ -228,8 +228,8 @@
 }
 
 .slot img {
-  width: 90%;
-  height: 90%;
+  width: 60%;
+  height: 60%;
   object-fit: contain;
 }
 
@@ -944,7 +944,19 @@ function updateUI() {
     const count = foodStock[type] || 0;
     slot.querySelector(".count").textContent = count;
   });
+// === Update stok makanan ===
+  for (let food in foodStock) {
+    const countEl = document.getElementById(`count-${food}`);
+    const slotEl = document.querySelector(`.slot[data-food='${food}']`);
+    countEl.textContent = foodStock[food];
 
+    if (foodStock[food] <= 0) {
+      slotEl.classList.add("disabled");
+    } else {
+      slotEl.classList.remove("disabled");
+    }
+  }
+  
   // === PELAT MAKANAN ===
   const plateFood = document.getElementById("plateFood");
   if (selectedFood && foodStock[selectedFood] > 0) {
