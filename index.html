@@ -203,61 +203,7 @@
     #plate { width:180px; }
     #plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; display:none; }
 
-    #foodGrid {
-  display: grid;
-  grid-template-columns: repeat(5, 40px); /* 5 kotak per baris */
 
-  grid-gap: 2px;
-  justify-content: center;
-  margin: 20px auto;
-
-}
-
-.slot {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #999;
-  border-radius: 5px;
-  background: rgba(255,255,255,0.1);
-  overflow: hidden; /* penting: batasi isi agar tidak keluar */
-}
-
-.slot img {
-  width: 80%;
-  height: auto;
-  object-fit: contain;
-  display: block;
-}
-
-
-
-.slot .count {
-  position: absolute;
-  bottom: 2px;
-  right: 2px;
-  background: none;
-  color: red;
-  font-weight: bold;
-  font-style: italic;
-  font-size: 12px;
-  padding: 0;
-  border-radius: 0;
-  text-shadow: black;
-}
-
-.slot.empty {
-  background: rgba(255,255,255,0.05);
-  border: 2px dashed #666;
-}
-
-.slot.disabled {
-  opacity: 0.4;
-  pointer-events: none; /* tidak bisa di-drag */
-  filter: grayscale(60%);
-}
 
     .flytext { position:absolute; left:50%; transform:translateX(-50%) translateY(0); bottom:110%; font-size:12px; color:#fff; text-shadow:1px 1px 2px black; opacity:0; animation:flyUp 1s forwards; pointer-events:none; }
 
@@ -271,6 +217,7 @@
   z-index: -10; /* di belakang semua */
 }
 
+    
 /* Langit */
 .bg-sky {
   position: absolute;
@@ -420,18 +367,59 @@
 
 /* 🍖 Food grid di bawah layar */
 #foodGrid {
-  margin-top: 10px;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 1.5vw;                 /* jarak antar kotak relatif layar */
+  margin-top: 2vh;
 }
 
-/* Slot makanan lebih besar & rapi */
-.slot img {
-  width: 60px;
-  height: 60px;
+/* === Slot kotak makanan === */
+.slot {
+  width: 12vw;                /* lebar relatif layar */
+  aspect-ratio: 1 / 1;        /* tinggi otomatis sama dengan lebar */
+  border: 0.3vw solid #999;
+  border-radius: 1vw;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease;
 }
+
+/* Slot aktif & kosong */
+.slot.empty {
+  background: rgba(255,255,255,0.05);
+  border: 0.3vw dashed #666;
+}
+
+/* Slot disabled (stok 0) */
+.slot.disabled {
+  opacity: 0.4;
+  filter: grayscale(80%);
+  pointer-events: none;
+}
+
+/* === Gambar item di dalam slot === */
+.slot img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+/* Jumlah stok */
+.slot .count {
+  position: absolute;
+  bottom: 3px;
+  right: 5px;
+  color: red;
+  font-weight: bold;
+  font-size: 3vw;
+  text-shadow: 1px 1px 2px black;
+}
+
 
 /* 🔵 Bubble (pesan pet) sedikit lebih tinggi */
 #bubble {
