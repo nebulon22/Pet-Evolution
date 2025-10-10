@@ -1413,6 +1413,25 @@ auth.onAuthStateChanged((user) => {
 });
 
 
+function showLoginBox() {
+  document.getElementById('loginBox').style.display = 'block';
+}
+
+firebase.auth().onAuthStateChanged((user) => {
+  const loginBox = document.getElementById('loginBox');
+  const logoutBtn = document.getElementById('logoutBtn');
+  
+  if (user) {
+    console.log("✅ Login aktif:", user.email);
+    if (loginBox) loginBox.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+    localStorage.setItem("playerEmail", user.email);
+  } else {
+    console.log("❌ Belum login");
+    if (logoutBtn) logoutBtn.style.display = 'none';
+  }
+});
+
 // === LOGOUT ===
 function logout() {
   if (!confirm("Apakah yakin ingin logout?")) return;
@@ -1493,20 +1512,6 @@ setInterval(() => {
   const user = auth.currentUser;
   if (user) saveUserData(user.uid);
 }, 30000);
-
-<script>
-function showLoginBox() {
-  const loginBox = document.getElementById("loginBox");
-  if (loginBox) {
-    // Pastikan popup muncul di atas semua
-    loginBox.style.display = "block";
-    loginBox.style.zIndex = 9999;
-    console.log("Login box ditampilkan");
-  } else {
-    console.error("❌ Elemen #loginBox tidak ditemukan.");
-  }
-}
-</script>
 
 
 </script>
