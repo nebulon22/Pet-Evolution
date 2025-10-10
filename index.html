@@ -1402,44 +1402,33 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
 
 // === OBSERVER LOGIN STATE ===
 
-//  (Fix Chrome & prompt offline)
+// === OBSERVER LOGIN STATE (Versi Sederhana dan Stabil) ===
 auth.onAuthStateChanged((user) => {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
+  const emailIcon = document.getElementById("emailIcon");
 
-  // Tunggu sebentar agar Firebase sync penuh di Chrome
-  setTimeout(() => {
-    if (!user || !user.emailVerified) {
-      // Belum login → tampilkan box login
-      if (logoutBtn) logoutBtn.style.display = "none";
-      if (loginBox) loginBox.style.display = "block";
-      return;
+  if (user && user.emailVerified) {
+    // === SUDAH LOGIN ===
+    loadUserData(user.uid);  // ambil data cloud
+
+    if (loginBox) loginBox.style.display = "none";     // sembunyikan form login
+    if (logoutBtn) logoutBtn.style.display = "block";  // tampilkan logout
+    if (emailIcon) {
+      emailIcon.style.opacity = "0.4";                 // buat abu-abu
+      emailIcon.style.pointerEvents = "none";          // nonaktifkan klik
     }
 
-    // ✅ User valid (login sesungguhnya)
-    const storedPet = localStorage.getItem("petData");
-    const storedFood = localStorage.getItem("foodStock");
-    if (storedPet) try { pet = JSON.parse(storedPet); } catch (e) { console.warn(e); }
-    if (storedFood) try { foodStock = JSON.parse(storedFood); } catch (e) { console.warn(e); }
-
-    // Muat data cloud
-    loadUserData(user.uid);
-
-    if (loginBox) loginBox.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "block";
-
-    // Tanya sekali saja tentang data offline
-    if (!offlinePromptShown && localStorage.getItem("petData")) {
-      if (confirm("Gunakan data offline untuk akun ini?")) {
-        saveUserData(user.uid);
-      }
-      offlinePromptShown = true;
+  } else {
+    // === BELUM LOGIN ===
+    if (loginBox) loginBox.style.display = "block";    // tampilkan login box
+    if (logoutBtn) logoutBtn.style.display = "none";   // sembunyikan logout
+    if (emailIcon) {
+      emailIcon.style.opacity = "1";                   // aktif & normal
+      emailIcon.style.pointerEvents = "auto";          // bisa diklik
     }
-  }, 300);
+  }
 });
-
-
-
 
 
 // === LOGOUT ===
