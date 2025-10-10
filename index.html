@@ -1440,18 +1440,6 @@ function logout() {
   });
 }
 
-
-  
-  .finally(() => {
-    // Pastikan status auth di-refresh untuk Chrome
-    setTimeout(() => {
-      location.reload();
-    }, 300);
-  });
-}
-
-
-
 // === SIMPAN DATA USER KE FIRESTORE ===
 
 function saveUserData(uid) {
