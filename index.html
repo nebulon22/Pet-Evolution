@@ -213,25 +213,26 @@
 
 }
 
-
-
 .slot {
-  width: 40px;
-  height: 40px;
-  border: 2px solid #999;
-  border-radius: 5px;
-  background: rgba(255,255,255,0.1);
-  position: relative;
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 2px solid #999;
+  border-radius: 5px;
+  background: rgba(255,255,255,0.1);
+  overflow: hidden; /* penting: batasi isi agar tidak keluar */
 }
 
 .slot img {
-  width: 60%;
-  height: 60%;
+  width: 80%;
+  height: auto;
   object-fit: contain;
+  display: block;
 }
+
+
 
 .slot .count {
   position: absolute;
