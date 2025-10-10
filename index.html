@@ -1366,45 +1366,32 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
     });
 }
 
-
 // === OBSERVER LOGIN STATE ===
- auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged((user) => {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
 
-   if (!user || !user.email) {
+  // 🚫 Tambahan anti-glitch Chrome — cegah logoutBtn muncul sementara
+  if (!user || !user.email) {
     if (logoutBtn) logoutBtn.style.display = "none";
     if (loginBox) loginBox.style.display = "block";
-    return;
+    return; // keluar sebelum menjalankan bagian login
   }
-   
-  if (user) {
-    // === Saat user login ===
-    const storedPet = localStorage.getItem("petData");
-    const storedFood = localStorage.getItem("foodStock");
-    if (storedPet) try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
-    if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
 
-    // Muat data cloud
-    loadUserData(user.uid);
+  // ✅ Jika user valid (login sesungguhnya)
+  const storedPet = localStorage.getItem("petData");
+  const storedFood = localStorage.getItem("foodStock");
+  if (storedPet) try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
+  if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
 
-    if (loginBox) loginBox.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "block";
-  } 
-  else {
-    // === Guest / Logout ===
-    const storedPet = localStorage.getItem("petData");
-    const storedFood = localStorage.getItem("foodStock");
-    if (storedPet) try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
-    if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
+  // Muat data cloud
+  loadUserData(user.uid);
 
-    evoAnimating = false;
-    updateUI();
+  if (loginBox) loginBox.style.display = "none";
+  if (logoutBtn) logoutBtn.style.display = "block";
+});
 
-    // Pastikan elemen tampil sesuai mode guest
-    if (loginBox) loginBox.style.display = "block";
-    if (logoutBtn) logoutBtn.style.display = "none";
-
+  
     // Tambahan anti-cache Chrome: hapus semua auth data lokal
     localStorage.removeItem("firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey);
   }
