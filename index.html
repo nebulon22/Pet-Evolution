@@ -1323,6 +1323,33 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
+// === 🔧 PERBAIKAN LOGIN PERSISTENCE & SYNC CROSS-BROWSER ===
+
+// 1️⃣ Pastikan Firebase menyimpan sesi login dengan benar
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    console.log("✅ Firebase persistence mode: LOCAL (login bertahan setelah reload)");
+  })
+  .catch((error) => {
+    console.warn("⚠️ Gagal set persistence:", error.message);
+  });
+
+// 2️⃣ Perbarui status tampilan login/logout saat halaman baru dimuat
+window.addEventListener("load", () => {
+  firebase.auth().currentUser?.reload().then(() => {
+    const user = firebase.auth().currentUser;
+    const logoutBtn = document.getElementById("logoutBtn");
+    const loginBox = document.getElementById("loginBox");
+
+    if (user && user.emailVerified) {
+      logoutBtn.style.display = "block";
+      loginBox.style.display = "none";
+    } else {
+      logoutBtn.style.display = "none";
+      loginBox.style.display = "block";
+    }
+  }).catch((e) => console.warn("Auth reload error:", e));
+});
 
 // === LOGIN EMAIL OTP ===
 function sendLoginLink() {
@@ -1371,8 +1398,12 @@ auth.onAuthStateChanged((user) => {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // 🚫 Anti-glitch Chrome — cegah tombol logout muncul kalau belum login
-  if (!user || !user.email) {
+  // 🚫 Anti-glitch Chrome + verifikasi email
+  if (!user || !user.emailVerified) {
+    // Jika Chrome menyimpan sesi lama, paksa logout
+    if (auth.currentUser && !user?.emailVerified) {
+      auth.signOut();
+    }
     if (logoutBtn) logoutBtn.style.display = "none";
     if (loginBox) loginBox.style.display = "block";
     return;
@@ -1392,6 +1423,9 @@ auth.onAuthStateChanged((user) => {
 });
 
 
+
+
+
 // === LOGOUT ===
 function logout() {
   if (!confirm("Apakah yakin ingin logout?")) return;
@@ -1406,6 +1440,8 @@ function logout() {
 
     // === Hapus data lokal ===
     localStorage.clear();
+    sessionStorage.clear();
+    try { indexedDB.deleteDatabase('firebaseLocalStorageDb'); } catch(e){ console.warn(e); }
 
     // === Hapus cache Firebase Auth (fix khusus Chrome) ===
     try {
