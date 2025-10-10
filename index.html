@@ -1344,41 +1344,16 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-// === 🔧 PERBAIKAN LOGIN PERSISTENCE & SYNC CROSS-BROWSER ===
-
-// 1️⃣ Pastikan Firebase menyimpan sesi login dengan benar
+    // === 🔧 KONFIGURASI LOGIN PERSISTENCE ===
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  .then(() => {
-    console.log("✅ Firebase persistence mode: LOCAL (login bertahan setelah reload)");
-  })
-  .catch((error) => {
-    console.warn("⚠️ Gagal set persistence:", error.message);
-  });
+  .then(() => console.log("✅ Firebase persistence: LOCAL (login bertahan setelah reload)"))
+  .catch(err => console.warn("⚠️ Gagal set persistence:", err.message));
 
-// 2️⃣ Perbarui status tampilan login/logout saat halaman baru dimuat
-window.addEventListener("load", () => {
-  firebase.auth().currentUser?.reload().then(() => {
-    const user = firebase.auth().currentUser;
-    const logoutBtn = document.getElementById("logoutBtn");
-    const loginBox = document.getElementById("loginBox");
 
-    if (user && user.emailVerified) {
-      logoutBtn.style.display = "block";
-      loginBox.style.display = "none";
-    } else {
-      logoutBtn.style.display = "none";
-      loginBox.style.display = "block";
-    }
-  }).catch((e) => console.warn("Auth reload error:", e));
-});
-
-// === LOGIN EMAIL OTP ===
+// === 🔑 LOGIN DENGAN EMAIL (KIRIM LINK OTP) ===
 function sendLoginLink() {
   const email = document.getElementById("emailInput").value.trim();
-  if (!email) {
-    alert("Masukkan email terlebih dahulu!");
-    return;
-  }
+  if (!email) return alert("Masukkan email terlebih dahulu!");
 
   const actionCodeSettings = {
     url: "https://nebulon22.github.io/Pet-Evolution/index.html",
@@ -1387,57 +1362,52 @@ function sendLoginLink() {
 
   auth.sendSignInLinkToEmail(email, actionCodeSettings)
     .then(() => {
-      alert("✅ Link OTP sudah dikirim ke " + email + "\nCek inbox atau folder spam.");
+      alert("✅ Link OTP dikirim ke " + email + "\nCek inbox atau folder spam.");
       localStorage.setItem("emailForSignIn", email);
     })
-    .catch((error) => {
-      alert("❌ Gagal kirim OTP: " + error.message);
-    });
+    .catch(err => alert("❌ Gagal kirim OTP: " + err.message));
 }
 
 
-// === CEK LINK LOGIN (saat user klik dari email) ===
+// === CEK LINK LOGIN DARI EMAIL ===
 if (auth.isSignInWithEmailLink(window.location.href)) {
   let email = localStorage.getItem("emailForSignIn");
   if (!email) email = prompt("Masukkan email Anda untuk verifikasi:");
-
+  
   auth.signInWithEmailLink(email, window.location.href)
-    .then((result) => {
+    .then(result => {
       alert("✅ Login berhasil sebagai: " + result.user.email);
       localStorage.removeItem("emailForSignIn");
       document.getElementById("loginBox").style.display = "none";
       document.getElementById("logoutBtn").style.display = "block";
       loadUserData(result.user.uid);
     })
-    .catch((error) => {
-      alert("❌ Login gagal: " + error.message);
-    });
+    .catch(err => alert("❌ Login gagal: " + err.message));
 }
 
-// === OBSERVER LOGIN STATE (Versi Stabil dan Sederhana) ===
+
+// === OBSERVER STATUS LOGIN ===
 auth.onAuthStateChanged((user) => {
-  const loginBox = document.getElementById("loginBox");
+  const loginBox  = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
   const emailIcon = document.getElementById("emailIcon");
 
   if (user && user.emailVerified) {
     // ✅ SUDAH LOGIN
     loadUserData(user.uid);
-
-    if (loginBox) loginBox.style.display = "none";     // popup login disembunyikan
-    if (logoutBtn) logoutBtn.style.display = "block";  // tampilkan tombol logout
+    if (loginBox)  loginBox.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "block";
     if (emailIcon) {
-      emailIcon.style.opacity = "0.4";                 // ikon login jadi abu-abu
-      emailIcon.style.pointerEvents = "none";          // tidak bisa diklik lagi
+      emailIcon.style.opacity = "0.4";
+      emailIcon.style.pointerEvents = "none";
     }
-
   } else {
     // 🚫 BELUM LOGIN
-    if (loginBox) loginBox.style.display = "none";     // popup disembunyikan default
-    if (logoutBtn) logoutBtn.style.display = "none";   // logout disembunyikan
+    if (loginBox)  loginBox.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "none";
     if (emailIcon) {
-      emailIcon.style.opacity = "1";                   // ikon login normal
-      emailIcon.style.pointerEvents = "auto";          // bisa diklik untuk buka login
+      emailIcon.style.opacity = "1";
+      emailIcon.style.pointerEvents = "auto";
     }
   }
 });
@@ -1448,81 +1418,58 @@ function logout() {
   if (!confirm("Apakah yakin ingin logout?")) return;
 
   auth.signOut().then(async () => {
-    // === Bersihkan data game ===
+    // 🔁 Reset data lokal
     pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
     coins = 0;
     foodStock = { meat: 100, fruit: 100, leaf: 100 };
     evoAnimating = false;
     selectedFood = null;
 
-    // === Hapus data lokal ===
     localStorage.clear();
     sessionStorage.clear();
-    try { indexedDB.deleteDatabase('firebaseLocalStorageDb'); } catch(e){ console.warn(e); }
+    try { indexedDB.deleteDatabase('firebaseLocalStorageDb'); } catch(e){}
 
-    // === Hapus cache Firebase Auth (fix khusus Chrome) ===
-    try {
-      const key = "firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey;
-      localStorage.removeItem(key);
-
-      // Paksa reset currentUser (agar Chrome benar-benar logout)
-      if (auth.currentUser) {
-        await auth.updateCurrentUser(null);
-      }
-    } catch (e) {
-      console.warn("Tidak bisa hapus cache Firebase:", e);
-    }
-
-    // === Reset tampilan ===
+    // 🔒 Reset tampilan
     updateUI();
-    const logoutBtn = document.getElementById("logoutBtn");
-    const loginBox = document.getElementById("loginBox");
-    if (logoutBtn) logoutBtn.style.display = "none";
-    if (loginBox) loginBox.style.display = "block";
+    document.getElementById("logoutBtn").style.display = "none";
+    document.getElementById("loginBox").style.display = "none";
+    const emailIcon = document.getElementById("emailIcon");
+    if (emailIcon) {
+      emailIcon.style.opacity = "1";
+      emailIcon.style.pointerEvents = "auto";
+    }
 
     alert("👋 Anda telah logout.");
     showBubble("Anda keluar dari akun.");
-
-    // === Reload halaman agar status benar-benar disinkronkan
-    setTimeout(() => {
-      location.reload(true); // reload penuh dari server, bukan cache
-    }, 500);
+    setTimeout(() => location.reload(true), 400);
   })
-  .catch((error) => {
-    alert("❌ Gagal logout: " + error.message);
-  });
+  .catch(err => alert("❌ Gagal logout: " + err.message));
 }
 
-// === SIMPAN DATA USER KE FIRESTORE ===
 
+// === SIMPAN DATA KE FIRESTORE ===
 function saveUserData(uid) {
   if (!uid || !pet) return;
-
   db.collection("users").doc(uid).set({
-    pet: pet,
-    foodStock: foodStock,
-    coins: pet.coins,
-    updatedAt: Date.now()
+    pet, foodStock, coins: pet.coins, updatedAt: Date.now()
   }, { merge: true })
   .then(() => console.log("☁️ Data tersimpan ke cloud"))
-  .catch((err) => console.error("Gagal simpan data:", err));
+  .catch(err => console.error("Gagal simpan data:", err));
 }
 
 
-// === MUAT DATA USER DARI FIRESTORE ===
+// === MUAT DATA DARI FIRESTORE ===
 function loadUserData(uid) {
   db.collection("users").doc(uid).get().then((doc) => {
     if (doc.exists) {
       const data = doc.data();
-
-      // Periksa mana yang lebih tinggi: lokal vs cloud
       const localPet = JSON.parse(localStorage.getItem("petData") || "{}");
       const localLevel = localPet.level || 1;
       const cloudLevel = data.pet?.level || 1;
 
       if (localLevel > cloudLevel) {
         console.log("📡 Cloud lebih rendah, kirim data lokal ke cloud");
-        saveUserData(uid); // kirim ke cloud data lokal
+        saveUserData(uid);
       } else {
         console.log("☁️ Data cloud dimuat (level " + cloudLevel + ")");
         pet = data.pet || pet;
@@ -1546,6 +1493,9 @@ setInterval(() => {
   const user = auth.currentUser;
   if (user) saveUserData(user.uid);
 }, 30000);
+
+
+
 </script>
   
 </body>
