@@ -1371,31 +1371,26 @@ auth.onAuthStateChanged((user) => {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
 
-  // 🚫 Tambahan anti-glitch Chrome — cegah logoutBtn muncul sementara
+  // 🚫 Anti-glitch Chrome — cegah tombol logout muncul kalau belum login
   if (!user || !user.email) {
     if (logoutBtn) logoutBtn.style.display = "none";
     if (loginBox) loginBox.style.display = "block";
-    return; // keluar sebelum menjalankan bagian login
+    return;
   }
 
   // ✅ Jika user valid (login sesungguhnya)
   const storedPet = localStorage.getItem("petData");
   const storedFood = localStorage.getItem("foodStock");
-  if (storedPet) try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
-  if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
+  if (storedPet) try { pet = JSON.parse(storedPet); } catch (e) { console.warn(e); }
+  if (storedFood) try { foodStock = JSON.parse(storedFood); } catch (e) { console.warn(e); }
 
-  // Muat data cloud
+  // Muat data cloud sesuai user login
   loadUserData(user.uid);
 
   if (loginBox) loginBox.style.display = "none";
   if (logoutBtn) logoutBtn.style.display = "block";
 });
 
-  
-    // Tambahan anti-cache Chrome: hapus semua auth data lokal
-    localStorage.removeItem("firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey);
-  }
-});
 
 // === LOGOUT ===
 function logout() {
@@ -1405,20 +1400,19 @@ function logout() {
     // === Bersihkan data game ===
     pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
     coins = 0;
-    inventory = {};
     foodStock = { meat: 100, fruit: 100, leaf: 100 };
     evoAnimating = false;
     selectedFood = null;
 
-    // === Hapus semua data lokal ===
+    // === Hapus data lokal ===
     localStorage.clear();
 
-    // === Tambahan penting: hapus cache Firebase Auth (Chrome fix) ===
+    // === Hapus cache Firebase Auth (fix khusus Chrome) ===
     try {
       const key = "firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey;
       localStorage.removeItem(key);
 
-      // Paksa Firebase me-reset currentUser (khusus Chrome)
+      // Paksa reset currentUser (agar Chrome benar-benar logout)
       if (auth.currentUser) {
         await auth.updateCurrentUser(null);
       }
@@ -1426,7 +1420,7 @@ function logout() {
       console.warn("Tidak bisa hapus cache Firebase:", e);
     }
 
-    // === Reset tampilan UI ===
+    // === Reset tampilan ===
     updateUI();
     const logoutBtn = document.getElementById("logoutBtn");
     const loginBox = document.getElementById("loginBox");
@@ -1436,15 +1430,16 @@ function logout() {
     alert("👋 Anda telah logout.");
     showBubble("Anda keluar dari akun.");
 
-    // Pastikan status auth disegarkan ulang setelah pembersihan cache
+    // === Reload halaman agar status benar-benar disinkronkan
     setTimeout(() => {
-      location.reload(true); // paksa reload dari server, bukan cache
+      location.reload(true); // reload penuh dari server, bukan cache
     }, 500);
   })
   .catch((error) => {
     alert("❌ Gagal logout: " + error.message);
   });
 }
+
 
   
   .finally(() => {
