@@ -22,7 +22,32 @@
     align-items:center;
     z-index:20;
   }
+/* === Tombol Reset & Logout (pojok kanan atas) === */
+#topRightButtons {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 10px;
+  z-index: 200;
+}
 
+#topRightButtons button {
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 4vw;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+#topRightButtons button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+    
   #leftIcons, #rightIcons {
     display:inline-flex;
     gap:8px;
@@ -452,10 +477,13 @@ div[style*="text-align:center"] {
     <div id="rightIcons">
       <div id="statsIcon" onclick="toggleStats()">📊</div>
       <div id="emailIcon">📧</div>
-      <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
-    </div>
   </div>
 
+<!-- 🔝 Tombol pojok kanan atas -->
+<div id="topRightButtons">
+  <button id="resetBtn" onclick="resetGame()">🔄</button>
+  <button id="logoutBtn" onclick="confirmLogout()" style="display:none;">🔓</button>
+</div>
 
   <!-- POPUP LOGIN EMAIL -->
 
@@ -468,11 +496,7 @@ div[style*="text-align:center"] {
   </div>
   
 <!-- Tombol Logout (ikon gembok terbuka) -->
-<button id="logoutBtn"
-  style="display:none; position:fixed; top:12px; right:12px;
-  background:none; border:none; cursor:pointer; z-index:200;">
-  🔓
-</button>
+
 
 <!-- Popup konfirmasi logout -->
 <div id="logoutPopup"
