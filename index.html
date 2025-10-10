@@ -1494,6 +1494,19 @@ setInterval(() => {
   if (user) saveUserData(user.uid);
 }, 30000);
 
+<script>
+function showLoginBox() {
+  const loginBox = document.getElementById("loginBox");
+  if (loginBox) {
+    // Pastikan popup muncul di atas semua
+    loginBox.style.display = "block";
+    loginBox.style.zIndex = 9999;
+    console.log("Login box ditampilkan");
+  } else {
+    console.error("❌ Elemen #loginBox tidak ditemukan.");
+  }
+}
+</script>
 
 
 </script>
