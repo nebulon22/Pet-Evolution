@@ -49,6 +49,23 @@
   }
 
   #resetBtn:hover { opacity:1; }
+
+  #logoutBtn {
+  position: fixed;
+  top: 12px;
+  right: 55px; /* Geser ke kiri agar tidak menimpa reset */
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 200;
+  font-size: 6vw;
+  padding: 4px 8px;       /* tambahkan area klik lebih besar */
+  border-radius: 8px;
+   }
+
+  #logoutBtn:hover {
+  background: rgba(255,255,255,0.15);
+}
   /* ===== BATTLE ICON ===== */
   #battleIcon {
     position:fixed;
@@ -173,22 +190,7 @@
     #resetWrapper { position:fixed; top:5px; right:5px; z-index:10; }
     #resetBtn { font-size:2.5vw; padding:4px 8px; border-radius:6px; opacity:0.6; }
     #resetBtn:hover { opacity:1; }
-    #logoutBtn {
-  position: fixed;
-  top: 12px;
-  right: 55px; /* Geser ke kiri agar tidak menimpa reset */
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 200;
-  font-size: 4.5vw;
-  padding: 4px 8px;       /* tambahkan area klik lebih besar */
-  border-radius: 8px;
-   }
-
-  #logoutBtn:hover {
-  background: rgba(255,255,255,0.15);
-}
+    
 
     @keyframes breathing { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
     .breathing{animation:breathing 3s infinite;}
