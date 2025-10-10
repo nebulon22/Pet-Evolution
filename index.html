@@ -349,27 +349,26 @@
 }
   /* Pet wrapper */
   .pet-wrapper {
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-top:100px;
-    gap:20px;
-    perspective:800px;
-    transform: translateX(-30px);
-  }
-  #thermometer {
-    margin-right: 50px;
-    margin-top: 100px;
-  }
-  /* Pet idle effect */
-  #pet {
-    width:40vw; max-width:220px; height:auto; z-index:1;
-    transition: transform 0.6s ease, filter 0.3s ease;
-    transform-style: preserve-3d;
-    filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-    animation: idleMotion 6s ease-in-out infinite, breathing 3s infinite;
-  }
+  display: flex;
+  align-items: flex-start;  /* sejajarkan bagian atas */
+  justify-content: center;  /* posisikan ke tengah layar */
+  gap: 25px;                /* jarak antara thermometer dan pet */
+  transform: translateY(40px); /* turunkan sedikit dari atas */
+}
+
+#thermometer {
+  margin-top: 10px; /* bisa disesuaikan lagi nanti */
+}
+
+#pet {
+  width: 40vw;
+  max-width: 220px;
+  height: auto;
+  z-index: 1;
+  filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
+  animation: idleMotion 6s ease-in-out infinite, breathing 3s infinite;
+}
+
 
 /* 🐣 Pet Area */
 #petWrapper {
