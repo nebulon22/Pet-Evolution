@@ -34,42 +34,60 @@
 }
 
 /* Semua ikon utama */
-/* Semua ikon kanan dan kiri (seragam dengan ikon Shop) */
-#coinDisplay, #shopIcon,
-#statsIcon, #emailIcon, #resetBtn, #logoutBtn {
-  font-size: 4.5vw;
-  background: rgba(0,0,0,0.25);   /* lebih halus daripada 0.3 */
-  padding: 4px 8px;               /* sama persis seperti ikon shop */
+/* ===== Restore Shop look & make other icons match it ===== */
+
+/* Pastikan shop & coin kembali ke gaya semula */
+#shopIcon, #coinDisplay {
+  font-size: 4.5vw;                 /* ukuran ideal */
+  background: rgba(0,0,0,0.3);      /* sama dengan awal */
+  padding: 4px 8px;                 /* padding yang pas */
   border-radius: 6px;
-  cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  user-select: none;
   line-height: 1;
-  min-width: 36px;                /* tetap enak disentuh jari */
-  min-height: 36px;
-  box-shadow: none;               /* pastikan tidak ada bayangan */
-  border: none;
+  min-width: unset;                 /* batalkan min-width yang memaksa */
+  min-height: unset;
+  box-shadow: none;
+  transform: none !important;       /* hapus efek transform bila ada */
 }
 
-/* Efek hover halus */
-#statsIcon:hover, #emailIcon:hover, #resetBtn:hover, #logoutBtn:hover,
-#shopIcon:hover {
-  background: rgba(255,255,255,0.15);
-  opacity: 0.95;
+/* Buat ikon kanan lain persis sama seperti shop (tanpa memaksa ukuran) */
+#statsIcon, #emailIcon, #resetBtn, #logoutBtn {
+  font-size: 4.5vw;
+  background: rgba(0,0,0,0.3);
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  min-width: unset;     /* jangan paksa lebar/tinggi */
+  min-height: unset;
+  box-shadow: none;
+  transform: none;
 }
 
-#statsIcon:active, #emailIcon:active, #resetBtn:active, #logoutBtn:active,
-#shopIcon:active {
-  transform: scale(1.1);
-  background: rgba(255,255,255,0.25);
+/* Reset aturan global yang mungkin tersisa untuk semua anak */
+#leftIcons * , #rightIcons * {
+  min-width: unset !important;
+  min-height: unset !important;
 }
+
+/* Hover/active efek ringan yang aman */
+#shopIcon:hover, #statsIcon:hover, #emailIcon:hover, #resetBtn:hover, #logoutBtn:hover {
+  background: rgba(255,255,255,0.12);
+}
+#shopIcon:active, #statsIcon:active, #emailIcon:active, #resetBtn:active, #logoutBtn:active {
+  transform: scale(1.06);
+}
+
+
 
 /* Supaya area klik tetap besar di HP */
 #statsIcon, #emailIcon, #resetBtn, #logoutBtn {
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 10px;
+  min-height: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
