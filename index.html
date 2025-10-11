@@ -13,53 +13,56 @@
 
   h2 { margin-top:10px; font-size:6vw; }
 
+ 
   /* ===== TOP BAR ===== */
-  #topBar {
-    position:fixed;
-    top:5px; left:5px; right:5px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    z-index:20;
-  }
+#topBar {
+  position: fixed;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
 
-  #leftIcons, #rightIcons {
-    display:inline-flex;
-    gap:8px;
-    align-items:center;
-  }
-
-   /* ===== RAPIKAN IKON KANAN ===== */
-#rightIcons {
+/* Susunan ikon kiri dan kanan */
+#leftIcons, #rightIcons {
   display: inline-flex;
   align-items: center;
-  gap: 8px;                   /* jarak antar ikon */
-  position: fixed;
-  top: 8px;
-  right: 10px;
-  z-index: 50;
+  gap: 8px;
 }
 
-/* Semua ikon kanan: stat, email, reset, logout */
-#statsIcon, #emailIcon, #resetBtn, #logoutBtn {
-  font-size: 4.8vw;           /* ukuran emoji seragam */
-  background: rgba(0,0,0,0.3);
-  padding: 8px 10px;          /* area klik nyaman */
-  border-radius: 8px;
+/* Semua ikon utama */
+#coinDisplay, #shopIcon, #statsIcon, #emailIcon, #resetBtn, #logoutBtn {
+  font-size: 4.5vw;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 6px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   user-select: none;
   line-height: 1;
-  text-align: center;
+  min-width: 40px;
+  min-height: 40px;
 }
 
-/* Hover & klik efek */
-#statsIcon:hover, #emailIcon:hover, #resetBtn:hover, #logoutBtn:hover {
-  background: rgba(255,255,255,0.2);
+/* Efek hover dan klik */
+#coinDisplay:hover, #shopIcon:hover,
+#statsIcon:hover, #emailIcon:hover,
+#resetBtn:hover, #logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
   opacity: 0.9;
 }
-#statsIcon:active, #emailIcon:active, #resetBtn:active, #logoutBtn:active {
+
+#coinDisplay:active, #shopIcon:active,
+#statsIcon:active, #emailIcon:active,
+#resetBtn:active, #logoutBtn:active {
   transform: scale(1.1);
 }
+
 
 /* Supaya area klik tetap besar di HP */
 #statsIcon, #emailIcon, #resetBtn, #logoutBtn {
