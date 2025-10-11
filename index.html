@@ -1385,12 +1385,11 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
       alert("❌ Login gagal: " + error.message);
     });
 }
-
-
-// === OBSERVER LOGIN STATE ===
- auth.onAuthStateChanged((user) => {
+ // === OBSERVER LOGIN STATE ===
+auth.onAuthStateChanged((user) => {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
+  const emailIcon = document.getElementById("emailIcon");
 
   if (user) {
     // === Saat user login ===
@@ -1402,8 +1401,16 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
     // Muat data cloud
     loadUserData(user.uid);
 
+    // 🔹 Atur UI login/logout
     if (loginBox) loginBox.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "block";
+    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+    if (emailIcon) {
+      emailIcon.style.opacity = "0.3";
+      emailIcon.style.pointerEvents = "none";
+    }
+
+    // Tandai login di localStorage (untuk fallback offline)
+    localStorage.setItem("isLoggedIn", "true");
   } 
   else {
     // === Guest / Logout ===
@@ -1415,14 +1422,21 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
     evoAnimating = false;
     updateUI();
 
-    // Pastikan elemen tampil sesuai mode guest
-    if (loginBox) loginBox.style.display = "block";
+    // 🔹 Atur UI login/logout
+    if (loginBox) loginBox.style.display = "none"; // popup jangan auto muncul
     if (logoutBtn) logoutBtn.style.display = "none";
+    if (emailIcon) {
+      emailIcon.style.opacity = "1";
+      emailIcon.style.pointerEvents = "auto";
+    }
 
-    // Tambahan anti-cache Chrome: hapus semua auth data lokal
+    localStorage.removeItem("isLoggedIn");
+
+    // Anti-cache Chrome
     localStorage.removeItem("firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey);
   }
 });
+
 
 // === LOGOUT ===
 function logout() {
