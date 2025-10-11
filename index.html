@@ -1343,6 +1343,14 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
+  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .then(() => {
+    console.log("✅ Firebase persistence: LOCAL (login bertahan setelah reload)");
+  })
+  .catch((error) => {
+    console.error("❌ Gagal set persistence:", error);
+  });
+
 
 // === LOGIN EMAIL OTP ===
 function sendLoginLink() {
@@ -1432,8 +1440,8 @@ auth.onAuthStateChanged((user) => {
 
     localStorage.removeItem("isLoggedIn");
 
-    // Anti-cache Chrome
-    localStorage.removeItem("firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey);
+    // Jangan hapus cache auth di observer (biarkan Firebase handle sendiri)
+
   }
 });
 
