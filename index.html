@@ -1101,7 +1101,7 @@ document.getElementById("logoutBtn").onclick = function() {
 
 function confirmLogout() {
   // Hapus semua data & kembali ke layar awal
-  localStorage.clear();
+ 
   document.getElementById("logoutPopup").style.display = "none";
   document.getElementById("logoutBtn").style.display = "none";
   alert("Anda telah logout.");
@@ -1460,7 +1460,7 @@ function logout() {
     selectedFood = null;
 
     // === Hapus semua data lokal ===
-    localStorage.clear();
+    
 
     // === Tambahan penting: hapus cache Firebase Auth (Chrome fix) ===
     try {
