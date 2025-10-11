@@ -661,14 +661,23 @@ div[style*="text-align:center"] {
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
   <audio id="soundBuy" src="sounds/buy.mp3" preload="auto"></audio>
+  
   <script>
-
     // Klik ikon email untuk buka/tutup popup login
     document.getElementById("emailIcon").onclick = function(){
       const box = document.getElementById("loginBox");
       box.style.display = (box.style.display==="block" ? "none" : "block");
     };
   </script>
+
+  <script>
+// === SEMBUNYIKAN LOGOUT SAAT HALAMAN PERTAMA KALI DIMUAT ===
+// Tujuannya agar tombol logout tidak muncul duluan sebelum Firebase selesai cek status.
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) logoutBtn.style.display = "none";
+});
+</script>
 
 <script>
   // Hapus data lama yang rusak / versi lama
