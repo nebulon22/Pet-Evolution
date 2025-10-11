@@ -1160,71 +1160,35 @@ function buyItem(type,price){
   // 🔊 Mainkan suara beli
 
   playSound("soundBuy");
-
-
-
   showBubble("Beli "+type+" berhasil! -"+price+" koin");
-
   updateUI();
 
-
-
   const coinDisplay=document.getElementById("coinDisplay");
-
   coinDisplay.style.transform="scale(1.2)";
-
   coinDisplay.style.opacity="0.5";
-
   setTimeout(()=>{
-
     coinDisplay.style.transform="scale(1)";
-
     coinDisplay.style.opacity="1";
-
   },300);
-
 }
-
-
 
 // ===================== STATS =====================
 
-
-
 function toggleStats(){
-
   const p=document.getElementById("statsPopup");
-
   p.style.display=(p.style.display==="block"?"none":"block");
-
   if(p.style.display==="block"){ drawStatsChart(); updateStatUI(); }
-
 }
 
-
-
-
-
 function updateStatUI(){
-
   document.getElementById("statPoints").textContent = pet.statPoints;
-
   const btns = document.getElementById("statButtons");
-
   btns.innerHTML = "";
-
-
-
   Object.keys(pet.stats).forEach(key=>{
-
     const row = document.createElement("div");
-
     row.style.margin = "5px 0";
 
-
-
     // label jumlah stat
-
     const label = document.createElement("span");
     label.textContent = key.toUpperCase() + ": " + pet.stats[key] + " ";
 
@@ -1247,10 +1211,6 @@ function updateStatUI(){
     btns.appendChild(row);
   });
 }
-
-
-
-
 
 function drawStatsChart(){
   const c=document.getElementById("statsChart");
