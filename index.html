@@ -91,25 +91,6 @@
 
   #resetBtn:hover { opacity:1; }
 
-  #logoutBtn {
-  position: fixed;
-  top: 8px;
-  right: 12px;
-  font-size: 5vw;          /* ukuran dasar seimbang dengan 📊, 📧, 🔄 */
-  transform: scale(1.8);   /* 🔥 paksa emoji lebih besar secara visual */
-  transform-origin: center;
-  background: rgba(0,0,0,0.3);
-  border: none;
-  border-radius: 8px;
-  padding: 4px 8px;      /* area sentuh besar */
-  cursor: pointer;
-  z-index: 200;
-  line-height: 1;
-}
-#logoutBtn:active {
-  transform: scale(1.9);   /* efek klik ringan */
-  opacity: 0.8;
-}
 
   /* ===== BATTLE ICON ===== */
   #battleIcon {
@@ -531,10 +512,6 @@ div[style*="text-align:center"] {
     <button onclick="sendLoginLink()">Kirim Link OTP</button>
     <button onclick="document.getElementById('loginBox').style.display='none'">Tutup</button>
   </div>
-  
-<!-- Tombol Logout (ikon gembok terbuka) -->
-<button id="logoutBtn" style="display:none;">🔓</button>
-
 
 <!-- Popup konfirmasi logout -->
 <div id="logoutPopup"
