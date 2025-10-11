@@ -29,6 +29,47 @@
     align-items:center;
   }
 
+   /* ===== RAPIKAN IKON KANAN ===== */
+#rightIcons {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;                   /* jarak antar ikon */
+  position: fixed;
+  top: 8px;
+  right: 10px;
+  z-index: 50;
+}
+
+/* Semua ikon kanan: stat, email, reset, logout */
+#statsIcon, #emailIcon, #resetBtn, #logoutBtn {
+  font-size: 4.8vw;           /* ukuran emoji seragam */
+  background: rgba(0,0,0,0.3);
+  padding: 8px 10px;          /* area klik nyaman */
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Hover & klik efek */
+#statsIcon:hover, #emailIcon:hover, #resetBtn:hover, #logoutBtn:hover {
+  background: rgba(255,255,255,0.2);
+  opacity: 0.9;
+}
+#statsIcon:active, #emailIcon:active, #resetBtn:active, #logoutBtn:active {
+  transform: scale(1.1);
+}
+
+/* Supaya area klik tetap besar di HP */
+#statsIcon, #emailIcon, #resetBtn, #logoutBtn {
+  min-width: 40px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
   #coinDisplay, #shopIcon, #statsIcon, #emailIcon {
     font-size:4.5vw;
     background:rgba(0,0,0,0.3);
@@ -472,10 +513,12 @@ div[style*="text-align:center"] {
       <div id="shopIcon" onclick="toggleShop()">🛒</div>
     </div>
     <div id="rightIcons">
-      <div id="statsIcon" onclick="toggleStats()">📊</div>
-      <div id="emailIcon">📧</div>
-      <div id="resetWrapper"><button id="resetBtn" onclick="resetGame()">🔄</button></div>
-    </div>
+  <div id="statsIcon" onclick="toggleStats()">📊</div>
+  <div id="emailIcon">📧</div>
+  <div id="resetBtn" onclick="resetGame()">🔄</div>
+  <div id="logoutBtn" style="display:none;">🔓</div>
+</div>
+
   </div>
 
 
