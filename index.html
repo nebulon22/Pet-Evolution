@@ -933,36 +933,7 @@ function evolvePet() {
   }, 3000);
 }
 
-function playWithPet(){
-  const btn = document.getElementById("playBtn");
-  if(btn.disabled) return; // kalau masih cooldown
 
-  // Kurangi hunger
-  pet.hunger = Math.max(0, pet.hunger - 10);
-  updateUI();
-
-  // Ambil pet
-  const petImg = document.getElementById("pet");
-  // Stop animasi idle/hungry, lalu jalankan jump
-  petImg.style.animation = "petJump 1s ease-out";
-  showBubble("🎮 Bermain seru! Hunger -10%");
-  setTimeout(()=>{
-    // kembalikan ke idleMotion atau hungry-shake sesuai kondisi
-    if(pet.hunger <= 0){
-      petImg.style.animation = "hungry-shake 0.6s infinite";
-    } else {
-      petImg.style.animation = "idleMotion 6s ease-in-out infinite";
-    }
-  },1000);
-
-  // Cooldown 5 detik
-  btn.disabled = true;
-  btn.textContent = "⏳ Tunggu...";
-  setTimeout(()=>{
-    btn.disabled = false;
-    btn.textContent = "🎮 Play";
-  },5000);
-}
 
  // === UPDATE UI ===
 function updateUI() {
@@ -1327,11 +1298,7 @@ function tapEffect(){
 
 petImg.addEventListener("click", tapEffect);
 petImg.addEventListener("touchstart", tapEffect);
-  window.onload = () => {
-  updateUI();
-  setupDrag();
-  setupButtons();
-  };
+  
 </script>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -1602,6 +1569,77 @@ setInterval(() => {
   const user = auth.currentUser;
   if (user) saveUserData(user.uid);
 }, 30000);
+
+<script>
+// === 🧠 SISTEM STABIL UNTUK DRAG DAN ANIMASI PLAY ===
+
+// 🟢 1. Reaktif sistem drag: aktif terus walau DOM berubah
+function activateDragObserver() {
+  // Pasang pertama kali
+  setupDrag();
+
+  // Jika isi foodGrid berubah (misalnya di-reset atau update UI)
+  const grid = document.getElementById("foodGrid");
+  if (!grid) return;
+
+  const observer = new MutationObserver((mutations) => {
+    // Cek apakah ada perubahan slot
+    const hasSlotChange = mutations.some(m => m.addedNodes.length || m.removedNodes.length);
+    if (hasSlotChange) setupDrag();
+  });
+
+  observer.observe(grid, { childList: true, subtree: true });
+  console.log("✅ Drag observer aktif dan otomatis memantau perubahan slot");
+}
+
+// 🟢 2. Logika animasi alami: gunakan variabel CSS
+function playWithPet() {
+  const btn = document.getElementById("playBtn");
+  if (btn.disabled) return;
+
+  pet.hunger = Math.max(0, pet.hunger - 10);
+  pet.exp = Math.min(100, pet.exp + 3);
+  pet.coins += 1;
+  updateUI();
+
+  const petImg = document.getElementById("pet");
+
+  // Gunakan variabel CSS untuk animasi
+  petImg.style.setProperty("--pet-anim", "petJump 1s ease-out");
+  showBubble("🎮 Bermain seru! Hunger -10%");
+  playSound("sound");
+
+  // Kembalikan ke idleMotion setelah selesai
+  setTimeout(() => {
+    petImg.style.setProperty("--pet-anim", "idleMotion 6s ease-in-out infinite, breathing 3s infinite");
+  }, 1000);
+
+  // Cooldown tombol
+  btn.disabled = true;
+  btn.textContent = "⏳ Tunggu...";
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = "🎮 Play";
+  }, 5000);
+}
+
+// 🟢 3. CSS alami: pastikan pet mengikuti variabel animasi
+const style = document.createElement("style");
+style.textContent = `
+  #pet {
+    animation: var(--pet-anim, idleMotion 6s ease-in-out infinite, breathing 3s infinite);
+  }
+`;
+document.head.appendChild(style);
+
+// 🟢 4. Jalankan saat halaman siap
+window.addEventListener("DOMContentLoaded", () => {
+  updateUI();
+  setupButtons();
+  activateDragObserver();
+});
+</script>
+
 </script>
   
 </body>
