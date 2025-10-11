@@ -52,20 +52,24 @@
 
   #logoutBtn {
   position: fixed;
-  top: 12px;
-  right: 55px; /* Geser ke kiri agar tidak menimpa reset */
-  background: none;
+  top: 8px;
+  right: 12px;
+  font-size: 5vw;          /* ukuran dasar seimbang dengan 📊, 📧, 🔄 */
+  transform: scale(1.8);   /* 🔥 paksa emoji lebih besar secara visual */
+  transform-origin: center;
+  background: rgba(0,0,0,0.3);
   border: none;
+  border-radius: 8px;
+  padding: 10px 14px;      /* area sentuh besar */
   cursor: pointer;
   z-index: 200;
-  font-size: 6vw;
-  padding: 4px 8px;       /* tambahkan area klik lebih besar */
-  border-radius: 8px;
-   }
-
-  #logoutBtn:hover {
-  background: rgba(255,255,255,0.15);
+  line-height: 1;
 }
+#logoutBtn:active {
+  transform: scale(1.9);   /* efek klik ringan */
+  opacity: 0.8;
+}
+
   /* ===== BATTLE ICON ===== */
   #battleIcon {
     position:fixed;
