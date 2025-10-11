@@ -1470,6 +1470,9 @@ function logout() {
       console.warn("Tidak bisa hapus cache Firebase:", e);
     }
 
+        // Kosongkan identitas user dalam objek game
+    pet.owner = "Guest";
+    
     // === Reset tampilan ===
     updateUI();
     const logoutBtn = document.getElementById("logoutBtn");
