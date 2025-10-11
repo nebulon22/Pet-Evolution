@@ -1416,7 +1416,11 @@ auth.onAuthStateChanged((user) => {
     if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
 
     // Muat data cloud
-    loadUserData(user.uid);
+    loadUserData(user.uid).then(() => {
+  pet.owner = user.email || "Player";
+  updateUI();
+});
+
 
     // 🔹 Atur UI login/logout
     if (loginBox) loginBox.style.display = "none";
@@ -1523,34 +1527,51 @@ function saveUserData(uid) {
 
 // === MUAT DATA USER DARI FIRESTORE ===
 function loadUserData(uid) {
-  db.collection("users").doc(uid).get().then((doc) => {
-    if (doc.exists) {
-      const data = doc.data();
+  return new Promise((resolve, reject) => {
+    db.collection("users").doc(uid).get()
+      .then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
 
-      // Periksa mana yang lebih tinggi: lokal vs cloud
-      const localPet = JSON.parse(localStorage.getItem("petData") || "{}");
-      const localLevel = localPet.level || 1;
-      const cloudLevel = data.pet?.level || 1;
+          // 🔹 Periksa mana yang lebih tinggi: lokal vs cloud
+          const localPet = JSON.parse(localStorage.getItem("petData") || "{}");
+          const localLevel = localPet.level || 1;
+          const cloudLevel = data.pet?.level || 1;
 
-      if (localLevel > cloudLevel) {
-        console.log("📡 Cloud lebih rendah, kirim data lokal ke cloud");
-        saveUserData(uid); // kirim ke cloud data lokal
-      } else {
-        console.log("☁️ Data cloud dimuat (level " + cloudLevel + ")");
-        pet = data.pet || pet;
-        foodStock = data.foodStock || foodStock;
-        pet.coins = data.coins || pet.coins;
-        localStorage.setItem("petData", JSON.stringify(pet));
-        localStorage.setItem("foodStock", JSON.stringify(foodStock));
-      }
+          if (localLevel > cloudLevel) {
+            console.log("📡 Cloud lebih rendah, kirim data lokal ke cloud");
+            saveUserData(uid); // kirim ke cloud data lokal
+          } else {
+            console.log("☁️ Data cloud dimuat (level " + cloudLevel + ")");
+            pet = data.pet || pet;
+            foodStock = data.foodStock || foodStock;
+            pet.coins = data.coins || pet.coins;
 
-      updateUI();
-    } else {
-      console.log("🔰 User baru — membuat data default di cloud");
-      saveUserData(uid);
-    }
+            // ✅ Pastikan owner & power tidak kosong
+            pet.owner = data.pet?.owner || firebase.auth().currentUser?.email || "Player";
+            if (!pet.name) pet.name = "Pet Kamu 🐾";
+            if (!pet.power) pet.power = 10;
+
+            // Simpan ke lokal
+            localStorage.setItem("petData", JSON.stringify(pet));
+            localStorage.setItem("foodStock", JSON.stringify(foodStock));
+          }
+
+          updateUI();
+          resolve(data);
+        } else {
+          console.log("🔰 User baru — membuat data default di cloud");
+          saveUserData(uid);
+          resolve(null);
+        }
+      })
+      .catch((error) => {
+        console.error("❌ Gagal memuat data user:", error);
+        reject(error);
+      });
   });
 }
+
 
 
 // === AUTO-SAVE SETIAP 30 DETIK ===
