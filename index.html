@@ -500,19 +500,29 @@
 }
 
 /* === Slot kotak makanan === */
+/* === Slot kotak makanan === */
 .slot {
-  position: relative;
-  overflow: visible; /* biarkan teks animasi ke atas terlihat */
+  width: 12vw;                 /* lebar relatif layar */
+  aspect-ratio: 1 / 1;         /* tinggi otomatis sama dengan lebar */
+  border: 0.3vw solid #999;
+  border-radius: 1vw;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;          /* 🟢 penting untuk posisi flytext */
+  overflow: visible;           /* 🟢 biar teks terbang terlihat */
+  transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
-
-/* Slot aktif & kosong */
+/* Slot kosong */
 .slot.empty {
   background: rgba(255,255,255,0.05);
   border: 0.3vw dashed #666;
 }
 
-/* Slot disabled (stok 0) */
+/* Slot disabled (stok habis) */
 .slot.disabled {
   opacity: 0.4;
   filter: grayscale(80%);
@@ -526,7 +536,7 @@
   object-fit: contain;
 }
 
-/* Jumlah stok */
+/* Jumlah stok di pojok kanan bawah */
 .slot .count {
   position: absolute;
   bottom: 3px;
@@ -536,6 +546,27 @@
   font-size: 3vw;
   text-shadow: 1px 1px 2px black;
 }
+
+/* ✨ Efek teks melayang saat feed (+EXP, dll) */
+.flytext {
+  position: absolute;
+  left: 50%;
+  bottom: 8px; /* mulai dari bawah slot */
+  transform: translateX(-50%) translateY(0);
+  font-size: 3.2vw;
+  color: #ffeb3b; /* kuning cerah */
+  text-shadow: 1px 1px 3px black;
+  opacity: 0;
+  animation: flyUp 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 50;
+}
+
+@keyframes flyUp {
+  0%   { transform: translateX(-50%) translateY(0); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-30px); opacity: 0; }
+}
+
 
 /* 🔥 Tambahan: jaga agar semua elemen center */
 #gameContent p,
@@ -1697,6 +1728,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
