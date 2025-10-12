@@ -890,26 +890,26 @@ function Pet() {
     startSparkle();
     showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
   } 
-  else if (pet.exp >= 100) {
-    // === Level up normal ===
-    pet.exp = 0;
+else if (pet.exp >= 100) {
+  // === Level up normal (versi sinkron) ===
+  playSound("soundLevel");
+
+  // Tunda sedikit supaya EXP bar sempat penuh dulu
+  setTimeout(() => {
     pet.level++;
+    pet.exp = 0;
     pet.coins += 5;
     pet.statPoints += 10;
-    playSound("soundLevel");
+
     showBubble("Level naik! Sekarang level " + pet.level);
     showCoinBubble("+5 💰");
     showStatBubble("+10 📊 Stats");
-  }
 
-  // === Simpan dan update ===
-  localStorage.setItem("petData", JSON.stringify(pet));
-  localStorage.setItem("foodStock", JSON.stringify(foodStock));
-  updateUI();
-
-  // Lepas lock setelah 400 ms agar bisa makan lagi nanti
-  setTimeout(() => (feeding = false), 400);
+    // Update UI setelah bubble muncul
+    updateUI();
+    
 }
+
 
 // === Fungsi evolusi Pet ===
 function evolvePet() {
@@ -1662,6 +1662,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
