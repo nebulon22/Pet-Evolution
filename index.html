@@ -486,18 +486,10 @@
 
 /* === Slot kotak makanan === */
 .slot {
-  width: 12vw;                /* lebar relatif layar */
-  aspect-ratio: 1 / 1;        /* tinggi otomatis sama dengan lebar */
-  border: 0.3vw solid #999;
-  border-radius: 1vw;
-  background: rgba(255,255,255,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
-  overflow: hidden;
-  transition: transform 0.2s ease;
+  overflow: visible; /* biarkan teks animasi ke atas terlihat */
 }
+
 
 /* Slot aktif & kosong */
 .slot.empty {
@@ -1684,6 +1676,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
