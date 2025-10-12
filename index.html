@@ -1247,13 +1247,31 @@ document.getElementById("logoutBtn").onclick = function() {
 };
 
 function confirmLogout() {
-  // Hapus semua data & kembali ke layar awal
- 
-  document.getElementById("logoutPopup").style.display = "none";
-  document.getElementById("logoutBtn").style.display = "none";
-  alert("Anda telah logout.");
-  location.reload(); // atau window.location.href = "index.html";
+  auth.signOut()
+    .then(() => {
+      console.log("✅ User berhasil logout dari Firebase.");
+
+      // Bersihkan data lokal
+      localStorage.removeItem("isLoggedIn");
+      localStorage.removeItem("emailForSignIn");
+      
+      // Reset data game ke mode guest
+      pet.owner = "Guest";
+      updateUI();
+
+      // Sembunyikan popup dan tombol logout
+      document.getElementById("logoutPopup").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "none";
+
+      alert("Anda telah logout.");
+      showBubble("Anda keluar dari akun.");
+    })
+    .catch((error) => {
+      alert("❌ Gagal logout: " + error.message);
+      console.error(error);
+    });
 }
+
 
 function cancelLogout() {
   document.getElementById("logoutPopup").style.display = "none";
@@ -1718,6 +1736,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
