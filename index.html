@@ -567,7 +567,25 @@
   100% { transform: translateX(-50%) translateY(-30px); opacity: 0; }
 }
 
+/* === Fly text untuk hasil Battle === */
+.flytext-battle {
+  position: fixed;
+  font-size: 5vw;
+  font-weight: bold;
+  text-shadow: 2px 2px 5px black;
+  opacity: 0;
+  z-index: 9999;
+  pointer-events: none;
+  animation: flyBattleUp 1.2s ease-out forwards;
+}
 
+@keyframes flyBattleUp {
+  0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+  70%  { transform: translate(-50%, -70%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -90%) scale(1.3); opacity: 0; }
+}
+
+    
 /* 🔥 Tambahan: jaga agar semua elemen center */
 #gameContent p,
 .bar-container,
@@ -852,20 +870,34 @@ function toggleBattle(){
   }
 }
 
+// === Efek fly text untuk hasil Battle ===
+function showBattleFlyText(text, color = "#ffeb3b") {
+  const fly = document.createElement("div");
+  fly.className = "flytext-battle";
+  fly.textContent = text;
+  fly.style.color = color;
+  document.body.appendChild(fly);
 
-function startBattle(){
-  let myPower = getTotalPower();
-  let enemyPower = 100; // dummy sementara
+  // posisi awal di tengah layar
+  fly.style.left = "50%";
+  fly.style.top = "50%";
+  fly.style.transform = "translate(-50%, -50%)";
 
-  if(myPower >= enemyPower){
+  // hilangkan setelah 1.2 detik
+  setTimeout(() => fly.remove(), 1200);
+}
+
+function startBattle() {
+  const myPower = getTotalPower();
+  const enemyPower = 100; // sementara, nanti bisa dinamis
+
+  if (myPower >= enemyPower) {
     showBubble("🏆 Kamu menang! +20 koin");
+    showBattleFlyText("🏆 MENANG +20💰", "#00ff00");
     pet.coins += 20;
-
-    // Tambahkan efek flytext di tengah layar
-    createMiniBubble("+20 💰", window.innerWidth/2 - 40, window.innerHeight/2 - 50);
   } else {
     showBubble("💀 Kalah... coba lagi!");
-    createMiniBubble("KALAH 💀", window.innerWidth/2 - 40, window.innerHeight/2 - 50);
+    showBattleFlyText("💀 KALAH", "#ff4444");
   }
 
   updateUI();
@@ -1728,6 +1760,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
