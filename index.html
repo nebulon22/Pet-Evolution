@@ -890,46 +890,52 @@ function evolvePet() {
   evoBtn.disabled = true;
   feedBtn.disabled = true;
   playBtn.disabled = true;
-  glow.style.display = "block";
 
-  playSound("soundEvo");
+  // Tambahkan animasi cahaya
+  glow.style.display = "block";
   petImg.classList.add("evo-pulse");
-  showBubble("🌟 Evolusi dimulai...!");
+  playSound("soundEvo");
 
   setTimeout(() => {
-    petImg.classList.remove("evo-pulse");
+    // Ganti stage Pet
+    switch (pet.stage) {
+      case "egg": pet.stage = "chick"; break;
+      case "chick": pet.stage = "rooster"; break;
+      case "rooster": pet.stage = "phoenix"; break;
+    }
 
-    // Ganti bentuk dan stage sesuai urutan
-    if (pet.stage === "egg") pet.stage = "chick";
-    else if (pet.stage === "chick") pet.stage = "rooster";
-    else if (pet.stage === "rooster") pet.stage = "phoenix";
-
-    // Reset exp dan naik level
+    // Level reset ringan
     pet.exp = 0;
     pet.level++;
-    pet.coins += 100;
-    pet.statPoints += 15;
+    pet.coins += 50;
+    pet.statPoints += 20;
 
-    showCoinBubble("+100 💰");
-    showStatBubble("+15 📊 Stats");
-    showBubble("✨ Evolusi sukses! Pet-mu kini lebih kuat!");
+    // Update gambar pet
+    petImg.src = getPetImage(pet.stage);
+    petImg.classList.remove("evo-pulse");
+    petImg.classList.add("evo-pop");
 
-    // Simpan hasil evolusi ke localStorage
-    localStorage.setItem("petData", JSON.stringify(pet));
+    showBubble("🌟 Evolusi berhasil! Pet berubah jadi " + pet.stage + "!");
+    showCoinBubble("+50 💰");
+    showStatBubble("+20 📊");
+
+    // Sembunyikan efek glow
+    glow.style.display = "none";
+    evoBtn.style.display = "none";
+
     updateUI();
+    localStorage.setItem("petData", JSON.stringify(pet));
 
-    // Setelah animasi selesai, aktifkan kembali tombol
+    // Lepas semua tombol kembali aktif
     setTimeout(() => {
-      evoBtn.style.display = "none";
-      glow.style.display = "none";
+      evoAnimating = false;
       feedBtn.disabled = false;
       playBtn.disabled = false;
-      evoBtn.disabled = true;   // cegah klik ulang
-      evoAnimating = false;
     }, 1200);
 
-  }, 3000);
+  }, 1500);
 }
+
 
 function playWithPet(){
   const btn = document.getElementById("playBtn");
@@ -1186,68 +1192,35 @@ function buyItem(type,price){
   // 🔊 Mainkan suara beli
 
   playSound("soundBuy");
-
-
-
   showBubble("Beli "+type+" berhasil! -"+price+" koin");
-
   updateUI();
 
-
-
   const coinDisplay=document.getElementById("coinDisplay");
-
   coinDisplay.style.transform="scale(1.2)";
-
   coinDisplay.style.opacity="0.5";
-
   setTimeout(()=>{
-
     coinDisplay.style.transform="scale(1)";
-
     coinDisplay.style.opacity="1";
-
   },300);
-
 }
-
-
 
 // ===================== STATS =====================
-
-
 function toggleStats(){
-
   const p=document.getElementById("statsPopup");
-
   p.style.display=(p.style.display==="block"?"none":"block");
-
   if(p.style.display==="block"){ drawStatsChart(); updateStatUI(); }
-
 }
 
-
-
 function updateStatUI(){
-
   document.getElementById("statPoints").textContent = pet.statPoints;
-
   const btns = document.getElementById("statButtons");
-
   btns.innerHTML = "";
 
-
-
   Object.keys(pet.stats).forEach(key=>{
-
     const row = document.createElement("div");
-
     row.style.margin = "5px 0";
 
-
-
     // label jumlah stat
-
     const label = document.createElement("span");
     label.textContent = key.toUpperCase() + ": " + pet.stats[key] + " ";
 
@@ -1258,7 +1231,7 @@ function updateStatUI(){
     b.onclick = ()=>{
   pet.stats[key]++;
   pet.statPoints--;
-  updateStatUI();
+ updateStatUI();
   drawStatsChart();
   updateUI();
   showMiniBubble("+"+key.toUpperCase()); // ✅ mini bubble muncul
@@ -1270,8 +1243,6 @@ function updateStatUI(){
     btns.appendChild(row);
   });
 }
-
-
 
 
 function drawStatsChart(){
@@ -1318,6 +1289,10 @@ function tapEffect(){
     petImg.style.filter = "";
   }, 500);
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const evoBtn = document.getElementById("evoBtn");
+  evoBtn.addEventListener("click", evolvePet);
+});
 
 petImg.addEventListener("click", tapEffect);
 petImg.addEventListener("touchstart", tapEffect);
@@ -1651,3 +1626,4 @@ setInterval(() => {
 
 </body>
 </html>
+
