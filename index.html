@@ -416,7 +416,15 @@
   height: auto;
   z-index: 1;
   filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-  animation: idleMotion 6s ease-in-out infinite, breathing 3s infinite;
+  animation: idleMotion 4.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+#bubble {
+  isolation: isolate; /* pastikan bubble di layer sendiri */
+}
+#pet, #bubble, .mini-bubble, .flytext {
+  will-change: transform, opacity;
 }
 
 
@@ -520,13 +528,6 @@
   font-weight: bold;
   font-size: 3vw;
   text-shadow: 1px 1px 2px black;
-}
-
-
-/* 🔵 Bubble (pesan pet) sedikit lebih tinggi */
-#bubble {
-  top: -90px;
-  font-size: 3.6vw;
 }
 
 /* 🔥 Tambahan: jaga agar semua elemen center */
@@ -1674,6 +1675,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
