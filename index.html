@@ -922,12 +922,12 @@ function playSound(id){
   if(s){ try{s.currentTime=0;s.play();} catch(e){} }
 }
 
-// ✅ Perbaikan Pet
 // === 5. Fungsi utama memberi makan Pet ===
-let feeding = false; // ⛔ mencegah dobel klik feed
 
-  function Pet() {
-  if (feeding) return;
+  let feeding = false; // ⛔ mencegah dobel klik feed
+
+function Pet() {
+  if (feeding) return; // cegah spam
   feeding = true;
 
   if (!selectedFood) {
@@ -947,29 +947,32 @@ let feeding = false; // ⛔ mencegah dobel klik feed
     selectedFood === "meat" ? 10 :
     selectedFood === "fruit" ? 5 : 2.5;
 
-  // Update data langsung (tanpa delay)
+  // Update data langsung
   pet.hunger = Math.min(100, pet.hunger + hungerGain);
   pet.exp = Math.min(100, pet.exp + expGain);
   pet.coins++;
   foodStock[selectedFood]--;
 
-  // Update UI seketika (supaya stok langsung berkurang)
-  updateUI();
-
-  // === Efek fly text EXP di slot makanan ===
-  const slotDiv = document.querySelector(`.slot[data-food='${selectedFood}']`);
+  // Efek teks pada slot makanan
+  const slotDiv = document.querySelector(`.slot[data-food="${selectedFood}"]`);
   if (slotDiv) {
-    const fly = document.createElement("span");
+    const fly = document.createElement("div");
     fly.className = "flytext";
     fly.textContent = `+${expGain}% EXP`;
     slotDiv.appendChild(fly);
-    // beri sedikit delay supaya animasi sempat muncul
     setTimeout(() => fly.remove(), 1000);
   }
 
+  // Efek suara dan bubble
   playSound("sound");
   showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
   showCoinBubble("+1 💰");
+
+  updateUI(); // update stok dan exp bar seketika
+
+  // Animasi makan (1 detik)
+  const petImg = document.getElementById("pet");
+  petImg.classList.add("pet-fly");
 
   // === Cek kondisi evolusi / level up ===
   const evoBtn = document.getElementById("evoBtn");
@@ -991,9 +994,9 @@ let feeding = false; // ⛔ mencegah dobel klik feed
     showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
   } 
   else if (pet.exp >= 100) {
-    // Level up normal
-    playSound("soundLevel");
+    // Level up normal (beri delay kecil supaya animasi nyam nyam selesai dulu)
     setTimeout(() => {
+      playSound("soundLevel");
       pet.level++;
       pet.exp = 0;
       pet.coins += 5;
@@ -1002,11 +1005,16 @@ let feeding = false; // ⛔ mencegah dobel klik feed
       showCoinBubble("+5 💰");
       showStatBubble("+10 📊 Stats");
       updateUI();
-    }, 400);
+    }, 500);
   }
 
-  feeding = false; // segera bebaskan tombol Feed
+  // Lepas animasi & izinkan klik lagi setelah 1 detik
+  setTimeout(() => {
+    petImg.classList.remove("pet-fly");
+    feeding = false; // baru boleh klik lagi
+  }, 1000);
 }
+
 
 
 // === Fungsi evolusi Pet ===
@@ -1756,6 +1764,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
