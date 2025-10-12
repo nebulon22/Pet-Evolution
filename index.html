@@ -813,7 +813,6 @@ function showMiniBubble(text){
 }
 
 
-
 function getPetImage(stage){
   switch(stage){
     case "egg": return "images/egg.png";
@@ -821,18 +820,6 @@ function getPetImage(stage){
     case "rooster": return "images/rooster.png";
     case "phoenix": return "images/phoenix.png";
   }
-}
-
-function showBubble(text) {
-  const b = document.getElementById("bubble");
-  b.textContent = text;
-  b.style.display = "block";
-  b.style.animation = "none";
-  void b.offsetWidth; // reset animasi
-  b.style.animation = "bubblePopFloat 2.3s ease-out forwards";
-
-  clearTimeout(b.hideTimeout);
-  b.hideTimeout = setTimeout(() => b.style.display = "none", 2300);
 }
 
 
@@ -1675,6 +1662,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
