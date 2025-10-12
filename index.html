@@ -1506,87 +1506,70 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
     });
 }
 
-// === OBSERVER LOGIN STATE (FINAL HYBRID MODE) ===
-auth.onAuthStateChanged((user) => {
+// === OBSERVER LOGIN STATE (FINAL HYBRID FIXED) ===
+auth.onAuthStateChanged(async (user) => {
   const loginBox = document.getElementById("loginBox");
   const logoutBtn = document.getElementById("logoutBtn");
   const emailIcon = document.getElementById("emailIcon");
 
   if (user) {
-    // === ✅ USER LOGIN ===
     console.log("🔑 Login terdeteksi:", user.email);
+    try {
+      // 🔄 Ambil data cloud
+      const cloudData = await loadUserData(user.uid);
 
-    // Muat data lokal dulu (sementara menunggu cloud)
-    const storedPet = localStorage.getItem("petData");
-    const storedFood = localStorage.getItem("foodStock");
-    if (storedPet) try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
-    if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
+      // Gabungkan data cloud dengan lokal agar tidak kehilangan field baru
+      const storedPet = JSON.parse(localStorage.getItem("petData") || "{}");
+      pet = { ...storedPet, ...(cloudData?.pet || {}) };
+      foodStock = { ...(JSON.parse(localStorage.getItem("foodStock") || "{}")), ...(cloudData?.foodStock || {}) };
 
-    // === Ambil data cloud ===
-    loadUserData(user.uid)
-      .then(() => {
-        pet.owner = user.email || "Player";
-        if (!pet.name) pet.name = "Pet Kamu 🐾";
-        if (!pet.power) pet.power = 10;
-        updateUI();
-      })
-      .catch((err) => {
-        console.warn("⚠️ Gagal memuat data cloud:", err);
-        // fallback ke data lokal
-        const localPet = localStorage.getItem("petData");
-        if (localPet) pet = JSON.parse(localPet);
-        updateUI();
-      });
+      // Pastikan semua field utama tetap ada
+      pet.owner = user.email || "Player";
+      if (!pet.name) pet.name = "Pet Kamu 🐾";
+      if (!pet.stats) pet.stats = { att:10, def:10, spd:10, acc:10, crit:10 };
+      if (!pet.stage) pet.stage = "egg";
 
-    // === Atur tampilan login/logout ===
-    if (loginBox) loginBox.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "inline-flex";
-    if (emailIcon) {
-      emailIcon.style.opacity = "0.3";
-      emailIcon.style.pointerEvents = "none";
+      updateUI();
+
+      // UI login/logout
+      if (loginBox) loginBox.style.display = "none";
+      if (logoutBtn) logoutBtn.style.display = "inline-flex";
+      if (emailIcon) {
+        emailIcon.style.opacity = "0.3";
+        emailIcon.style.pointerEvents = "none";
+      }
+
+      localStorage.setItem("isLoggedIn", "true");
+    } catch (err) {
+      console.warn("⚠️ loadUserData gagal, fallback ke lokal:", err);
+      const storedPet = localStorage.getItem("petData");
+      if (storedPet) pet = JSON.parse(storedPet);
+      updateUI();
     }
-
-    // === Tandai status login untuk mode offline ===
-    localStorage.setItem("isLoggedIn", "true");
-  }
-
-  else {
-    // === 🚫 USER BELUM LOGIN / LOGOUT ===
-    console.log("🚪 Tidak ada user aktif (mode guest).");
-
-    // === Ambil data lokal agar tetap bisa main offline ===
+  } else {
+    // === 🚫 Tidak login (Guest Mode) ===
+    console.log("🚪 Tidak ada user aktif (Guest).");
     const storedPet = localStorage.getItem("petData");
     const storedFood = localStorage.getItem("foodStock");
-    if (storedPet) try { pet = JSON.parse(storedPet); } catch(e){ console.warn(e); }
-    if (storedFood) try { foodStock = JSON.parse(storedFood); } catch(e){ console.warn(e); }
+    if (storedPet) pet = JSON.parse(storedPet);
+    if (storedFood) foodStock = JSON.parse(storedFood);
 
     pet.owner = "Guest";
     evoAnimating = false;
     updateUI();
 
-    // === Tampilkan UI mode guest ===
-    if (loginBox) loginBox.style.display = "none"; // tidak perlu popup otomatis
+    if (loginBox) loginBox.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "none";
     if (emailIcon) {
       emailIcon.style.opacity = "1";
       emailIcon.style.pointerEvents = "auto";
     }
-
-    // === Hapus flag login hybrid ===
     localStorage.removeItem("isLoggedIn");
-
-    // ⚠️ Jangan hapus cache Firebase di sini (biarkan SDK yang urus)
   }
 });
 
 
-    // 🔹 Atur UI login/logout
-    if (loginBox) loginBox.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "inline-flex";
-    if (emailIcon) {
 
-
-// === LOGOUT ===
 // === LOGOUT FINAL HYBRID MODE ===
 function logout() {
   if (!confirm("Apakah yakin ingin logout?")) return;
@@ -1760,6 +1743,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
