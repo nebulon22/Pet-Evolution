@@ -925,9 +925,12 @@ else if (pet.exp >= 100) {
 
     // Update UI setelah bubble muncul
     updateUI();
-  }
-}
-}
+  }, 500);  // ✅ tutup setTimeout dengan koma + kurung
+}  // ✅ tutup else if
+
+feeding = false;  // ✅ kembalikan status feeding
+}  // ✅ tutup function Pet()
+
 
 // === Fungsi evolusi Pet ===
 function evolvePet() {
@@ -1680,6 +1683,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
