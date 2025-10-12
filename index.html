@@ -1572,50 +1572,70 @@ function logout() {
     });
 }
 
-// === SIMPAN DATA USER KE FIRESTORE ===
+// === SIMPAN DATA USER KE FIRESTORE (versi aman & alami) ===
 function saveUserData(uid) {
   if (!uid || !pet) return;
-  db.collection("users").doc(uid).set({
-    pet: pet,
-    foodStock: foodStock,
-    coins: pet.coins,
-    updatedAt: Date.now()
-  }, { merge: true })
-  .then(() => console.log("☁️ Data tersimpan ke cloud"))
-  .catch((err) => console.error("Gagal simpan data:", err));
+  try {
+    db.collection("users").doc(uid).set({
+      pet: pet,
+      foodStock: foodStock,
+      coins: pet.coins,
+      lastLevel: pet.level,
+      updatedAt: Date.now()
+    }, { merge: true })
+    .then(() => console.log("☁️ Data tersimpan ke cloud (lvl " + pet.level + ")"))
+    .catch((err) => console.error("Gagal simpan data:", err));
+  } catch (e) {
+    console.warn("⚠️ saveUserData error:", e);
+  }
 }
 
-// === MUAT DATA USER DARI FIRESTORE ===
-function loadUserData(uid) {
-  return new Promise((resolve, reject) => {
-    db.collection("users").doc(uid).get()
-      .then((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          const localPet = JSON.parse(localStorage.getItem("petData") || "{}");
-          const localLevel = localPet.level || 1;
-          const cloudLevel = data.pet?.level || 1;
 
-          if (localLevel > cloudLevel) {
-            console.log("📡 Data lokal lebih tinggi → kirim ke cloud");
-            saveUserData(uid);
-          } else {
-            console.log("☁️ Memuat data dari cloud (lvl " + cloudLevel + ")");
-          }
+// === MUAT DATA USER DARI FIRESTORE (pilih versi terbaru otomatis) ===
+async function loadUserData(uid) {
+  if (!uid) return;
+  try {
+    const doc = await db.collection("users").doc(uid).get();
+    const localPet = JSON.parse(localStorage.getItem("petData") || "{}");
+    const localLevel = localPet.level || 1;
 
-          resolve(data);
-        } else {
-          console.log("🔰 User baru — membuat data default di cloud");
-          saveUserData(uid);
-          resolve(null);
-        }
-      })
-      .catch((error) => {
-        console.error("❌ Gagal memuat data user:", error);
-        reject(error);
-      });
-  });
+    if (doc.exists) {
+      const data = doc.data();
+      const cloudLevel = data.lastLevel || data.pet?.level || 1;
+      const localTime = localPet.updatedAt || 0;
+      const cloudTime = data.updatedAt || 0;
+
+      // === Perbandingan utama ===
+      if (localLevel > cloudLevel || localTime > cloudTime) {
+        console.log("📡 Data lokal lebih tinggi → kirim ke cloud");
+        saveUserData(uid);
+        return data; // tetap return supaya tidak undefined
+      } 
+      else if (cloudLevel > localLevel || cloudTime > localTime) {
+        console.log("☁️ Data cloud lebih tinggi → gunakan data cloud (lvl " + cloudLevel + ")");
+        if (data.pet) pet = data.pet;
+        if (data.foodStock) foodStock = data.foodStock;
+        pet.coins = data.coins ?? pet.coins;
+        localStorage.setItem("petData", JSON.stringify(pet));
+        localStorage.setItem("foodStock", JSON.stringify(foodStock));
+        return data;
+      } 
+      else {
+        console.log("🤝 Data seimbang, tidak perlu sinkronisasi");
+        return data;
+      }
+    } 
+    else {
+      console.log("🔰 User baru — membuat data default di cloud");
+      saveUserData(uid);
+      return null;
+    }
+  } catch (error) {
+    console.error("❌ Gagal memuat data user:", error);
+    return null;
+  }
 }
+
 
 // === OBSERVER LOGIN STATE (HYBRID FIXED) ===
 auth.onAuthStateChanged(async (user) => {
@@ -1635,7 +1655,7 @@ auth.onAuthStateChanged(async (user) => {
       pet.owner = user.email || "Player";
       if (!pet.name) pet.name = "Pet Kamu 🐾";
       if (!pet.stats) pet.stats = { att:10, def:10, spd:10, acc:10, crit:10 };
-      if (!pet.stage) pet.stage = "egg";
+      if (!pet.stage) pet.stage= "egg";
 
       updateUI();
 
@@ -1736,6 +1756,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
