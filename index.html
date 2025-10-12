@@ -738,32 +738,52 @@ let foodStock = JSON.parse(localStorage.getItem("foodStock")) || {
 let selectedFood=null;
 let evoAnimating=false;
 
-// === Bubble untuk coins & stats ===
-function showBubble(text) {
-  const b = document.getElementById("bubble");
-  b.textContent = text;
-  b.style.display = "block";
-  b.style.animation = "none";      // reset animasi agar bisa diulang
-  void b.offsetWidth;              // trigger reflow
-  b.style.animation = "bubblePopFloat 2.6s ease-out forwards";
-
-  clearTimeout(b.hideTimeout);
-  b.hideTimeout = setTimeout(() => {
-    b.style.display = "none";
-  }, 2600);
-}
-
-
-function showStatBubble(text){
-  const rect = document.getElementById("statsIcon").getBoundingClientRect();
+// === Bubble Kumpulan ===
+// === Mini-bubble untuk coin / stat (aman & clamp posisi layar) ===
+function createMiniBubble(text, x, y, duration = 2000) {
   const b = document.createElement("div");
   b.className = "mini-bubble";
-  b.style.left = (rect.left + window.scrollX) + "px";
-  b.style.top = (rect.top + window.scrollY - 20) + "px";
   b.textContent = text;
+  // Posisi sementara: fixed (relatif viewport)
+  // x,y dalam pixel (biasanya dari getBoundingClientRect)
+  // Clamp agar tidak keluar layar
+  const pad = 8;
+  const left = Math.max(pad, Math.min(window.innerWidth - pad - 120, x)); // 120 ~ approx bubble width
+  const top  = Math.max(pad, Math.min(window.innerHeight - pad - 40, y));
+  b.style.left = left + "px";
+  b.style.top  = top + "px";
   document.body.appendChild(b);
-  setTimeout(()=> b.remove(), 3000);
+  setTimeout(() => b.remove(), duration);
+  return b;
 }
+
+function showCoinBubble(text) {
+  const icon = document.getElementById("coinDisplay");
+  if (!icon) {
+    // fallback: buat mini di pojok atas kiri
+    createMiniBubble(text, 20, 20);
+    return;
+  }
+  const rect = icon.getBoundingClientRect();
+  // tempatkan sedikit di atas ikon
+  const x = rect.left + rect.width / 2 - 30; // shift supaya bubble center-ish
+  const y = rect.top - 28;
+  createMiniBubble(text, x, y);
+}
+
+function showStatBubble(text) {
+  const icon = document.getElementById("statsIcon");
+  if (!icon) {
+    createMiniBubble(text, window.innerWidth - 140, 20);
+    return;
+  }
+  const rect = icon.getBoundingClientRect();
+  const x = rect.left + rect.width / 2 - 30;
+  const y = rect.top - 28;
+  createMiniBubble(text, x, y);
+}
+
+
 
 
 function toggleLogin(){
@@ -802,14 +822,6 @@ function startBattle(){
   }
   updateUI();
   toggleBattle();
-}
-
-function showMiniBubble(text){
-  const b = document.createElement("div");
-  b.className = "mini-bubble";
-  b.textContent = text;
-  document.body.appendChild(b);
-  setTimeout(()=> b.remove(), 5000);
 }
 
 
@@ -1662,6 +1674,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
