@@ -822,7 +822,6 @@ function toggleBattle(){
 }
 
 
-
 function startBattle(){
   let myPower = getTotalPower();
   let enemyPower = 100; // dummy sementara
@@ -830,12 +829,19 @@ function startBattle(){
   if(myPower >= enemyPower){
     showBubble("🏆 Kamu menang! +20 koin");
     pet.coins += 20;
+
+    // Tambahkan efek flytext di tengah layar
+    createMiniBubble("+20 💰", window.innerWidth/2 - 40, window.innerHeight/2 - 50);
   } else {
     showBubble("💀 Kalah... coba lagi!");
+    createMiniBubble("KALAH 💀", window.innerWidth/2 - 40, window.innerHeight/2 - 50);
   }
+
   updateUI();
   toggleBattle();
 }
+
+
 
 
 function getPetImage(stage){
@@ -1691,6 +1697,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
