@@ -783,6 +783,12 @@ function showStatBubble(text) {
   createMiniBubble(text, x, y);
 }
 
+function showBubble(text){
+  const b = document.getElementById("bubble");
+  b.textContent = text;
+  b.style.display = "block";
+  setTimeout(() => b.style.display = "none", 2500);
+}
 
 
 
@@ -1674,6 +1680,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
