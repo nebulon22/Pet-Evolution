@@ -822,12 +822,18 @@ function getPetImage(stage){
   }
 }
 
-function showBubble(text){
-  const b=document.getElementById("bubble");
-  b.textContent=text;
-  b.style.display="block";
-  setTimeout(()=>b.style.display="none",2500);
+function showBubble(text) {
+  const b = document.getElementById("bubble");
+  b.textContent = text;
+  b.style.display = "block";
+  b.style.animation = "none";
+  void b.offsetWidth; // reset animasi
+  b.style.animation = "bubblePopFloat 2.3s ease-out forwards";
+
+  clearTimeout(b.hideTimeout);
+  b.hideTimeout = setTimeout(() => b.style.display = "none", 2300);
 }
+
 
 function playSound(id){
   const s=document.getElementById(id);
@@ -1668,6 +1674,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
