@@ -145,25 +145,71 @@
 
   #statsPopup h3 { margin-top:0; font-size:4vw; }
   #statButtons button { margin:3px; font-size:3.2vw; }
-  /* Mini bubble */
-  .mini-bubble {
-    position: fixed;
-    right: 55px; top: 55px;
-    background: rgba(250,250,0,0.9);
-    color: blue;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-size: 2.8vw;
-    opacity: 0;
-    animation: fadeUp 3s forwards;
-    z-index: 999;
-  }
-  @keyframes fadeUp {
-    0% { transform: translateY(0); opacity:1; }
-    100% { transform: translateY(-20px); opacity:0; }
-  }
 
+/* 🗨️ Bubble utama (pet berbicara, lapar, evo, dsb) */
+#bubble {
+  position: absolute;
+  left: 50%;
+  top: -70px; /* muncul tepat di atas kepala pet */
+  transform: translateX(-50%) scale(0.8);
+  background: white;
+  color: black;
+  padding: 8px 14px;
+  border-radius: 12px;
+  display: none;
+  max-width: 200px;
+  text-align: center;
+  z-index: 10;
+  font-size: 3.6vw;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  animation: bubblePopFloat 2.6s ease-out forwards;
+}
 
+#bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  transform: translateX(-50%);
+  border-width: 10px;
+  border-style: solid;
+  border-color: white transparent transparent transparent;
+}
+
+/* ✨ Efek Pop + Naik + Fade */
+@keyframes bubblePopFloat {
+  0%   { transform: translateX(-50%) scale(0); opacity: 0; }
+  10%  { transform: translateX(-50%) scale(1.1); opacity: 1; }
+  20%  { transform: translateX(-50%) scale(1); opacity: 1; }
+  80%  { transform: translateX(-50%) translateY(-5px) scale(1); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-10px) scale(0.9); opacity: 0; }
+}
+
+/* 💰📊 Mini bubble (coin & stat) */
+.mini-bubble {
+  position: fixed;
+  background: rgba(255, 255, 200, 0.95);
+  color: #0044cc;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 3vw;
+  opacity: 0;
+  z-index: 200;
+  pointer-events: none;
+  transform: scale(0.8);
+  animation: miniPopFloat 2.3s ease-out forwards;
+}
+
+/* 🔼 Efek melayang kecil dengan pop */
+@keyframes miniPopFloat {
+  0%   { transform: scale(0); opacity: 0; }
+  15%  { transform: scale(1.1); opacity: 1; }
+  25%  { transform: scale(1); opacity: 1; }
+  90%  { transform: translateY(-20px) scale(1); opacity: 1; }
+  100% { transform: translateY(-25px) scale(0.9); opacity: 0; }
+}
+
+    
   .glow {
     position:absolute; width:200px; height:200px;
     background:radial-gradient(circle, rgba(255,255,200,0.8) 0%, transparent 70%);
@@ -203,11 +249,6 @@
   /* dst… (lanjutan tetap sama seperti versi lama) */
     .sparkle { position:absolute; width:8px; height:8px; background:white; border-radius:50%; opacity:0.8; animation:sparkleMove 1.5s forwards; pointer-events:none; z-index:2; }
     @keyframes sparkleMove { 0%{transform:translateY(0) scale(1);opacity:1;} 100%{transform:translateY(-50px) scale(0.5);opacity:0;} }
-
-    #bubble { position:absolute; left:60%; top:20%; background:white; color:black; padding:8px 12px; border-radius:12px; display:none; max-width:180px; text-align:left; z-index:3; font-size:3.5vw; }
-    #bubble::after { content:""; position:absolute; left:-10px; top:20px; border-width:10px; border-style:solid; border-color:transparent white transparent transparent; }
-
-
 
     .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start; width:30px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; }
     .bar { flex:1; margin:1px 0; background:#666; }
@@ -700,16 +741,20 @@ let selectedFood=null;
 let evoAnimating=false;
 
 // === Bubble untuk coins & stats ===
-
-function showCoinBubble(text){
-  const b = document.createElement("div");
-  b.className = "mini-bubble";
-  b.style.right = "55px"; 
-  b.style.top = "55px";   // dekat coinDisplay
+function showBubble(text) {
+  const b = document.getElementById("bubble");
   b.textContent = text;
-  document.body.appendChild(b);
-  setTimeout(()=> b.remove(), 3000);
+  b.style.display = "block";
+  b.style.animation = "none";      // reset animasi agar bisa diulang
+  void b.offsetWidth;              // trigger reflow
+  b.style.animation = "bubblePopFloat 2.6s ease-out forwards";
+
+  clearTimeout(b.hideTimeout);
+  b.hideTimeout = setTimeout(() => {
+    b.style.display = "none";
+  }, 2600);
 }
+
 
 function showStatBubble(text){
   const rect = document.getElementById("statsIcon").getBoundingClientRect();
@@ -1626,4 +1671,5 @@ setInterval(() => {
 
 </body>
 </html>
+
 
