@@ -794,6 +794,22 @@ let foodStock = JSON.parse(localStorage.getItem("foodStock")) || {
 let selectedFood=null;
 let evoAnimating=false;
 
+// ✅ Menentukan apakah pet bisa berevolusi
+function canEvolve(pet) {
+  const nextStages = {
+    egg:    { level: 10, next: "chick" },
+    chick:  { level: 20, next: "rooster" },
+    rooster:{ level: 30, next: "phoenix" },
+    phoenix:{ level: 40, next: null } // 🚫 mentok di sini
+  };
+
+  const rule = nextStages[pet.stage];
+  if (!rule) return false;            // jika stage tidak dikenali
+  if (!rule.next) return false;       // jika sudah mentok (phoenix)
+  return pet.exp >= 100 && pet.level >= rule.level;
+}
+
+  
 // === Bubble Kumpulan ===
 // === Mini-bubble untuk coin / stat (aman & clamp posisi layar) ===
 function createMiniBubble(text, x, y, duration = 2000) {
@@ -975,38 +991,41 @@ function Pet() {
   petImg.classList.add("pet-fly");
 
   // === Cek kondisi evolusi / level up ===
-  const evoBtn = document.getElementById("evoBtn");
-  const feedBtn = document.getElementById("feedBtn");
-  const playBtn = document.getElementById("playBtn");
-  const glow = document.getElementById("evoGlow");
+  // === Cek kondisi evolusi / level up ===
+const evoBtn = document.getElementById("evoBtn");
+const feedBtn = document.getElementById("feedBtn");
+const playBtn = document.getElementById("playBtn");
+const glow = document.getElementById("evoGlow");
 
-  if (
-    (pet.level === 10 && pet.stage === "egg" && pet.exp >= 100) ||
-    (pet.level === 20 && pet.stage === "chick" && pet.exp >= 100) ||
-    (pet.level === 30 && pet.stage === "rooster" && pet.exp >= 100)
-  ) {
-    evoBtn.style.display = "inline-block";
-    evoBtn.disabled = false;
-    feedBtn.disabled = true;
-    playBtn.disabled = true;
-    glow.style.display = "block";
-    startSparkle();
-    showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
-  } 
-  else if (pet.exp >= 100) {
-    // Level up normal (beri delay kecil supaya animasi nyam nyam selesai dulu)
-    setTimeout(() => {
-      playSound("soundLevel");
-      pet.level++;
-      pet.exp = 0;
-      pet.coins += 5;
-      pet.statPoints += 10;
-      showBubble("Level naik! Sekarang level " + pet.level);
-      showCoinBubble("+5 💰");
-      showStatBubble("+10 📊 Stats");
-      updateUI();
-    }, 500);
-  }
+if (canEvolve(pet)) {
+  evoBtn.style.display = "inline-block";
+  evoBtn.disabled = false;
+  feedBtn.disabled = true;
+  playBtn.disabled = true;
+  glow.style.display = "block";
+  startSparkle();
+  showBubble("✨ Saatnya evolusi! Tekan tombol Evo Sekarang!");
+} 
+else if (pet.exp >= 100 && pet.level < 40) {
+  // Level up normal (belum mencapai batas)
+  setTimeout(() => {
+    playSound("soundLevel");
+    pet.level++;
+    pet.exp = 0;
+    pet.coins += 5;
+    pet.statPoints += 10;
+    showBubble("Level naik! Sekarang level " + pet.level);
+    showCoinBubble("+5 💰");
+    showStatBubble("+10 📊 Stats");
+    updateUI();
+  }, 500);
+} 
+else if (pet.level >= 40) {
+  // 🔒 Level maksimum
+  pet.exp = 100;
+  showBubble("🌟 Level maksimum tercapai!");
+}
+
 
   // Lepas animasi & izinkan klik lagi setelah 1 detik
   setTimeout(() => {
@@ -1764,6 +1783,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
