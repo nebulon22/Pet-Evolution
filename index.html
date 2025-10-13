@@ -1037,65 +1037,69 @@ else if (pet.level >= 40) {
 
 
 // === Fungsi evolusi Pet ===
+let evoAnimating = false; // 🔒 mencegah spam klik evolusi
+
 function evolvePet() {
-  if (evoAnimating) return;
+  if (evoAnimating) return; // cegah dobel animasi
   evoAnimating = true;
 
   const evoBtn = document.getElementById("evoBtn");
-  const feedBtn = document.getElementById("feedBtn");
-  const playBtn = document.getElementById("playBtn");
   const glow = document.getElementById("evoGlow");
   const petImg = document.getElementById("pet");
 
-  // Nonaktifkan semua tombol selama evolusi
-  evoBtn.disabled = true;
-  feedBtn.disabled = true;
-  playBtn.disabled = true;
-
-  // Tambahkan animasi cahaya
-  glow.style.display = "block";
-  petImg.classList.add("evo-pulse");
   playSound("soundEvo");
+  glow.style.display = "block";
+  glow.classList.add("evo-pulse");
+
+  showBubble("🌟 Evolusi sedang berlangsung...");
 
   setTimeout(() => {
-    // Ganti stage Pet
-    switch (pet.stage) {
-      case "egg": pet.stage = "chick"; break;
-      case "chick": pet.stage = "rooster"; break;
-      case "rooster": pet.stage = "phoenix"; break;
+    // === Proses evolusi berdasarkan stage saat ini ===
+    if (pet.stage === "egg" && pet.level >= 10) {
+      pet.stage = "chick";
+      petImg.src = "images/chick.png";
+      showBubble("🐣 Menetas jadi Chick!");
+    } 
+    else if (pet.stage === "chick" && pet.level >= 20) {
+      pet.stage = "rooster";
+      petImg.src = "images/rooster.png";
+      showBubble("🐓 Berevolusi jadi Rooster!");
+    } 
+    else if (pet.stage === "rooster" && pet.level >= 30) {
+      pet.stage = "phoenix";
+      petImg.src = "images/phoenix.png";
+      showBubble("🔥 Berevolusi jadi Phoenix!");
+    } 
+    else {
+      showBubble("🚫 Tidak bisa berevolusi lebih lanjut!");
+      evoAnimating = false;
+      glow.style.display = "none";
+      evoBtn.style.display = "none";
+      return;
     }
 
-    // Level reset ringan
+    // === Reset status setelah evolusi ===
     pet.exp = 0;
-    pet.level++;
-    pet.coins += 50;
-    pet.statPoints += 20;
-
-    // Update gambar pet
-    petImg.src = getPetImage(pet.stage);
-    petImg.classList.remove("evo-pulse");
-    petImg.classList.add("evo-pop");
-
-    showBubble("🌟 Evolusi berhasil! Pet berubah jadi " + pet.stage + "!");
-    showCoinBubble("+50 💰");
-    showStatBubble("+20 📊");
-
-    // Sembunyikan efek glow
-    glow.style.display = "none";
-    evoBtn.style.display = "none";
-
+    pet.level++;             // naik 1 level setelah evolusi
+    pet.coins += 10;         // bonus evolusi
+    pet.statPoints += 20;    // bonus stat
     updateUI();
-    localStorage.setItem("petData", JSON.stringify(pet));
 
-    // Lepas semua tombol kembali aktif
-    setTimeout(() => {
-      evoAnimating = false;
-      feedBtn.disabled = false;
-      playBtn.disabled = false;
-    }, 1200);
+    // === UI cleanup ===
+    evoBtn.style.display = "none";
+    document.getElementById("feedBtn").disabled = false;
+    document.getElementById("playBtn").disabled = false;
+    glow.style.display = "none";
+    glow.classList.remove("evo-pulse");
 
-  }, 1500);
+    showCoinBubble("+10 💰");
+    showStatBubble("+20 📊 Stats");
+
+    evoAnimating = false;
+  }, 2000);
 }
+
+    
 
 
 function playWithPet(){
@@ -1783,6 +1787,7 @@ setInterval(() => {
 
 </body>
 </html>
+
 
 
 
