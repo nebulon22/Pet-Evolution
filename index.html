@@ -887,6 +887,7 @@ function toggleBattle(){
     p.style.display="block";
     document.getElementById("battlePetName").textContent = pet.name;
     document.getElementById("battlePetPower").textContent = getTotalPower();
+    document.getElementById("battlePetPower").textContent = calculatePower(pet);
   }
 }
 
@@ -1250,6 +1251,7 @@ if (powerEl) {
   powerEl.textContent = "⚔️ Total Power: " + total;
 }
 
+pet.power = calculatePower(pet);
 
   // === SIMPAN KE LOCAL STORAGE ===
   localStorage.setItem("petData", JSON.stringify(pet));
@@ -1839,6 +1841,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
