@@ -924,6 +924,12 @@ function startBattle() {
   toggleBattle();
 }
 
+function calculatePower(pet) {
+  const atk = pet.stats?.attack || 0;
+  const def = pet.stats?.defense || 0;
+  // bisa ubah sesuai rumus tempur kamu
+  return atk * 10 + def * 5;
+}
 
 
 
@@ -1216,6 +1222,11 @@ const ownerEl = document.getElementById("ownerName");
 const petNameEl = document.getElementById("petName");
 const powerEl = document.getElementById("petPower") || document.getElementById("totalPower"); 
 // kompatibel dgn kedua versi ID
+
+ if (powerEl) {
+  const totalPower = calculatePower(pet);
+  powerEl.textContent = "⚔️ Total Power: " + totalPower;
+}
 
 // Pastikan nilai dasar tidak kosong
 if (!pet.ownerName) {
@@ -1828,6 +1839,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
