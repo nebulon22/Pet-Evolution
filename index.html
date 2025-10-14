@@ -664,7 +664,10 @@ div[style*="text-align:center"] {
     <h3>⚔️ Arena Battle</h3>
     <p>Pet: <span id="battlePetName"></span><br>
        Power: <span id="battlePetPower"></span></p>
-    <p>Musuh Dummy<br>Power: <span id="enemyPower">100</span></p>
+    <p>Musuh Dummy<br>
+  Power: ⚔️ <span id="enemyAtk">100</span> / 🛡️ <span id="enemyDef">80</span>
+</p>
+
     <button onclick="startBattle()">Mulai</button>
     <button onclick="toggleBattle()">Tutup</button>
   </div>
@@ -881,18 +884,26 @@ function getTotalPower(){
   return s.att + s.def + s.spd + s.acc + s.crit;
 }
 
-function toggleBattle(){
-  const p=document.getElementById("battlePopup");
-  if(p.style.display==="block"){
-    p.style.display="none";
+function toggleBattle() {
+  const p = document.getElementById("battlePopup");
+  if (p.style.display === "block") {
+    p.style.display = "none";
   } else {
-    p.style.display="block";
-    document.getElementById("battlePetName").textContent = pet.name;
-document.getElementById("battlePetPower").innerHTML =
-  "⚔️ " + pet.powerAtk + " / 🛡️ " + pet.powerDef;
+    p.style.display = "block";
 
+    // === Data Pet Player ===
+    document.getElementById("battlePetName").textContent = pet.name || "Petmu";
+    document.getElementById("battlePetPower").innerHTML =
+      "⚔️ " + (pet.powerAtk || 0) + " / 🛡️ " + (pet.powerDef || 0);
+
+    // === Data Musuh Dummy (sementara statik) ===
+    const enemyAtk = 100;
+    const enemyDef = 80;
+    document.getElementById("enemyAtk").textContent = enemyAtk;
+    document.getElementById("enemyDef").textContent = enemyDef;
   }
 }
+
 
 // === Efek fly text untuk hasil Battle ===
 function showBattleFlyText(text, color = "#ffeb3b") {
@@ -1840,6 +1851,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
