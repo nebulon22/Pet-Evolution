@@ -1172,17 +1172,15 @@ function updateUI() {
     const count = foodStock[type] || 0;
     slot.querySelector(".count").textContent = count;
   });
-// === Update stok makanan ===
+
+  // === Update stok makanan ===
   for (let food in foodStock) {
     const countEl = document.getElementById(`count-${food}`);
     const slotEl = document.querySelector(`.slot[data-food='${food}']`);
-    countEl.textContent = foodStock[food];
-
-    if (foodStock[food] <= 0) {
-      slotEl.classList.add("disabled");
-    } else {
-      slotEl.classList.remove("disabled");
-    }
+    if (countEl) countEl.textContent = foodStock[food];
+    if (!slotEl) continue;
+    if (foodStock[food] <= 0) slotEl.classList.add("disabled");
+    else slotEl.classList.remove("disabled");
   }
   
   // === PELAT MAKANAN ===
@@ -1209,6 +1207,26 @@ function updateUI() {
     evoGlow.style.display = "none";
   }
 
+  // === INFORMASI IDENTITAS PET ===
+  const ownerEl = document.getElementById("ownerName");
+  const petNameEl = document.getElementById("petName");
+  const powerEl = document.getElementById("petPower");
+
+  // Pastikan nilai dasar tidak kosong
+  if (!pet.ownerName) pet.ownerName = auth?.currentUser?.email?.split("@")[0] || "Tamu";
+  if (!pet.name) pet.name = "Bulu";
+  if (!pet.stats) pet.stats = { attack: 1, defense: 1 };
+
+  if (ownerEl) ownerEl.textContent = "👤 Pemilik: " + pet.ownerName;
+  if (petNameEl) petNameEl.textContent = "🐾 Nama Pet: " + pet.name;
+
+  if (powerEl) {
+    const atk = pet.stats.attack || 0;
+    const def = pet.stats.defense || 0;
+    const total = atk + def;
+    powerEl.textContent = "⚡ Power: " + total;
+  }
+
   // === SIMPAN KE LOCAL STORAGE ===
   localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
@@ -1233,6 +1251,8 @@ function updateUI() {
     playBtn.disabled = false;
   }
 }
+
+
 
 function startSparkle(){
   const w=document.getElementById("petWrapper");
@@ -1795,5 +1815,6 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
