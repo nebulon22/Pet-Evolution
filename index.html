@@ -958,26 +958,37 @@ function toggleBattle() {
   }
 }
 
-
-
 // === Efek fly text untuk hasil Battle ===
 function showBattleFlyText(text, color = "#ffeb3b") {
   const fly = document.createElement("div");
   fly.className = "flytext-battle";
   fly.textContent = text;
   fly.style.color = color;
+
+  // gaya dasar
+  fly.style.position = "fixed";
+  fly.style.left = "50%";
+  fly.style.top = "50%"; // tengah layar vertikal
+  fly.style.transform = "translate(-50%, -50%)";
+  fly.style.fontSize = "6vw";
+  fly.style.fontWeight = "bold";
+  fly.style.textShadow = "2px 2px 6px rgba(0,0,0,0.6)";
+  fly.style.zIndex = "9999";
+  fly.style.opacity = "1";
+  fly.style.transition = "all 1.2s ease-out";
+
   document.body.appendChild(fly);
 
-  // posisi awal di tengah layar
-  fly.style.left = "50%";
-  fly.style.top = "50%";
-  fly.style.transform = "translate(-50%, -50%)";
+  // animasi terbang ke atas + hilang
+  setTimeout(() => {
+    fly.style.top = "30%"; // dari tengah naik sedikit
+    fly.style.opacity = "0";
+  }, 100);
 
-  // hilangkan setelah 1.2 detik
+  // hapus setelah selesai animasi
   setTimeout(() => fly.remove(), 1200);
 }
 
-// === HITUNG HASIL BATTLE BERDASARKAN RUMUS BARU ===
 // === HITUNG HASIL BATTLE BERDASARKAN RUMUS BARU ===
 function startBattle() {
   const myPower = pet.totalPower || 0;
@@ -1989,6 +2000,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
