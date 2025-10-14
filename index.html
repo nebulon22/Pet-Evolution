@@ -700,6 +700,7 @@ div[style*="text-align:center"] {
       <div id="bubble"></div>
     </div>
 
+    
     <!-- 🧾 Info Panel -->
 <p style="font-size:4vw; text-align:center;">Level Pet: <span id="level">1</span></p>
 
@@ -1211,24 +1212,33 @@ function updateUI() {
   }
 
   // === INFORMASI IDENTITAS PET ===
-  const ownerEl = document.getElementById("ownerName");
-  const petNameEl = document.getElementById("petName");
-  const powerEl = document.getElementById("petPower");
+const ownerEl = document.getElementById("ownerName");
+const petNameEl = document.getElementById("petName");
+const powerEl = document.getElementById("petPower") || document.getElementById("totalPower"); 
+// kompatibel dgn kedua versi ID
 
-  // Pastikan nilai dasar tidak kosong
-  if (!pet.ownerName) pet.ownerName = auth?.currentUser?.email?.split("@")[0] || "Tamu";
-  if (!pet.name) pet.name = "Bulu";
-  if (!pet.stats) pet.stats = { attack: 1, defense: 1 };
+// Pastikan nilai dasar tidak kosong
+if (!pet.ownerName) {
+  if (typeof auth !== "undefined" && auth.currentUser)
+    pet.ownerName = auth.currentUser.email.split("@")[0];
+  else
+    pet.ownerName = "Tamu";
+}
 
-  if (ownerEl) ownerEl.textContent = "👤 Pemilik: " + pet.ownerName;
-  if (petNameEl) petNameEl.textContent = "🐾 Nama Pet: " + pet.name;
+if (!pet.name) pet.name = "Bulu";
+if (!pet.stats) pet.stats = { attack: 1, defense: 1 };
 
-  if (powerEl) {
-    const atk = pet.stats.attack || 0;
-    const def = pet.stats.defense || 0;
-    const total = atk + def;
-    powerEl.textContent = "⚡ Power: " + total;
-  }
+// === Tampilkan ke layar ===
+if (ownerEl) ownerEl.textContent = "👤 Pemilik: " + pet.ownerName;
+if (petNameEl) petNameEl.textContent = "🐾 Nama Pet: " + pet.name;
+
+if (powerEl) {
+  const atk = pet.stats.attack || 0;
+  const def = pet.stats.defense || 0;
+  const total = atk + def;
+  powerEl.textContent = "⚔️ Total Power: " + total;
+}
+
 
   // === SIMPAN KE LOCAL STORAGE ===
   localStorage.setItem("petData", JSON.stringify(pet));
@@ -1818,6 +1828,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
