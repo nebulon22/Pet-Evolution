@@ -701,12 +701,15 @@ div[style*="text-align:center"] {
     </div>
 
     <!-- 🧾 Info Panel -->
-    <p style="font-size:4vw; text-align:center;">Level Pet: <span id="level">1</span></p>
-    <p style="font-size:3.8vw; text-align:center;">
-      🐾 Nama Pet: <span id="petName"></span><br>
-      👤 Pemilik: <span id="ownerName"></span><br>
-      ⚔️ Total Power: <span id="totalPower"></span>
-    </p>
+<p style="font-size:4vw; text-align:center;">Level Pet: <span id="level">1</span></p>
+
+<!-- Info dinamis akan diisi oleh updateUI() -->
+<div id="petInfo" style="font-size:3.8vw; text-align:center;">
+  <div id="petName">🐾 Nama Pet: -</div>
+  <div id="ownerName">👤 Pemilik: -</div>
+  <div id="petPower">⚔️ Total Power: -</div>
+</div>
+
 
     <!-- ⚡ EXP Bar -->
     <div class="bar-container" style="margin:auto; width:80%;">
@@ -1815,6 +1818,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
