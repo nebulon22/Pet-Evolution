@@ -103,73 +103,6 @@
   margin-left:5px;
   margin-top:30px;   /* ✅ geser agak kebawah */
   }
- 
-/* ======================= */
-/* === AREA BACKGROUND === */
-/* ======================= */
-
-/* Kontainer utama background */
-#background {
-  position: fixed;             /* ✅ agar menempel di layar */
-  top: 0; left: 0;
-  width: 100vw; height: 100vh; /* penuh layar */
-  overflow: hidden;
-  z-index: -10;                /* tetap di belakang semua */
-}
-
-/* 🌤 Langit - tidak stretch, proporsional */
-.bg-sky {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: url("images/background.png") no-repeat center bottom;
-  background-size: contain;     /* ✅ tampil proporsional, tidak melar */
-  background-color: #8fd7ff;    /* warna langit fallback di atas gambar */
-  z-index: -9;
-}
-
-/* ☁️ Awan */
-.cloud {
-  position: absolute;
-  top: 10vh;                   /* ✅ agak turun sedikit agar terlihat di langit */
-  width: 25vw;                 /* lebar adaptif */
-  max-width: 250px;
-  animation: moveCloud 60s linear infinite;
-  opacity: 0.8;
-  z-index: -8;
-}
-@keyframes moveCloud {
-  from { left: -30vw; }
-  to   { left: 100%; }
-}
-
-/* 🌳 Pohon goyang */
-.tree {
-  position: absolute;
-  bottom: 10vh;                /* ✅ naik supaya terlihat di atas rumput */
-  width: 22vw;                 /* proporsional dengan layar */
-  max-width: 180px;
-  transform-origin: bottom center;
-  animation: sway 4s ease-in-out infinite alternate;
-  z-index: -7;
-}
-@keyframes sway {
-  from { transform: rotate(-2deg); }
-  to   { transform: rotate(2deg); }
-}
-
-/* 🌿 Rumput */
-.grass {
-  position: absolute;
-  bottom: 6vh;                 /* ✅ sejajar dengan food grid */
-  width: 100%;
-  height: auto;
-  z-index: -6;                 /* tetap di belakang foodGrid (z-index:1) */
-  opacity: 0.95;
-  pointer-events: none;
-}
 
 
   /* ===== BATTLE ICON ===== */
@@ -698,28 +631,7 @@
   width: 240px; /* sesuaikan lebar */
   text-align: center;
 }
-/* === Background Stabil === */
-#clouds {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
-  z-index: 0;
-  pointer-events: none;
-}
 
-#grass {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: auto;
-  z-index: 1;
-  pointer-events: none;
-  transform-origin: bottom center;
-  animation: sway 3s ease-in-out infinite alternate;
-}
 
 /* 🎮 Tombol aksi bawah (Feed, Play, Evo) */
 /* 🎁 Grid makanan di atas rumput */
@@ -819,9 +731,6 @@
   transition: width 0.5s ease;
 }
 
-/* === Posisi FIXED di atas tombol Feed/Play === */
-
-
 /* 🔸 Tombol utama bawah (Feed, Play, Evo) */
 .mainBtn {
   background: linear-gradient(180deg, #ffb347, #ff7733);
@@ -858,8 +767,88 @@
 .popupBtn:hover {
   background: #888;
 }
+/* =========================== */
+/* === BACKGROUND SCENE FIX === */
+/* =========================== */
 
+/* 🎨 Container utama background */
+#background {
+  position: fixed;               /* agar tidak ikut scroll */
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  z-index: -10;                  /* di belakang semua elemen gameplay */
+}
 
+/* 🌤 Langit - proporsional, tidak pecah */
+.bg-sky {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("images/background.png") no-repeat center bottom;
+  background-size: contain;       /* proporsional di HP */
+  background-color: #9bd7ff;      /* warna langit isi area kosong */
+  z-index: -9;
+  image-rendering: auto;
+}
+
+/* ☁️ Awan bergerak */
+.cloud {
+  position: absolute;
+  top: 8vh;                       /* turun sedikit dari atas agar pas di langit */
+  width: 22vw;                    /* lebar relatif layar */
+  max-width: 220px;
+  opacity: 0.85;
+  animation: moveCloud 60s linear infinite;
+  z-index: -8;
+}
+@keyframes moveCloud {
+  from { left: -25vw; }
+  to   { left: 100%; }
+}
+
+/* 🌳 Pohon di belakang pet dan piring */
+.tree {
+  position: absolute;
+  bottom: 10vh;                   /* pas di atas rumput */
+  width: 22vw;
+  max-width: 180px;
+  transform-origin: bottom center;
+  animation: sway 4s ease-in-out infinite alternate;
+  z-index: -7;
+  opacity: 0.95;
+}
+@keyframes sway {
+  from { transform: rotate(-2deg); }
+  to   { transform: rotate(2deg); }
+}
+
+/* 🌿 Rumput di dasar scene */
+#grass {
+  position: fixed;                /* tidak ikut scroll */
+  bottom: 6vh;                    /* sejajar dengan foodgrid */
+  left: 0;
+  width: 100%;
+  height: auto;
+  z-index: 0;                     /* tetap di belakang foodgrid (z-index:1) */
+  pointer-events: none;
+  transform-origin: bottom center;
+  animation: sway 3s ease-in-out infinite alternate;
+  opacity: 0.95;
+}
+
+/* 🌅 Penyesuaian otomatis untuk berbagai rasio layar */
+@media (max-aspect-ratio: 9/16) { /* layar tinggi (HP modern 20:9) */
+  .cloud { top: 10vh; }
+  .tree { bottom: 8vh; }
+}
+@media (min-aspect-ratio: 16/9) { /* layar lebar (tablet/desktop landscape) */
+  .bg-sky { background-size: cover; } /* penuhi layar lebar */
+  .cloud { top: 6vh; }
+  .tree { bottom: 9vh; }
+}
 
     
   </style>
@@ -2403,5 +2392,6 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
