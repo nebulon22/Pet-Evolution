@@ -104,6 +104,72 @@
   margin-top:30px;   /* ✅ geser agak kebawah */
   }
  
+/* ======================= */
+/* === AREA BACKGROUND === */
+/* ======================= */
+
+/* Kontainer utama background */
+#background {
+  position: fixed;             /* ✅ agar menempel di layar */
+  top: 0; left: 0;
+  width: 100vw; height: 100vh; /* penuh layar */
+  overflow: hidden;
+  z-index: -10;                /* tetap di belakang semua */
+}
+
+/* 🌤 Langit - tidak stretch, proporsional */
+.bg-sky {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url("images/background.png") no-repeat center bottom;
+  background-size: contain;     /* ✅ tampil proporsional, tidak melar */
+  background-color: #8fd7ff;    /* warna langit fallback di atas gambar */
+  z-index: -9;
+}
+
+/* ☁️ Awan */
+.cloud {
+  position: absolute;
+  top: 10vh;                   /* ✅ agak turun sedikit agar terlihat di langit */
+  width: 25vw;                 /* lebar adaptif */
+  max-width: 250px;
+  animation: moveCloud 60s linear infinite;
+  opacity: 0.8;
+  z-index: -8;
+}
+@keyframes moveCloud {
+  from { left: -30vw; }
+  to   { left: 100%; }
+}
+
+/* 🌳 Pohon goyang */
+.tree {
+  position: absolute;
+  bottom: 10vh;                /* ✅ naik supaya terlihat di atas rumput */
+  width: 22vw;                 /* proporsional dengan layar */
+  max-width: 180px;
+  transform-origin: bottom center;
+  animation: sway 4s ease-in-out infinite alternate;
+  z-index: -7;
+}
+@keyframes sway {
+  from { transform: rotate(-2deg); }
+  to   { transform: rotate(2deg); }
+}
+
+/* 🌿 Rumput */
+.grass {
+  position: absolute;
+  bottom: 6vh;                 /* ✅ sejajar dengan food grid */
+  width: 100%;
+  height: auto;
+  z-index: -6;                 /* tetap di belakang foodGrid (z-index:1) */
+  opacity: 0.95;
+  pointer-events: none;
+}
 
 
   /* ===== BATTLE ICON ===== */
@@ -289,51 +355,6 @@
 }
 
 
-  #background {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  overflow: hidden;
-  z-index: -10; /* di belakang semua */
-}
-
-    /* Langit */
-.bg-sky {
-  position: absolute;
-  width: 100%; height: 100%;
-  background: url("images/background.png") no-repeat center bottom;
-  background-size: cover;
-  z-index: -5;
-}
-
-/* Awan */
-.cloud {
-  position: absolute;
-  top: 40px;
-  width: 220px;
-  animation: moveCloud 60s linear infinite;
-  z-index: -4;
-}
-
-@keyframes moveCloud {
-  from { left: -250px; }
-  to   { left: 100%; }
-}
-
-/* Pohon goyang */
-
-.tree {
-  position: absolute;
-  width: 160px;
-  transform-origin: bottom center;
-  animation: sway 4s ease-in-out infinite alternate;
-  z-index: -2;
-}
-
-@keyframes sway {
-  from { transform: rotate(-2deg); }
-  to   { transform: rotate(2deg); }
-}
 
     
 .bar {
@@ -2382,4 +2403,5 @@ window.onload = function() {
 
 </body>
 </html>
+
 
