@@ -267,7 +267,15 @@
     .evo-pop   { animation:evoPop 0.8s ease-out; }
 
 #plate { width:180px; }
-#plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; display:none; }
+#plateFood { position:absolute;
+            top:50%; 
+            left:50%; 
+            transform:translate(-50%,-50%); 
+            width:50%; 
+            height:50%; 
+            object-fit:contain; 
+            z-index: 3;
+           }
 
 .flytext {
   position: absolute;
@@ -368,15 +376,16 @@
 }
   /* Pet wrapper */
 .pet-wrapper {
-  position: relative;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 45vh;
   margin-top: 30vh;
-  padding-left: 70px; /* ⬅️ tambah jarak */
+  padding-left: 40px; /* ⬅️ tambah jarak */
   overflow: visible; /* penting agar thermometer tidak terpotong */
+  z-index: 7;
 }
 
 .thermometer {
@@ -711,7 +720,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 1.5vw;
-  z-index: 3;
+  z-index: 1;
 }
 
 /* 🍽️ Piring di atas grid */
@@ -722,7 +731,7 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  z-index: 4;
+  z-index: 2;
 }
 
 /* 🎮 Tombol Feed / Play / Evo di atas piring */
@@ -734,7 +743,7 @@
   display: flex;
   justify-content: center;
   gap: 4vw;
-  z-index: 6;
+  z-index: 4;
 }
 
 /* ⚡ EXP Bar di atas tombol bawah */
@@ -743,7 +752,7 @@
   bottom: calc(7vh + 31vw); /* naik agar di atas tombol */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 7;
+  z-index: 5;
 }
 
 /* Jika kamu punya panel info pet di atas EXP bar, gunakan ini */
@@ -752,7 +761,7 @@
   bottom: calc(7vh + 38vw); /* naik di atas exp bar */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 8;
+  z-index: 6;
 }
 
 
@@ -2382,4 +2391,5 @@ window.onload = function() {
 
 </body>
 </html>
+
 
