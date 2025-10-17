@@ -635,7 +635,7 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 1.5vw;
-  z-index: 3;
+  z-index: 10;
 }
 
 /* 🍽️ Piring di atas grid */
@@ -643,10 +643,13 @@
   position: fixed;
   bottom: calc(7vh + 20vw);
   left: 0;
-  width: 100%;
   display: flex;
   justify-content: center;
-  z-index: 4;
+  z-index: 5;
+  pointer-events: auto;
+  width: 120px;      /* atau sesuaikan lebar */
+  height: 80px;
+  overflow: visible;
 }
 
 /* 🎮 Tombol Feed / Play / Evo di atas piring */
@@ -2428,6 +2431,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
