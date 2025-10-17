@@ -642,12 +642,13 @@
 #plateWrapper {
   position: fixed;
   bottom: calc(7vh + 20vw);
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   z-index: 5;
   pointer-events: auto;
-  width: 120px;      /* atau sesuaikan lebar */
+  width: 120px;
   height: 80px;
   overflow: visible;
 }
@@ -2431,6 +2432,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
