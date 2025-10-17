@@ -1878,21 +1878,51 @@ function cancelLogout() {
   document.getElementById("logoutPopup").style.display = "none";
 }
 
-function startDrag(ev,foodType){
+function startDrag(ev, foodType) {
   ev.preventDefault();
-  const clone=document.createElement('img'); clone.src='images/'+foodType+'.png'; clone.style.position='fixed'; clone.style.width='60px'; clone.style.opacity=0.8; clone.style.zIndex=1000; document.body.appendChild(clone);
-  function moveHandler(e){ const t=e.touches?e.touches[0]:e; clone.style.left=t.clientX-30+'px'; clone.style.top=t.clientY-30+'px'; }
-  function endHandler(e){ const t=e.changedTouches?e.changedTouches[0]:e;
 
-    const plate=document.getElementById('plateWrapper').getBoundingClientRect();
-    const dx=t.clientX-(plate.left+plate.width/2); const dy=t.clientY-(plate.top+plate.height/2-15);
-    if(Math.sqrt(dx*dx+dy*dy)<=plate.width*0.4 && foodStock[foodType]>0){ selectedFood=foodType; const pf=document.getElementById('plateFood'); pf.src='images/'+foodType+'.png'; pf.style.display='block'; showBubble('🍽️ '+foodType+' siap di piring!'); }
-    clone.remove(); document.removeEventListener('mousemove',moveHandler); document.removeEventListener('mouseup',endHandler);
-    document.removeEventListener('touchmove',moveHandler); document.removeEventListener('touchend',endHandler);
+  // Buat gambar kloning untuk efek seret
+  const clone = document.createElement('img');
+  clone.src = 'images/' + foodType + '.png';
+  clone.style.position = 'fixed';
+  clone.style.width = '60px';
+  clone.style.opacity = 0.8;
+  clone.style.zIndex = 1000;
+  document.body.appendChild(clone);
 
+  function moveHandler(e) {
+    const t = e.touches ? e.touches[0] : e;
+    clone.style.left = t.clientX - 30 + 'px';
+    clone.style.top = t.clientY - 30 + 'px';
   }
-  document.addEventListener('mousemove',moveHandler); document.addEventListener('mouseup',endHandler);
-  document.addEventListener('touchmove',moveHandler); document.addEventListener('touchend',endHandler);
+
+  function endHandler(e) {
+    const t = e.changedTouches ? e.changedTouches[0] : e;
+    const plate = document.getElementById('plateWrapper').getBoundingClientRect();
+    const dx = t.clientX - (plate.left + plate.width / 2);
+    const dy = t.clientY - (plate.top + plate.height / 2 - 15);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    // Jika dilepas di area piring dan stok makanan masih ada
+    if (distance <= plate.width * 0.4 && foodStock[foodType] > 0) {
+      selectedFood = foodType; // simpan jenis makanan yang disiapkan
+      const pf = document.getElementById("plateFood");
+      pf.src = "images/" + foodType + ".png";
+      pf.style.display = "block";
+      showBubble("🍽️ " + foodType + " siap di piring!");
+    }
+
+    clone.remove();
+    document.removeEventListener('mousemove', moveHandler);
+    document.removeEventListener('mouseup', endHandler);
+    document.removeEventListener('touchmove', moveHandler);
+    document.removeEventListener('touchend', endHandler);
+  }
+
+  document.addEventListener('mousemove', moveHandler);
+  document.addEventListener('mouseup', endHandler);
+  document.addEventListener('touchmove', moveHandler);
+  document.addEventListener('touchend', endHandler);
 }
 
 function setupButtons() {
@@ -2398,6 +2428,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
