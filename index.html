@@ -20,13 +20,19 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: 200vw; /* dua kali lebar layar */
+  width: 200vw;
   background-image: url('background.png');
   background-size: auto 100vh;
   background-repeat: no-repeat;
-  background-position: 0 center;
   z-index: 1;
+  overflow: visible;
 }
+
+#background-layer img {
+  position: absolute;
+  pointer-events: none;
+}
+
 
 /* 🐾 Pet di tengah layar */
 #pet {
@@ -1034,12 +1040,12 @@
   <div id="gameContent">
 
     <!-- 🌤️ Background Layer -->
-    <div id="background">
-      <div class="bg-sky"></div>
-      <img src="images/cloud.png" class="cloud">
-      <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
-      <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
-    </div>
+<div id="background-layer">
+  <img src="images/cloud.png" class="cloud">
+  <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
+  <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
+</div>
+
 
     <!-- 🐣 Pet Area -->
     <div class="pet-wrapper" id="petWrapper">
@@ -2543,6 +2549,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
