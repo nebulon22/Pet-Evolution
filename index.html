@@ -284,7 +284,19 @@
 
 
 
-    .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start; width:30px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; }
+    .thermometer { display:flex;
+                  flex-direction:column-reverse;
+                  justify-content:flex-start; 
+                  width:30px;
+                  height:220px; 
+                  border:2px solid #ccc; 
+                  border-radius:6px;
+                  overflow:hidden;
+                  background:#666;
+                  position:fixed; 
+                  z-index:8;
+                 }
+   
     .bar { flex:1; margin:1px 0; background:#666; }
     .bar.active { opacity:1; }
     .bar:nth-child(2).active{background:#800000;}
@@ -2558,6 +2570,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
