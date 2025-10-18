@@ -330,21 +330,20 @@
 /* === Fix posisi Pet & Thermometer di semua layar === */
 .pet-wrapper {
   position: fixed;
-  top: 40%;
+  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);   /* benar-benar di tengah layar */
+  transform: translate(-50%, -50%);  /* ⬅️ sejajarkan benar-benar di tengah layar */
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;                       /* isi lebar layar */
+  width: auto;
   height: auto;
-  margin: 0;                          /* hilangkan margin-top lama */
-  padding: 0;                         /* hilangkan padding kiri lama */
+  margin: 0;
+  padding: 0;
   overflow: visible;
   z-index: 5;
-  overflow: visible !important;
-  transform: none !important; /* pastikan bubble tidak ikut konteks pet-wrapper */
 }
+
 
 .thermometer {
   position: fixed;
@@ -2486,6 +2485,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
