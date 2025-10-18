@@ -158,13 +158,12 @@
 
 /* 🌟 Bubble utama (ucapan pet, lapar, evolusi) */
 /* 💬 Bubble teks di kanan pet */
-/* 💬 Bubble teks di kanan pet (posisi tetap sejajar pet) */
-
 /* === Bubble teks sejajar pet === */
+
 #bubble {
-  position: fixed;                /* ubah dari absolute ke fixed */
-  top: 50%;                       /* sejajar vertikal tengah layar */
-  left: calc(50% + 12vw);         /* geser sedikit ke kanan pet */
+  position: fixed;                /* fix terhadap layar, bukan pet-wrapper */
+  top: 50%;
+  left: calc(50% + 12vw);         /* sedikit di kanan pet */
   transform: translateY(-50%);
   background: rgba(255,255,255,0.9);
   border-radius: 10px;
@@ -174,12 +173,12 @@
   max-width: 36vw;
   word-wrap: break-word;
   overflow-wrap: break-word;
-  z-index: 20;
+  z-index: 200;
   display: none;
   transition: opacity 0.3s ease;
 }
 
-/* 📱 Mode HP: bubble lebih dekat ke pet */
+/* 📱 versi HP: lebih dekat dan font menyesuaikan */
 @media (max-width: 480px) {
   #bubble {
     left: 62%;
@@ -187,8 +186,6 @@
     font-size: 3.6vw;
   }
 }
-
-
 
 
 
@@ -1032,9 +1029,11 @@
 
       <div class="glow" id="evoGlow"></div>
       <img id="pet" src="images/egg.png">
-      <div id="bubble"></div>
+
     </div>
 
+ <div id="bubble"></div>
+    
     
     <!-- 🧾 Info Panel -->
 <p style="font-size:4vw; text-align:center;">Level Pet: <span id="level">1</span></p>
@@ -1044,8 +1043,8 @@
   <div id="petName">🐾 Nama Pet: -</div>
   <div id="ownerName">👤 Pemilik: -</div>
   <div id="petPowerAtk">⚔️ Power Atk: -</div>
-<div id="petPowerDef">🛡️ Power Def: -</div>
-<div id="petPowerTotal">🔥 Total Power: -</div>
+  <div id="petPowerDef">🛡️ Power Def: -</div>
+  <div id="petPowerTotal">🔥 Total Power: -</div>
 
 </div>
 
@@ -2487,6 +2486,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
