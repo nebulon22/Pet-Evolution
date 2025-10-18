@@ -5,14 +5,68 @@
   <title>Game Pet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-  body {
-    margin:0; text-align:center; background:#2e7d32; color:white;
-    font-family:sans-serif;
-    display:flex; flex-direction:column; align-items:center;
+  html, body {
+  margin: 0;
   padding: 0;
-  overflow-x: auto;     /* bisa digeser kiri–kanan */
+  height: 100%;
+  overflow-x: auto;       /* geser panorama */
   overflow-y: hidden;
-  }
+  background: #000;
+}
+
+/* 🌄 Background panorama */
+#background-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 200vw; /* dua kali lebar layar */
+  background-image: url('background.png');
+  background-size: auto 100vh;
+  background-repeat: no-repeat;
+  background-position: 0 center;
+  z-index: 1;
+}
+
+/* 🐾 Pet di tengah layar */
+#pet {
+  position: fixed;
+  bottom: 12vh;
+  left: 50%;
+  transform: translateX(-50%) rotateY(0deg);
+  width: 160px;
+  z-index: 5;
+  transition: transform 0.3s ease;
+}
+
+/* 🫧 Bubble text */
+#bubble {
+  position: fixed;
+  bottom: 25vh;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 18px;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  z-index: 6;
+  display: none;
+}
+
+/* 🧭 UI layer tetap di layar */
+#ui-layer {
+  position: fixed;
+  bottom: 2vh;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 10;
+}
+
+#playBtn {
+  padding: 10px 20px;
+  font-size: 18px;
+}
+
 
   h2 { margin-top:10px; font-size:6vw; }
 
@@ -2129,8 +2183,50 @@ document.addEventListener("DOMContentLoaded", () => {
   evoBtn.addEventListener("click", evolvePet);
 });
 
-petImg.addEventListener("click", tapEffect);
-petImg.addEventListener("touchstart", tapEffect);
+const pet = document.getElementById("pet");
+const bubble = document.getElementById("bubble");
+const playBtn = document.getElementById("playBtn");
+
+let facingRight = true;
+
+// 🖐️ Sentuh pet → berputar ke arah lain
+pet.addEventListener("click", () => {
+  facingRight = !facingRight;
+  pet.style.transform = facingRight
+    ? "translateX(-50%) rotateY(0deg)"
+    : "translateX(-50%) rotateY(180deg)";
+  showBubble(facingRight ? "Hai!" : "Lihat ke sana~");
+});
+
+// 🎮 Tekan tombol Play → animasi lompat
+playBtn.addEventListener("click", () => {
+  pet.style.animation = "jump 0.8s ease-out";
+  showBubble("🎮 Ayo main!");
+  setTimeout(() => {
+    pet.style.animation = "none";
+  }, 800);
+});
+
+// 🫧 Tampilkan bubble text
+function showBubble(text) {
+  bubble.textContent = text;
+  bubble.style.display = "block";
+  clearTimeout(bubble.hideTimeout);
+  bubble.hideTimeout = setTimeout(() => {
+    bubble.style.display = "none";
+  }, 1500);
+}
+
+// 🌈 Animasi lompat ringan
+const style = document.createElement("style");
+style.textContent = `
+@keyframes jump {
+  0% { transform: translateX(-50%) translateY(0) rotateY(${facingRight ? 0 : 180}deg); }
+  40% { transform: translateX(-50%) translateY(-40px) rotateY(${facingRight ? 0 : 180}deg); }
+  100% { transform: translateX(-50%) translateY(0) rotateY(${facingRight ? 0 : 180}deg); }
+}`;
+document.head.appendChild(style);
+
   
 </script>
 
@@ -2447,6 +2543,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
