@@ -720,11 +720,20 @@
 
 #petInfoPanel {
   position: fixed;
-  bottom: 20vh; /* tetap proporsional ke tinggi layar */
+  bottom: calc(5vh + 15vw); /* posisi dasar, proporsional */
   left: 50%;
   transform: translateX(-50%);
   z-index: 8;
 }
+
+/* 📱 Mode layar kecil (HP) */
+@media (max-width: 600px) {
+  #petInfoPanel {
+    bottom: calc(5vh + 10vw); /* sedikit lebih dekat ke EXP bar */
+    transform: translateX(-50%);
+  }
+}
+
 
 
 /* Reset default margin tombol global untuk area bawah */
@@ -2484,6 +2493,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
