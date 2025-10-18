@@ -282,6 +282,12 @@
   100% { transform: translateY(-40px) scale(0.5); opacity: 0; }
 }
 
+#thermometer {
+  position: fixed;        /* ubah dari relative ke fixed */
+  left: 2vw;              /* jarak dari sisi kiri layar */
+  bottom: calc(12vh + 10px); /* sejajar dengan posisi pet */
+  z-index: 8;
+}
 
 
     .thermometer { display:flex;
@@ -1067,22 +1073,20 @@
   <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
 </div>
 
-
-    <!-- 🐣 Pet Area -->
-    <div class="pet-wrapper" id="petWrapper">
-      <div class="thermometer" id="thermometer">
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+    <div id="thermometer">
+   <div class="bar"></div><div class="bar"></div><div class="bar"></div>
         <div class="bar"></div><div class="bar"></div><div class="bar"></div>
         <div class="bar"></div><div class="bar"></div><div class="bar"></div>
         <div class="bar"></div>
-        <span class="thermo-label">0%</span>
-        <div id="labelBottom" class="thermo-label" style="bottom:-1.5em;">Lapar</div>
-      </div>
+  <span class="thermo-label">0%</span>
+  <div id="labelBottom" class="thermo-label" style="bottom:-1.5em;">Lapar</div>
+</div>
 
-      <div class="glow" id="evoGlow"></div>
-      <img id="pet" src="images/egg.png">
-      <div id="bubble"></div>
-    </div>
+<div class="pet-wrapper" id="petWrapper">
+  <div class="glow" id="evoGlow"></div>
+  <img id="pet" src="images/egg.png">
+  <div id="bubble"></div>
+</div>
 
     
     <!-- 🧾 Info Panel -->
@@ -2570,6 +2574,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
