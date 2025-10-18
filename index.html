@@ -345,6 +345,8 @@
   padding: 0;                         /* hilangkan padding kiri lama */
   overflow: visible;
   z-index: 5;
+  overflow: visible !important;
+  transform: none !important; /* pastikan bubble tidak ikut konteks pet-wrapper */
 }
 
 .thermometer {
@@ -367,7 +369,7 @@
   will-change: transform;
 }
 
-#pet, #bubble, .mini-bubble, .flytext {
+#pet, .mini-bubble, .flytext {
   will-change: transform, opacity;
 }
 
@@ -1207,6 +1209,9 @@ let inBattle = false;
 
 function showBubble(text) {
   if (inBattle) return;
+
+  // pastikan tidak ada mini-bubble aktif
+  document.querySelectorAll('.mini-bubble').forEach(el => el.remove());
 
   const bubble = document.getElementById("bubble");
   const pet = document.getElementById("pet");
@@ -2482,6 +2487,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
