@@ -159,32 +159,35 @@
 /* 🌟 Bubble utama (ucapan pet, lapar, evolusi) */
 /* 💬 Bubble teks di kanan pet */
 /* 💬 Bubble teks di kanan pet (posisi tetap sejajar pet) */
+
+/* === Bubble teks sejajar pet === */
 #bubble {
-  position: fixed;               /* ubah dari absolute → fixed agar sejajar pet */
-  top: 50%;                      /* tengah vertikal layar */
-  left: calc(50% + 140px);       /* geser sedikit ke kanan dari pet */
+  position: fixed;                /* ubah dari absolute ke fixed */
+  top: 50%;                       /* sejajar vertikal tengah layar */
+  left: calc(50% + 12vw);         /* geser sedikit ke kanan pet */
   transform: translateY(-50%);
-  max-width: 35vw;
   background: rgba(255,255,255,0.9);
   border-radius: 10px;
-  padding: 6px 10px;
+  padding: 8px 12px;
   color: black;
   font-size: 1.2rem;
-  z-index: 12;
+  max-width: 36vw;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  z-index: 20;
   display: none;
-  isolation: isolate;            /* tetap jaga layer sendiri */
+  transition: opacity 0.3s ease;
 }
 
-/* 📱 Mode mobile: geser lebih dekat */
+/* 📱 Mode HP: bubble lebih dekat ke pet */
 @media (max-width: 480px) {
   #bubble {
-    left: 60%;
+    left: 62%;
     max-width: 40vw;
-    font-size: 3.4vw;
+    font-size: 3.6vw;
   }
 }
+
 
 
 
@@ -1209,36 +1212,34 @@ function showBubble(text) {
   const pet = document.getElementById("pet");
   if (!bubble || !pet) return;
 
-  // isi teks dulu agar bubble punya ukuran
+  // tampilkan bubble dulu agar ukurannya valid
   bubble.textContent = text;
   bubble.style.display = "block";
   bubble.style.opacity = 1;
 
-  // hitung ulang ukuran setelah tampil
+  // hitung posisi berdasarkan pet
   const petRect = pet.getBoundingClientRect();
   const bubbleRect = bubble.getBoundingClientRect();
 
-  // posisi di kanan pet
   let left = petRect.right + 10;
   let top = petRect.top + petRect.height / 2 - bubbleRect.height / 2;
 
-  // pastikan tidak keluar kanan layar
+  // cegah keluar layar
   const maxRight = window.innerWidth - 10;
   const bubbleRight = left + bubbleRect.width;
   if (bubbleRight > maxRight) {
-    left = maxRight - bubbleRect.width;
+    left = maxRight - bubbleRect.width - 10;
   }
 
-  // kalau terlalu ke bawah (misalnya pet di bawah), clamp
+  // batas vertikal
   const maxTop = window.innerHeight - bubbleRect.height - 10;
   if (top > maxTop) top = maxTop;
   if (top < 10) top = 10;
 
-  // set posisi akhir
   bubble.style.left = `${left}px`;
   bubble.style.top = `${top}px`;
 
-  // efek fade out
+  // animasi hilang perlahan
   setTimeout(() => {
     bubble.style.opacity = 0;
     setTimeout(() => (bubble.style.display = "none"), 800);
@@ -2481,6 +2482,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
