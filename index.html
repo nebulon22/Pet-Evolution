@@ -268,9 +268,6 @@
     .evo-pulse { animation:evoPulse 2s ease-in-out; }
     .evo-pop   { animation:evoPop 0.8s ease-out; }
 
-#plate { width:180px; }
-#plateFood { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:50%; height:50%; object-fit:contain; display:none; }
-
 .flytext {
   position: absolute;
   left: 50%;
@@ -648,6 +645,7 @@
 }
 
 /* 🍽️ Piring di atas grid */
+/* === Piring dinamis: membesar sesuai ukuran layar === */
 #plateWrapper {
   position: fixed;
   bottom: calc(7vh + 20vw);
@@ -655,12 +653,46 @@
   transform: translateX(-50%);
   display: flex;
   justify-content: center;
+  align-items: center;
   z-index: 5;
   pointer-events: auto;
-  width: 120px;
-  height: 80px;
+  width: 20vw;           /* relatif terhadap lebar layar */
+  height: 13vw;
+  max-width: 220px;      /* batas maksimum di HP kecil */
+  max-height: 150px;
   overflow: visible;
 }
+
+#plate {
+  width: 100%;
+  height: auto;
+}
+
+#plateFood {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 55%;
+  height: 55%;
+  object-fit: contain;
+  display: none;
+}
+
+/* 💻 Mode desktop: sedikit diperbesar */
+@media (min-width: 900px) {
+  #plateWrapper {
+    width: 18vw;
+    height: 12vw;
+    bottom: calc(8vh + 14vw); /* naik sedikit supaya pas */
+  }
+
+  #plateFood {
+    width: 60%;
+    height: 60%;
+  }
+}
+
 
 /* 🎮 Tombol Feed / Play / Evo di atas piring */
 #bottomButtons {
@@ -2441,6 +2473,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
