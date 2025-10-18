@@ -1209,34 +1209,41 @@ function showBubble(text) {
   const pet = document.getElementById("pet");
   if (!bubble || !pet) return;
 
-  // Hitung posisi pet di layar
-  const petRect = pet.getBoundingClientRect();
-  const bubbleRect = bubble.getBoundingClientRect();
-
-  // Posisi dasar di kanan pet
-  let left = petRect.right + 10; // jarak 10px dari pet
-  let top = petRect.top + petRect.height / 2 - bubbleRect.height / 2;
-
-  // 🔧 Cegah keluar layar kanan
-  const maxRight = window.innerWidth - 10;
-  const bubbleRight = left + bubbleRect.width;
-  if (bubbleRight > maxRight) {
-    left = maxRight - bubbleRect.width; // geser agar pas di dalam layar
-  }
-
-  bubble.style.left = `${left}px`;
-  bubble.style.top = `${top}px`;
-
+  // isi teks dulu agar bubble punya ukuran
   bubble.textContent = text;
   bubble.style.display = "block";
   bubble.style.opacity = 1;
 
+  // hitung ulang ukuran setelah tampil
+  const petRect = pet.getBoundingClientRect();
+  const bubbleRect = bubble.getBoundingClientRect();
+
+  // posisi di kanan pet
+  let left = petRect.right + 10;
+  let top = petRect.top + petRect.height / 2 - bubbleRect.height / 2;
+
+  // pastikan tidak keluar kanan layar
+  const maxRight = window.innerWidth - 10;
+  const bubbleRight = left + bubbleRect.width;
+  if (bubbleRight > maxRight) {
+    left = maxRight - bubbleRect.width;
+  }
+
+  // kalau terlalu ke bawah (misalnya pet di bawah), clamp
+  const maxTop = window.innerHeight - bubbleRect.height - 10;
+  if (top > maxTop) top = maxTop;
+  if (top < 10) top = 10;
+
+  // set posisi akhir
+  bubble.style.left = `${left}px`;
+  bubble.style.top = `${top}px`;
+
+  // efek fade out
   setTimeout(() => {
     bubble.style.opacity = 0;
     setTimeout(() => (bubble.style.display = "none"), 800);
   }, 1800);
 }
-
 
 
 
@@ -2474,6 +2481,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
