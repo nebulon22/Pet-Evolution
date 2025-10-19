@@ -745,7 +745,7 @@
 
 
 /* 🧾 Info Panel - hanya tampil saat Battle aktif */
-#petInfoPanel {
+#petInfoPopup {
   position: fixed;
   bottom: calc(7vh + 30vw); /* di atas EXP bar */
   left: 50%;
@@ -768,14 +768,12 @@
 }
 
 /* 🔹 Saat tampil (Battle ditekan) */
-#petInfoPanel.active {
+#petInfoPopup.active {
   display: block;
   opacity: 1;
   transform: translate(-50%, -5px);
   pointer-events: auto;
 }
-
-
 
 
 /* Reset default margin tombol global untuk area bawah */
@@ -2558,6 +2556,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </body>
 </html>
+
 
 
 
