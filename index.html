@@ -1341,7 +1341,6 @@ function setEnemyData(data) {
 function toggleBattle() {
   const battlePopup = document.getElementById("battlePopup");
   const petInfoPopup = document.getElementById("petInfoPopup");
-
   const isOpen = battlePopup.style.display === "block";
 
   if (isOpen) {
@@ -1353,18 +1352,28 @@ function toggleBattle() {
       petInfoPopup.style.display = "none";
     }, 300);
   } else {
-    // Tampilkan popup Battle
+    // Buka popup Battle dan Info Pet
     updateDummyEnemy();
     updateUI();
     updateBattlePopup();
+
     battlePopup.style.display = "block";
     petInfoPopup.style.display = "block";
+
+    // Isi info pet
+    document.getElementById("petName").textContent = "Nama: " + (pet.name || "-");
+    document.getElementById("ownerName").textContent = "Pemilik: " + (pet.owner || "-");
+    document.getElementById("petPowerAtk").textContent = "⚔️ Atk: " + (pet.atk || 0);
+    document.getElementById("petPowerDef").textContent = "🛡️ Def: " + (pet.def || 0);
+    document.getElementById("petPowerTotal").textContent = "🔥 Power: " + (pet.power || 0);
+
     requestAnimationFrame(() => {
       battlePopup.style.opacity = "1";
       petInfoPopup.style.opacity = "1";
     });
   }
 }
+
 
 
 
@@ -2453,8 +2462,27 @@ setInterval(() => {
 }, 30000);
 
 </script>
+  <!-- ==================== END: FIREBASE LOGIC ==================== -->
 
-<!-- ==================== END: FIREBASE LOGIC ==================== -->
+<script>
+window.addEventListener("load", () => {
+  const pet = document.getElementById("pet");
+  pet.style.opacity = 1;       // tampil perlahan
+  pet.classList.add("idle");   // mulai napas
+});
+
+// Jika tombol Play ditekan → pet lompat
+const playBtn = document.getElementById("playBtn");
+if (playBtn) {
+  playBtn.addEventListener("click", () => {
+    const pet = document.getElementById("pet");
+    pet.classList.remove("jump");
+    void pet.offsetWidth; // restart animasi
+    pet.classList.add("jump");
+  });
+}
+</script>
+  
 <script>
 (function(){
   let down = false, startX=0, scrollX=0;
@@ -2529,27 +2557,9 @@ window.onload = function() {
   
 </script>
   
-<script>
-window.addEventListener("load", () => {
-  const pet = document.getElementById("pet");
-  pet.style.opacity = 1;       // tampil perlahan
-  pet.classList.add("idle");   // mulai napas
-});
-
-// Jika tombol Play ditekan → pet lompat
-const playBtn = document.getElementById("playBtn");
-if (playBtn) {
-  playBtn.addEventListener("click", () => {
-    const pet = document.getElementById("pet");
-    pet.classList.remove("jump");
-    void pet.offsetWidth; // restart animasi
-    pet.classList.add("jump");
-  });
-}
-</script>
-
 </body>
 </html>
+
 
 
 
