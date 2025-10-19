@@ -1859,20 +1859,20 @@ if (totalEl) totalEl.textContent = "🔥 Total Power: " + pet.totalPower;
 }
 
 // === PERBARUI ISI POPUP BATTLE ===
+// === PERBARUI ISI POPUP BATTLE ===
 function updateBattlePopup() {
   const playerAtkEl = document.getElementById("playerAtk");
-const playerDefEl = document.getElementById("playerDef");
-const playerTotalEl = document.getElementById("playerTotal");
+  const playerDefEl = document.getElementById("playerDef");
+  const playerTotalEl = document.getElementById("playerTotal");
 
   const enemyAtkEl = document.getElementById("enemyAtk");
   const enemyDefEl = document.getElementById("enemyDef");
   const enemyTotalEl = document.getElementById("enemyTotal");
   const enemyInfoEl = document.getElementById("enemyInfo");
 
-if (playerAtkEl) playerAtkEl.textContent = pet.totalAtk || 0;
-if (playerDefEl) playerDefEl.textContent = pet.totalDef || 0;
-if (playerTotalEl) playerTotalEl.textContent = pet.totalPower || 0;
-
+  if (playerAtkEl) playerAtkEl.textContent = pet.totalAtk || 0;
+  if (playerDefEl) playerDefEl.textContent = pet.totalDef || 0;
+  if (playerTotalEl) playerTotalEl.textContent = pet.totalPower || 0;
 
   if (enemyAtkEl) enemyAtkEl.textContent = enemyData.totalAtk || 0;
   if (enemyDefEl) enemyDefEl.textContent = enemyData.totalDef || 0;
@@ -2560,6 +2560,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </body>
 </html>
+
 
 
 
