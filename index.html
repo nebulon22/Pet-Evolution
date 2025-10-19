@@ -749,21 +749,37 @@
 }
 
 
+/* 🧾 Info Panel - hanya tampil saat Battle aktif */
 #petInfoPanel {
   position: fixed;
-  bottom: calc(5vh + 15vw); /* posisi dasar, proporsional */
+  bottom: calc(7vh + 30vw); /* di atas EXP bar */
   left: 50%;
   transform: translateX(-50%);
   z-index: 8;
+  display: none;             /* 🔹 default disembunyikan */
+  width: 80vw;
+  max-width: 400px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 3.6vw;
+  border-radius: 1vw;
+  padding: 1vw 2vw;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  text-align: center;
+  backdrop-filter: blur(4px);
+  transition: opacity 0.4s ease, transform 0.3s ease;
+  opacity: 0;
+  pointer-events: none; /* tidak mengganggu klik */
 }
 
-/* 📱 Mode layar kecil (HP) */
-@media (max-width: 600px) {
-  #petInfoPanel {
-    bottom: calc(5vh + 10vw); /* sedikit lebih dekat ke EXP bar */
-    transform: translateX(-50%);
-  }
+/* 🔹 Saat tampil (Battle ditekan) */
+#petInfoPanel.active {
+  display: block;
+  opacity: 1;
+  transform: translate(-50%, -5px);
+  pointer-events: auto;
 }
+
 
 
 
@@ -881,6 +897,10 @@
   pointer-events: none;
   animation: cloudDrift 60s linear infinite;
   animation-delay: 10s;  /* lewat pertama kali setelah 10 detik */
+}
+@keyframes cloudDrift {
+  from { left: -30vw; }
+  to { left: 110vw; } /* lewat sampai keluar kanan layar */
 }
 
 
@@ -1319,26 +1339,24 @@ function setEnemyData(data) {
 
 function toggleBattle() {
   const popup = document.getElementById("battlePopup");
+  const infoPanel = document.getElementById("petInfoPanel");
 
   if (popup.style.display === "block") {
-    // 🔻 Tutup popup dengan efek fade-out
     popup.style.opacity = "0";
     popup.style.transform = "translateY(-10px)";
     setTimeout(() => (popup.style.display = "none"), 300);
+    if (infoPanel) infoPanel.classList.remove("active");
   } else {
-    // 🔹 Siapkan data battle terbaru
     updateDummyEnemy();
     updateUI();
     updateBattlePopup();
-
-    // 🔹 Tampilkan popup dengan efek fade-in
     popup.style.display = "block";
-    setTimeout(() => {
-      popup.style.opacity = "1";
-      popup.style.transform = "translateY(0)";
-    }, 10);
+    popup.style.opacity = "1";
+    popup.style.transform = "translateY(0)";
+    if (infoPanel) infoPanel.classList.add("active");
   }
 }
+
 
 
 // === Efek fly text untuk hasil Battle ===
@@ -2523,6 +2541,7 @@ if (playBtn) {
 
 </body>
 </html>
+
 
 
 
