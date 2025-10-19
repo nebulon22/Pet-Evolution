@@ -1430,15 +1430,65 @@ function toggleBattle() {
   }
 }
 
-// === Mulai battle (contoh hasil sederhana) ===
+// === HITUNG HASIL BATTLE (versi sinkron) ===
 function startBattle() {
-  const result =
-    playerPet.total + Math.random() * 5 >
-    dummyEnemy.totalPower + Math.random() * 5
-      ? "Menang 🎉"
-      : "Kalah 💀";
-  showBubble("Hasil battle: " + result);
+  // Ambil data dari playerPet & dummyEnemy
+  const myPower = playerPet.total || 0;
+  const enemyPower = dummyEnemy.totalPower || 0;
+
+  let resultText = "";
+  let flyText = "";
+  let flyColor = "#ffeb3b";
+
+  // Rumus perbandingan kekuatan
+  if (myPower > enemyPower) {
+    resultText = "🏆 Kamu menang! +20💰";
+    flyText = "🏆 MENANG +20💰";
+    flyColor = "#00ff00";
+    if (pet) pet.coins = (pet.coins || 0) + 20;
+    if (playerPet) playerPet.coins = (playerPet.coins || 0) + 20;
+  } else if (myPower < enemyPower) {
+    resultText = "💀 Kalah... coba lagi!";
+    flyText = "💀 KALAH -5💰";
+    flyColor = "#ff4444";
+    if (pet) pet.coins = Math.max(0, (pet.coins || 0) - 5);
+    if (playerPet) playerPet.coins = Math.max(0, (playerPet.coins || 0) - 5);
+  } else {
+    resultText = "🤝 Seri! Tidak ada perubahan.";
+    flyText = "🤝 SERI";
+    flyColor = "#ffaa00";
+  }
+
+  // Tutup popup battle
+  const popup = document.getElementById("battlePopup");
+  if (popup) popup.style.display = "none";
+
+  // 🌟 Efek hasil battle
+  if (typeof showBattleFlyText === "function") {
+    showBattleFlyText(flyText, flyColor);
+  } else if (typeof showBubble === "function") {
+    showBubble(resultText);
+  }
+
+  // Perbarui UI setelah animasi
+  setTimeout(() => {
+    if (typeof updateUI === "function") updateUI();
+  }, 1600);
 }
+
+// === Rumus perhitungan atk & def (tetap kompatibel) ===
+function calculateAtkPower(p) {
+  const atk = p.stats?.attack || 0;
+  const lvl = p.level || 1;
+  return Math.floor(atk * 8 + lvl * 2);
+}
+
+function calculateDefPower(p) {
+  const def = p.stats?.defense || 0;
+  const lvl = p.level || 1;
+  return Math.floor(def * 6 + lvl * 1.5);
+}
+
 
 
 
@@ -1474,57 +1524,6 @@ function showBattleFlyText(text, color = "#ffeb3b") {
 }
 
 // === HITUNG HASIL BATTLE BERDASARKAN RUMUS BARU ===
-function startBattle() {
-  const myPower = pet.totalPower || 0;
-  const enemyPower = enemyData.totalPower || 0;
-
-  let resultText = "";
-  let flyText = "";
-  let flyColor = "#ffeb3b";
-
-  if (myPower > enemyPower) {
-    resultText = "🏆 Kamu menang! +20💰";
-    flyText = "🏆 MENANG +20💰";
-    flyColor = "#00ff00";
-    pet.coins += 20;
-  } else if (myPower < enemyPower) {
-    resultText = "💀 Kalah... coba lagi!";
-    flyText = "💀 KALAH -5💰";
-    flyColor = "#ff4444";
-    pet.coins = Math.max(0, pet.coins - 5);
-  } else {
-    resultText = "🤝 Seri! Tidak ada perubahan.";
-    flyText = "🤝 SERI";
-    flyColor = "#ffaa00";
-  }
-
-  // Tutup popup lebih dulu
-  const popup = document.getElementById("battlePopup");
-  popup.style.display = "none";
-
-  // 🌟 Tampilkan bubble teks utama & efek melayang
-  showBattleFlyText(flyText, flyColor);
-
-  // Perbarui tampilan setelah animasi selesai
-  setTimeout(() => {
-    updateUI();
-  }, 1600);
-}
-
-
-
-function calculateAtkPower(pet) {
-  const atk = pet.stats?.attack || 0;
-  const lvl = pet.level || 1;
-  return Math.floor(atk * 8 + lvl * 2); // bisa ubah rumus sesuai keinginan
-}
-
-function calculateDefPower(pet) {
-  const def = pet.stats?.defense || 0;
-  const lvl = pet.level || 1;
-  return Math.floor(def * 6 + lvl * 1.5);
-}
-
 
 
 
@@ -2626,6 +2625,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </body>
 </html>
+
 
 
 
