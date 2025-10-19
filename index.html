@@ -1274,32 +1274,66 @@ function toggleLogin(){
   p.style.display = (p.style.display==="block" ? "none" : "block");
 }
 
-function getTotalPower(){
-  let s = pet.stats;
-  // total power = jumlah semua stats
-  return s.att + s.def + s.spd + s.acc + s.crit;
+
+/* ============================================================
+   ⚔️ SISTEM BATTLE TERPADU (Game Pet Evo)
+   - Sinkronisasi antara pet lama dan playerPet baru
+   - Menampilkan popup battle + popup info pet
+   ============================================================ */
+
+// === Patch kompatibilitas pet lama & baru ===
+if (typeof playerPet === "undefined" && typeof pet !== "undefined") {
+  window.playerPet = {
+    name: pet.name || "Pet",
+    level: pet.level || 1,
+    atk: pet.totalAtk || 0,
+    def: pet.totalDef || 0,
+    total: pet.totalPower || 0,
+    owner: pet.owner || "Player",
+    stats: pet.stats || {}
+  };
+}
+if (typeof pet === "undefined" && typeof playerPet !== "undefined") {
+  window.pet = {
+    name: playerPet.name,
+    level: playerPet.level,
+    totalAtk: playerPet.atk,
+    totalDef: playerPet.def,
+    totalPower: playerPet.total,
+    stats: playerPet.stats || {},
+    owner: playerPet.owner
+  };
 }
 
-// === DEFAULT ENEMY DATA (Dummy, mengikuti level player) ===
-let enemyData = {
+// === Hitung total power pet ===
+function getTotalPower() {
+  let s = (pet && pet.stats) || {};
+  return (s.att || 0) + (s.def || 0) + (s.spd || 0) + (s.acc || 0) + (s.crit || 0);
+}
+
+// === Data enemy default ===
+let dummyEnemy = {
   uid: "dummy001",
   name: "Dummy",
   stats: {},
   isDummy: true,
+  totalAtk: 0,
+  totalDef: 0,
+  totalPower: 0
 };
 
-// === PERBARUI STATS DUMMY SESUAI LEVEL PLAYER ===
+// === Perbarui stats dummy sesuai level player ===
 function updateDummyEnemy() {
-  const lvl = pet.level || 1;
+  const lvl = (pet && pet.level) || 1;
 
-  // Rumus sederhana agar seimbang tapi tetap menantang
-  const baseAtk = 5 + lvl * 2;      // serangan meningkat tiap level
+  // Rumus dummy sederhana
+  const baseAtk = 5 + lvl * 2;
   const baseDef = 4 + lvl * 1.5;
   const baseCrit = 1 + Math.floor(lvl / 5);
   const baseAcc  = 1 + Math.floor(lvl / 4);
   const baseSpd  = 2 + Math.floor(lvl / 3);
 
-  enemyData.stats = {
+  dummyEnemy.stats = {
     attack: baseAtk,
     defense: baseDef,
     crit: baseCrit,
@@ -1307,37 +1341,76 @@ function updateDummyEnemy() {
     spd: baseSpd
   };
 
-  // Hitung total power sesuai rumus battle
-  const calc = calculateBattlePower(enemyData);
-  enemyData.totalAtk = calc.totalAtk;
-  enemyData.totalDef = calc.totalDef;
-  enemyData.totalPower = calc.totalPower;
+  // Rumus total power sederhana
+  const calc = calculateBattlePower(dummyEnemy);
+  dummyEnemy.totalAtk = calc.totalAtk;
+  dummyEnemy.totalDef = calc.totalDef;
+  dummyEnemy.totalPower = calc.totalPower;
 }
 
-
-// === Ganti lawan (dummy → online)
+// === Ganti lawan (jika nanti online battle) ===
 function setEnemyData(data) {
   if (!data) return;
-  enemyData = {
+  dummyEnemy = {
     uid: data.uid || "unknown",
     name: data.name || "Lawan",
     stats: data.stats || { attack: 10, defense: 10, crit: 5, acc: 5, spd: 5 },
     isDummy: !!data.isDummy,
   };
-  const calc = calculateBattlePower(enemyData);
-  enemyData.totalAtk = calc.totalAtk;
-  enemyData.totalDef = calc.totalDef;
-  enemyData.totalPower = calc.totalPower;
-  console.log("⚔️ Enemy data set:", enemyData);
+  const calc = calculateBattlePower(dummyEnemy);
+  dummyEnemy.totalAtk = calc.totalAtk;
+  dummyEnemy.totalDef = calc.totalDef;
+  dummyEnemy.totalPower = calc.totalPower;
+  console.log("⚔️ Enemy data set:", dummyEnemy);
 }
 
+// === Hitung kekuatan battle (sederhana) ===
+function calculateBattlePower(obj) {
+  const s = obj.stats || {};
+  const totalAtk = Math.floor((s.attack || 0) + (s.crit || 0) * 1.2);
+  const totalDef = Math.floor((s.defense || 0) + (s.acc || 0) * 0.8);
+  const totalPower = totalAtk + totalDef + (s.spd || 0);
+  return { totalAtk, totalDef, totalPower };
+}
+
+// === Perbarui isi popup battle & popup info pet ===
+function updateBattlePopup() {
+  // pastikan data sinkron
+  if (!playerPet && pet) {
+    playerPet = {
+      name: pet.name || "Pet",
+      atk: pet.totalAtk || 0,
+      def: pet.totalDef || 0,
+      total: pet.totalPower || 0,
+      owner: pet.owner || "Player"
+    };
+  }
+
+  // Battle popup
+  document.getElementById("battlePetName").textContent = playerPet.name;
+  document.getElementById("playerAtk").textContent = playerPet.atk;
+  document.getElementById("playerDef").textContent = playerPet.def;
+  document.getElementById("playerTotal").textContent = playerPet.total;
+
+  document.getElementById("enemyAtk").textContent = dummyEnemy.totalAtk;
+  document.getElementById("enemyDef").textContent = dummyEnemy.totalDef;
+  document.getElementById("enemyTotal").textContent = dummyEnemy.totalPower;
+
+  // Info pet popup
+  document.getElementById("petName").textContent = "Nama: " + playerPet.name;
+  document.getElementById("ownerName").textContent = "Pemilik: " + playerPet.owner;
+  document.getElementById("petPowerAtk").textContent = "⚔️ Atk: " + playerPet.atk;
+  document.getElementById("petPowerDef").textContent = "🛡️ Def: " + playerPet.def;
+  document.getElementById("petPowerTotal").textContent = "🔥 Power: " + playerPet.total;
+}
+
+// === Tampilkan / sembunyikan popup battle ===
 function toggleBattle() {
   const battlePopup = document.getElementById("battlePopup");
   const petInfoPopup = document.getElementById("petInfoPopup");
   const isOpen = battlePopup.style.display === "block";
 
   if (isOpen) {
-    // Tutup kedua popup
     battlePopup.style.opacity = "0";
     petInfoPopup.style.opacity = "0";
     setTimeout(() => {
@@ -1345,21 +1418,11 @@ function toggleBattle() {
       petInfoPopup.style.display = "none";
     }, 300);
   } else {
-    // Buka popup Battle dan Info Pet
     updateDummyEnemy();
     updateUI();
     updateBattlePopup();
-
     battlePopup.style.display = "block";
     petInfoPopup.style.display = "block";
-
-    // Isi info pet
-    document.getElementById("petName").textContent = "Nama: " + (pet.name || "-");
-    document.getElementById("ownerName").textContent = "Pemilik: " + (pet.owner || "-");
-    document.getElementById("petPowerAtk").textContent = "⚔️ Atk: " + (pet.atk || 0);
-    document.getElementById("petPowerDef").textContent = "🛡️ Def: " + (pet.def || 0);
-    document.getElementById("petPowerTotal").textContent = "🔥 Power: " + (pet.power || 0);
-
     requestAnimationFrame(() => {
       battlePopup.style.opacity = "1";
       petInfoPopup.style.opacity = "1";
@@ -1367,6 +1430,15 @@ function toggleBattle() {
   }
 }
 
+// === Mulai battle (contoh hasil sederhana) ===
+function startBattle() {
+  const result =
+    playerPet.total + Math.random() * 5 >
+    dummyEnemy.totalPower + Math.random() * 5
+      ? "Menang 🎉"
+      : "Kalah 💀";
+  showBubble("Hasil battle: " + result);
+}
 
 
 
@@ -2554,6 +2626,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </body>
 </html>
+
 
 
 
