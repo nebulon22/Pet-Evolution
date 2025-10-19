@@ -2501,9 +2501,29 @@ window.onload = function() {
 
   
 </script>
+  
+<script>
+window.addEventListener("load", () => {
+  const pet = document.getElementById("pet");
+  pet.style.opacity = 1;       // tampil perlahan
+  pet.classList.add("idle");   // mulai napas
+});
+
+// Jika tombol Play ditekan → pet lompat
+const playBtn = document.getElementById("playBtn");
+if (playBtn) {
+  playBtn.addEventListener("click", () => {
+    const pet = document.getElementById("pet");
+    pet.classList.remove("jump");
+    void pet.offsetWidth; // restart animasi
+    pet.classList.add("jump");
+  });
+}
+</script>
 
 </body>
 </html>
+
 
 
 
