@@ -2452,6 +2452,10 @@ window.addEventListener("load", () => {
   const pet = document.getElementById("pet");
   pet.style.opacity = 1;       // tampil perlahan
   pet.classList.add("idle");   // mulai napas
+  setupButtons();
+  setupDrag();
+  setupToggle();
+  updateUI();
 });
 
 // Jika tombol Play ditekan → pet lompat
@@ -2556,6 +2560,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </body>
 </html>
+
 
 
 
