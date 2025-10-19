@@ -228,9 +228,38 @@
   100% { transform: translateY(-40px) scale(0.5); opacity: 0; }
 }
 
+#bgGrass {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: auto;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#bgTree {
+  position: fixed;
+  bottom: 8vh;
+  left: 5vw;
+  width: 18vw;
+  height: auto;
+  z-index: 2;
+  pointer-events: none;
+}
 
 
-    .thermometer { display:flex; flex-direction:column-reverse; justify-content:flex-start; width:30px; height:220px; border:2px solid #ccc; border-radius:6px; overflow:hidden; background:#666; position:relative; }
+    .thermometer { display:flex;
+                  flex-direction:column-reverse;
+                  justify-content:flex-start;
+                  width:30px; 
+                  height:220px; 
+                  border:2px solid #ccc; 
+                  border-radius:6px; 
+                  overflow:hidden;
+                  background:#666; 
+                  position:relative; 
+                 }
     .bar { flex:1; margin:1px 0; background:#666; }
     .bar.active { opacity:1; }
     .bar:nth-child(2).active{background:#800000;}
@@ -839,79 +868,37 @@
   z-index: -9;
 }
 
-
-/* ☁️ Awan bergerak */
+    /* ☁️ Awan tunggal yang sesekali lewat */
 .cloud {
-  position: absolute;
-  top: 8vh;                       /* turun sedikit dari atas agar pas di langit */
-  width: 22vw;                    /* lebar relatif layar */
-  max-width: 220px;
-  opacity: 0.85;
-  animation: moveCloud 60s linear infinite;
-  z-index: -8;
-}
-@keyframes moveCloud {
-  from { left: -25vw; }
-  to   { left: 100%; }
-}
-
-/* 🌳 Pohon di belakang pet dan piring */
-.tree {
-  position: absolute;
-  bottom: 40vh;                   /* pas di atas rumput */
-  width: 22vw;
-  max-width: 180px;
-  transform-origin: bottom center;
-  animation: sway 4s ease-in-out infinite alternate;
-  z-index: -7;
-  opacity: 0.95;
-}
-@keyframes sway {
-  from { transform: rotate(-2deg); }
-  to   { transform: rotate(2deg); }
-}
-
-/* 🌿 Rumput di dasar scene */
-/* === Animasi Rumput Hidup === */
-.grass {
   position: fixed;
-  bottom: 6vh;
-  width: 28vw;
-  max-width: 160px;
-  height: auto;
+  top: 8vh;              /* posisi tinggi di langit */
+  left: -30vw;           /* mulai dari luar kiri layar */
+  width: 40vw;           /* ukuran sedang */
+  opacity: 0.8;
+  z-index: 2;            /* di atas background, di bawah pet */
   pointer-events: none;
-  z-index: 2;
-  transform-origin: bottom center;
-  animation: grassSwing 2.8s ease-in-out infinite;
-  opacity: 0.95;
+  animation: cloudDrift 60s linear infinite;
+  animation-delay: 10s;  /* lewat pertama kali setelah 10 detik */
 }
 
-/* Variasi kecil antar rumput biar alami */
-.grass:nth-child(1) { animation-delay: 0s; animation-duration: 2.7s; }
-.grass:nth-child(2) { animation-delay: 1.2s; animation-duration: 3s; }
-.grass:nth-child(3) { animation-delay: 0.6s; animation-duration: 2.5s; }
-
-/* ✨ Gerakan ayunan rumput */
-@keyframes grassSwing {
-  0%   { transform: rotate(0deg) scaleX(1); }
-  25%  { transform: rotate(1.2deg) scaleX(0.98); }
-  50%  { transform: rotate(0deg) scaleX(1); }
-  75%  { transform: rotate(-1.2deg) scaleX(0.98); }
-  100% { transform: rotate(0deg) scaleX(1); }
+/* Gerak awan halus melintas penuh layar */
+@keyframes cloudDrift {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95% {
+    transform: translateX(160vw);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
-
-
-/* 🌅 Penyesuaian otomatis untuk berbagai rasio layar */
-@media (max-aspect-ratio: 9/16) { /* layar tinggi (HP modern 20:9) */
-  .cloud { top: 10vh; }
-  .tree { bottom: 8vh; }
-}
-@media (min-aspect-ratio: 16/9) { /* layar lebar (tablet/desktop landscape) */
-  .bg-sky { background-size: contain; } /* penuhi layar lebar */
-  .cloud { top: 6vh; }
-  .tree { bottom: 9vh; }
-}
 
     /* 🌄 Background Panorama */
 #gameBackground {
@@ -940,7 +927,10 @@ html, body {
 </head>
 <body>
 
-  <img id="gameBackground" src="images/background.png" alt="Background">
+<img id="gameBackground" src="images/background.png" alt="Background">
+<img id="bgGrass" src="images/grass.png" alt="Grass">
+<img id="bgTree" src="images/tree.png" alt="Tree">
+<img class="cloud" id="cloud1" src="images/cloud.png" alt="Cloud">
 
   <!-- TOP BAR -->
   <div id="topBar">
@@ -1040,14 +1030,6 @@ html, body {
 <div id="gameContainer">
   <div id="gameContent">
 
-    <!-- 🌤️ Background Layer -->
-    <div id="background">
-      <div class="bg-sky"></div>
-      <img src="images/cloud.png" class="cloud">
-      <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
-      <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
-    </div>
-
     <!-- 🐣 Pet Area -->
     <div class="pet-wrapper" id="petWrapper">
       <div class="glow" id="evoGlow"></div>
@@ -1122,10 +1104,6 @@ html, body {
 
   </div> <!-- end #gameContent -->
 </div> <!-- end #gameContainer -->
-
-<img src="images/grass.png" class="grass" style="left:10%;">
-<img src="images/grass.png" class="grass" style="left:40%;">
-<img src="images/grass.png" class="grass" style="left:70%;">
 
   
   <!-- Suara -->
@@ -2533,6 +2511,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
