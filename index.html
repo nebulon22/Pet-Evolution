@@ -913,10 +913,34 @@
   .tree { bottom: 9vh; }
 }
 
+    /* 🌄 Background Panorama */
+#gameBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;         /* penuh tinggi layar */
+  width: auto;            /* biarkan proporsional */
+  min-width: 100vw;       /* jangan lebih kecil dari layar */
+  z-index: 0;             /* di bawah semua elemen lain */
+  pointer-events: none;   /* tidak ganggu klik */
+}
+
+/* 🌐 Izinkan panorama horizontal */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: auto;       /* bisa geser kiri–kanan */
+  overflow-y: hidden;     /* kunci vertikal */
+  background-color: #000; /* fallback warna */
+}
+
     
   </style>
 </head>
 <body>
+
+  <img id="gameBackground" src="images/background.png" alt="Background">
 
   <!-- TOP BAR -->
   <div id="topBar">
@@ -2433,6 +2457,22 @@ setInterval(() => {
 </script>
 
 <!-- ==================== END: FIREBASE LOGIC ==================== -->
+<script>
+(function(){
+  let down = false, startX=0, scrollX=0;
+  document.addEventListener('touchstart', e=>{
+    down=true;
+    startX=e.touches[0].clientX;
+    scrollX=window.scrollX;
+  },{passive:true});
+  document.addEventListener('touchmove', e=>{
+    if(!down) return;
+    const dx = startX - e.touches[0].clientX;
+    window.scrollTo(scrollX + dx, 0);
+  },{passive:true});
+  document.addEventListener('touchend', ()=>down=false);
+})();
+</script>
 
 <!-- ==================== INIT / DRAG OBSERVER & HYBRID INIT ==================== -->
 <script>
@@ -2493,6 +2533,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
