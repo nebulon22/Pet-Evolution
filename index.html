@@ -141,24 +141,7 @@
   #statsPopup h3 { margin-top:0; font-size:4vw; }
   #statButtons button { margin:3px; font-size:3.2vw; }
 
-  /* 🐣 PET IDLE (gerakan lembut tanpa rotate 3D) */
-@keyframes idleMotion {
-  0%,100% { transform: translateY(0) scale(1); }
-  50%     { transform: translateY(-4px) scale(1.03); }
-}
-
-/* ✨ Saat pet lompat bermain */
-@keyframes petJump {
-  0%   { transform: translateY(0) scale(1); }
-  35%  { transform: translateY(-60px) scale(1.05); }
-  70%  { transform: translateY(-20px) scale(1.02); }
-  100% { transform: translateY(0) scale(1); }
-}
-.pet-fly { animation: petJump 1s ease-out; will-change: transform; }
-
-/* 🌟 Bubble utama (ucapan pet, lapar, evolusi) */
-/* 💬 Bubble teks di kanan pet */
-/* === Bubble teks sejajar pet === */
+  /* 🐣 PET == Bubble teks sejajar pet === */
 
 #bubble {
   position: fixed;                /* fix terhadap layar, bukan pet-wrapper */
@@ -383,46 +366,73 @@
 }
 
 
+/* === 🐣 PET ANIMASI RINGAN === */
 #pet {
-  position: relative;
-  width: 40vw;
-  max-width: 220px;
+  position: fixed;
+  bottom: 18vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30vw;
   height: auto;
-  z-index: 2;
-  filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-  animation: idleMotion 4.5s ease-in-out infinite;
-  will-change: transform;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
 }
+
+/* 🫁 Napas lembut */
+#pet.idle {
+  animation: petBreath 2.8s ease-in-out infinite;
+}
+
+@keyframes petBreath {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.04); }
+}
+
+/* 🦘 Lompat ringan */
+#pet.jump {
+  animation: petJump 0.6s ease-out;
+}
+
+@keyframes petJump {
+  0% { transform: translateX(-50%) translateY(0); }
+  40% { transform: translateX(-50%) translateY(-4vh); }
+  100% { transform: translateX(-50%) translateY(0); }
+}
+
+/* ✨ Glow evo */
+#pet.evo-glow {
+  filter: drop-shadow(0 0 10px #fff) drop-shadow(0 0 25px #00f);
+  animation: glowPulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+  from { filter: drop-shadow(0 0 8px #fff) drop-shadow(0 0 15px #00f); }
+  to { filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 35px #0ff); }
+}
+
+/* 🌑 Bayangan bawah */
+#pet::after {
+  content: "";
+  position: absolute;
+  bottom: -1.5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 1.5vh;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+  transition: opacity 0.5s;
+}
+
 
 #pet, .mini-bubble, .flytext {
   will-change: transform, opacity;
 }
 
 
-/* 🌟 Efek evolusi di tengah pet */
-#evoGlow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 140%;
-  height: 140%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,0,0.6), rgba(255,255,0,0.1) 70%);
-  filter: blur(25px);
-  z-index: 1; /* di belakang pet */
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.6s ease;
-}
-#evoGlow.active {
-  opacity: 1;
-  animation: pulseGlow 1.2s infinite alternate ease-in-out;
-}
-@keyframes pulseGlow {
-  from { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-  to   { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-}
 
 /* ⚡ EXP Bar */
 .bar-container {
@@ -544,20 +554,12 @@
 
 /* === PATCH POSISI & TATA LETAK 2025-10 === */
 
-/* 💫 Glow evolusi lebih terlihat (di atas pet tapi di bawah bubble) */
-#evoGlow {
-  z-index: 5 !important;
-}
-
 /* 🧩 Tambahkan ruang bawah agar tombol tidak tertutup battleIcon */
 #gameContent {
   padding-bottom: 16vh; /* ruang aman untuk feed/play/evo */
 }
 
-/* 🐣 Perhalus peralihan animasi agar tidak freeze */
-#pet.idle {
-  animation: idleMotion 4.5s ease-in-out infinite !important;
-}
+
 #pet.hungry {
   animation: hungry-shake 0.6s infinite !important;
 }
@@ -907,6 +909,14 @@ html, body {
 
     
   </style>
+
+  <!-- Preload gambar penting agar pet cepat tampil -->
+<link rel="preload" as="image" href="images/egg.webp">
+<link rel="preload" as="image" href="images/background.png">
+<link rel="preload" as="image" href="images/grass.png">
+<link rel="preload" as="image" href="images/tree.png">
+<link rel="preload" as="image" href="images/cloud.png">
+
 </head>
 <body>
 
@@ -1016,7 +1026,7 @@ html, body {
     <!-- 🐣 Pet Area -->
     <div class="pet-wrapper" id="petWrapper">
       <div class="glow" id="evoGlow"></div>
-      <img id="pet" src="images/egg.png">
+      <img id="pet" src="images/egg.webp" loading="eager" alt="Pet">
     </div>
     
      <div class="thermometer" id="thermometer">
@@ -2494,6 +2504,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
