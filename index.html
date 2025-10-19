@@ -1704,16 +1704,6 @@ function updatePetAnimation() {
   }
 }
 
-// Jalankan setiap kali UI diperbarui
-const _oldUpdateUI = updateUI;
-updateUI = function() {
-  _oldUpdateUI();     // panggil versi lama
-  updatePetAnimation(); // perbarui animasi
-};
-
-// Jalankan saat pertama kali halaman dimuat
-document.addEventListener("DOMContentLoaded", updatePetAnimation);
-
 // === HITUNG TOTAL POWER SESUAI RUMUS BARU ===
 // Total Atk = atk + crit + acc
 // Total Def = def + spd
@@ -2553,12 +2543,24 @@ window.onload = function() {
   initGame();
 };
 
+// === PATCH: sinkronisasi animasi pet dengan updateUI ===
+document.addEventListener("DOMContentLoaded", () => {
+  if (typeof updateUI === "function") {
+    const _oldUpdateUI = updateUI;
+    updateUI = function() {
+      _oldUpdateUI();
+      updatePetAnimation(); // tetap jalan seperti sebelumnya
+    };
+    updatePetAnimation(); // animasi awal (idle/hungry)
+  }
+});
 
   
 </script>
   
 </body>
 </html>
+
 
 
 
