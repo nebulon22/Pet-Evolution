@@ -1015,29 +1015,44 @@ html, body {
 </div>
 
 
-  <!-- Popup Battle -->
-  <div id="battlePopup" style="display:none; position:fixed; top:60px; left:50%; transform:translateX(-50%);
-    background:rgba(51,51,51,0.95); padding:15px; border-radius:12px; z-index:40;
-    text-align:center; width:240px; font-size:3.2vw;">
-<h3>⚔️ Arena Battle</h3>
+  <!-- ⚔️ Popup Battle -->
+<div id="battlePopup" style="
+  display:none; position:fixed; top:60px; left:50%; transform:translateX(-50%);
+  background:rgba(51,51,51,0.95); padding:15px; border-radius:12px;
+  z-index:40; text-align:center; width:240px; font-size:3.2vw;">
+  
+  <h3>⚔️ Arena Battle</h3>
 
-<p id="playerInfo">
-  Pet: <span id="battlePetName">-</span><br>
-  Power: ⚔️ <span id="playerAtk">-</span> / 🛡️ <span id="playerDef">-</span><br>
-  🔥 Total: <span id="playerTotal">-</span>
-</p>
+  <p id="playerInfo">
+    Pet: <span id="battlePetName">-</span><br>
+    Power: ⚔️ <span id="playerAtk">-</span> / 🛡️ <span id="playerDef">-</span><br>
+    🔥 Total: <span id="playerTotal">-</span>
+  </p>
 
-    <p id="enemyInfo">
-  Musuh Dummy<br>
-  Power: ⚔️ <span id="enemyAtk">-</span> / 🛡️ <span id="enemyDef">-</span><br>
-  🔥 Total: <span id="enemyTotal">-</span>
-</p>
+  <p id="enemyInfo">
+    Musuh Dummy<br>
+    Power: ⚔️ <span id="enemyAtk">-</span> / 🛡️ <span id="enemyDef">-</span><br>
+    🔥 Total: <span id="enemyTotal">-</span>
+  </p>
 
-</p>
+  <button onclick="startBattle()">Mulai</button>
+  <button onclick="toggleBattle()">Tutup</button>
+</div>
 
-    <button onclick="startBattle()">Mulai</button>
-    <button onclick="toggleBattle()">Tutup</button>
-  </div>
+<!-- 🧾 Popup Info Pet -->
+<div id="petInfoPopup" style="
+  display:none; position:fixed; top:240px; left:50%; transform:translateX(-50%);
+  background:rgba(0,0,0,0.8); color:white; padding:12px 15px; border-radius:10px;
+  z-index:39; width:240px; font-size:3.4vw; text-align:center;
+  box-shadow:0 0 8px rgba(0,0,0,0.4); opacity:0; transition:opacity .3s ease;">
+  
+  <h3>🐾 Info Pet</h3>
+  <div id="petName">Nama: -</div>
+  <div id="ownerName">Pemilik: -</div>
+  <div id="petPowerAtk">⚔️ Atk: -</div>
+  <div id="petPowerDef">🛡️ Def: -</div>
+  <div id="petPowerTotal">🔥 Power: -</div>
+</div>
 
   
 <div id="gameContainer">
@@ -1059,20 +1074,6 @@ html, body {
       </div>
       
  <div id="bubble"></div>
-    
-    
-    <!-- 🧾 Info Panel -->
-<p style="font-size:4vw; text-align:center;">Level Pet: <span id="level">1</span></p>
-
-<!-- Info dinamis akan diisi oleh updateUI() -->
-<div id="petInfo" style="font-size:3.8vw; text-align:center;">
-  <div id="petName">🐾 Nama Pet: -</div>
-  <div id="ownerName">👤 Pemilik: -</div>
-  <div id="petPowerAtk">⚔️ Power Atk: -</div>
-  <div id="petPowerDef">🛡️ Power Def: -</div>
-  <div id="petPowerTotal">🔥 Total Power: -</div>
-
-</div>
 
 
 <!-- ⚡ EXP Bar -->
@@ -1338,22 +1339,30 @@ function setEnemyData(data) {
 }
 
 function toggleBattle() {
-  const popup = document.getElementById("battlePopup");
-  const infoPanel = document.getElementById("petInfoPanel");
+  const battlePopup = document.getElementById("battlePopup");
+  const petInfoPopup = document.getElementById("petInfoPopup");
 
-  if (popup.style.display === "block") {
-    popup.style.opacity = "0";
-    popup.style.transform = "translateY(-10px)";
-    setTimeout(() => (popup.style.display = "none"), 300);
-    if (infoPanel) infoPanel.classList.remove("active");
+  const isOpen = battlePopup.style.display === "block";
+
+  if (isOpen) {
+    // Tutup kedua popup
+    battlePopup.style.opacity = "0";
+    petInfoPopup.style.opacity = "0";
+    setTimeout(() => {
+      battlePopup.style.display = "none";
+      petInfoPopup.style.display = "none";
+    }, 300);
   } else {
+    // Tampilkan popup Battle
     updateDummyEnemy();
     updateUI();
     updateBattlePopup();
-    popup.style.display = "block";
-    popup.style.opacity = "1";
-    popup.style.transform = "translateY(0)";
-    if (infoPanel) infoPanel.classList.add("active");
+    battlePopup.style.display = "block";
+    petInfoPopup.style.display = "block";
+    requestAnimationFrame(() => {
+      battlePopup.style.opacity = "1";
+      petInfoPopup.style.opacity = "1";
+    });
   }
 }
 
@@ -2541,6 +2550,7 @@ if (playBtn) {
 
 </body>
 </html>
+
 
 
 
