@@ -1859,29 +1859,23 @@ if (totalEl) totalEl.textContent = "🔥 Total Power: " + pet.totalPower;
 }
 
 // === PERBARUI ISI POPUP BATTLE ===
-// === PERBARUI ISI POPUP BATTLE ===
 function updateBattlePopup() {
-  const playerAtkEl = document.getElementById("playerAtk");
-  const playerDefEl = document.getElementById("playerDef");
-  const playerTotalEl = document.getElementById("playerTotal");
+  document.getElementById("battlePetName").textContent = playerPet.name;
+  document.getElementById("playerAtk").textContent = playerPet.atk;
+  document.getElementById("playerDef").textContent = playerPet.def;
+  document.getElementById("playerTotal").textContent = playerPet.total;
 
-  const enemyAtkEl = document.getElementById("enemyAtk");
-  const enemyDefEl = document.getElementById("enemyDef");
-  const enemyTotalEl = document.getElementById("enemyTotal");
-  const enemyInfoEl = document.getElementById("enemyInfo");
+  document.getElementById("enemyAtk").textContent = dummyEnemy.atk;
+  document.getElementById("enemyDef").textContent = dummyEnemy.def;
+  document.getElementById("enemyTotal").textContent = dummyEnemy.total;
 
-  if (playerAtkEl) playerAtkEl.textContent = pet.totalAtk || 0;
-  if (playerDefEl) playerDefEl.textContent = pet.totalDef || 0;
-  if (playerTotalEl) playerTotalEl.textContent = pet.totalPower || 0;
-
-  if (enemyAtkEl) enemyAtkEl.textContent = enemyData.totalAtk || 0;
-  if (enemyDefEl) enemyDefEl.textContent = enemyData.totalDef || 0;
-  if (enemyTotalEl) enemyTotalEl.textContent = enemyData.totalPower || 0;
-
-  if (enemyInfoEl)
-    enemyInfoEl.firstChild.textContent = `Musuh ${enemyData.name || "???"}`;
+  // update info pet popup juga
+  document.getElementById("petName").textContent = "Nama: " + playerPet.name;
+  document.getElementById("ownerName").textContent = "Pemilik: " + playerPet.owner;
+  document.getElementById("petPowerAtk").textContent = "⚔️ Atk: " + playerPet.atk;
+  document.getElementById("petPowerDef").textContent = "🛡️ Def: " + playerPet.def;
+  document.getElementById("petPowerTotal").textContent = "🔥 Power: " + playerPet.total;
 }
-
 
 
 function startSparkle(){
@@ -2560,6 +2554,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
 </body>
 </html>
+
 
 
 
