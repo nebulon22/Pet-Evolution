@@ -848,13 +848,13 @@ body {
 
 /* 🌳 Pohon di belakang pet dan piring */
 .tree {
-  position: absolute;
+  position: fixed;
   bottom: 10vh;                   /* pas di atas rumput */
   width: 22vw;
   max-width: 180px;
   transform-origin: bottom center;
   animation: sway 4s ease-in-out infinite alternate;
-  z-index: -7;
+  z-index: 2;
   opacity: 0.95;
 }
 @keyframes sway {
@@ -872,7 +872,7 @@ body {
   height: auto;
   pointer-events: none;
   z-index: 2;
-  background: url("images/grass.png") repeat-x bottom center;
+  background: none;
   animation: grassSwing 2.8s ease-in-out infinite;
   opacity: 0.95;
   height: 100px; /* Sesuaikan dengan tinggi gambar grass */
@@ -880,13 +880,13 @@ body {
 
 @keyframes grassSwing {
   0% {
-    transform: translateY(0);
+    transform: translateX(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateX(-5px);
   }
   100% {
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
@@ -2486,6 +2486,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
