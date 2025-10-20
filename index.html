@@ -17,19 +17,9 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 400vw;
+  width: 800vw;
   height: 100vh;
   z-index: -10;
-}
-
-.bg-sky {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 400vw;
-  height: 100%;
-  background: url("images/background.png") repeat-x bottom center;
-  background-size: auto 100%;
 }
 
   h2 { margin-top:10px; font-size:6vw; }
@@ -1020,7 +1010,7 @@ body {
       <div class="bg-sky"></div>
       <img src="images/cloud.png" class="cloud">
       <img src="images/tree.png" class="tree" style="left:5%; bottom:60px;">
-      <img src="images/tree.png" class="tree" style="left:80%; bottom:70px;">
+      
     </div>
 
     <!-- 🐣 Pet Area -->
@@ -1099,15 +1089,20 @@ body {
 </div> <!-- end #gameContainer -->
 
 <img src="images/grass.png" class="grass" style="left:10%;">
-<img src="images/grass.png" class="grass" style="left:40%;">
-<img src="images/grass.png" class="grass" style="left:70%;">
-
   
   <!-- Suara -->
   <audio id="sound" src="sounds/feed.mp3" preload="auto"></audio>
   <audio id="soundLevel" src="sounds/levelup.mp3" preload="auto"></audio>
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
   <audio id="soundBuy" src="sounds/buy.mp3" preload="auto"></audio>
+
+<script>
+    const bg = document.getElementById('background');
+
+    window.addEventListener('scroll', () => {
+      bg.style.left = `-${window.scrollX}px`;
+    });
+  </script>
   
   <script>
     // Klik ikon email untuk buka/tutup popup login
@@ -2492,6 +2487,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
