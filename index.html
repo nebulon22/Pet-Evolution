@@ -850,8 +850,8 @@ body {
 .tree {
   position: fixed;
   bottom: 10vh;                   /* pas di atas rumput */
-  width: 22vw;
-  max-width: 180px;
+  width: 50vw;
+  max-width: 320px;
   transform-origin: bottom center;
   animation: sway 4s ease-in-out infinite alternate;
   z-index: 2;
@@ -873,22 +873,10 @@ body {
   pointer-events: none;
   z-index: 2;
   background: none;
-  animation: grassSwing 2.8s ease-in-out infinite;
   opacity: 0.95;
   height: 100px; /* Sesuaikan dengan tinggi gambar grass */
 }
 
-@keyframes grassSwing {
-  0% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-5px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
 
 
 
@@ -2486,6 +2474,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
