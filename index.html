@@ -987,6 +987,17 @@
 </head>
 <body>
 
+<div id="loadingScreen" style="
+  position:fixed; top:0; left:0; width:100vw; height:100vh;
+  background:#111; display:flex; flex-direction:column; justify-content:center; align-items:center;
+  color:#fff; font-family:sans-serif; font-size:5vw; z-index:9999;">
+  <div id="loadingText">Loading... 0%</div>
+  <div style="width:60%; height:12px; background:#333; border-radius:6px; margin-top:10px; overflow:hidden;">
+    <div id="loadingBar" style="width:0%; height:100%; background:#4caf50; transition:width 0.2s;"></div>
+  </div>
+</div>
+
+  
   <!-- TOP BAR -->
   <div id="topBar">
     <div id="leftIcons">
@@ -1175,6 +1186,66 @@
   <audio id="soundEvo" src="sounds/evo.mp3" preload="auto"></audio>
   <audio id="soundBuy" src="sounds/buy.mp3" preload="auto"></audio>
 
+<script>
+const assetList = [
+  "images/background.png",
+  "images/grass.png",
+  "images/tree.png",
+  "images/cloud.png",
+  "images/egg.webp",
+  "sounds/feed.mp3",
+  "sounds/play.mp3",
+  "sounds/evo.mp3"
+];
+
+function preloadAssets(list) {
+  let loaded = 0;
+  const total = list.length;
+
+  const promises = list.map(src => new Promise(resolve => {
+    const ext = src.split('.').pop();
+    let el;
+
+    if (["png","jpg","jpeg","webp","gif"].includes(ext)) {
+      el = new Image();
+    } else if (["mp3","ogg","wav"].includes(ext)) {
+      el = new Audio();
+    } else {
+      el = document.createElement("link");
+      el.rel = "preload";
+      el.href = src;
+    }
+
+    el.onload = el.onerror = () => {
+      loaded++;
+      const percent = Math.round((loaded / total) * 100);
+      document.getElementById("loadingBar").style.width = percent + "%";
+      document.getElementById("loadingText").innerText = `Loading... ${percent}%`;
+      resolve();
+    };
+    el.src = src;
+  }));
+
+  return Promise.all(promises);
+}
+
+window.addEventListener("load", async () => {
+  await preloadAssets(assetList);
+  document.getElementById("loadingText").innerText = "Ready!";
+  setTimeout(() => {
+    document.getElementById("loadingScreen").style.opacity = "0";
+    setTimeout(() => document.getElementById("loadingScreen").remove(), 400);
+    initGame();
+  }, 500);
+});
+
+function initGame() {
+  console.log("✅ Semua aset dimuat. Game dimulai!");
+  // tempatkan semua inisialisasi game kamu di sini
+}
+</script>
+
+  
 <script>
     const bg = document.getElementById('background');
 
@@ -2586,6 +2657,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
