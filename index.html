@@ -1289,24 +1289,33 @@ function setPetAnimation(state) {
 // ================== Tombol Play ==================
 function playWithPet() {
   const btn = document.getElementById("playBtn");
-  if(btn.disabled) return; // cooldown
+  if (btn.disabled) return; // cooldown
 
   // Kurangi hunger
   pet.hunger = Math.max(0, pet.hunger - 10);
-  updateUI(); // fungsi update UI, misal exp/hunger bar
+  updateUI();
 
   const petImg = document.getElementById("pet");
-  petImg.classList.add("pet-fly");       // trigger animasi jump
+  if (!petImg) return;
 
+  // 🔧 hentikan animasi lama dulu
+  petImg.classList.remove("idle", "hungry");
+
+  // 🐾 jalankan animasi jump
+  petImg.classList.add("pet-fly");
+
+  // 💬 tampilkan bubble
   showBubble("🎮 Bermain seru! Hunger -10%");
 
-  // Kembalikan animasi idle/hungry setelah jump selesai
+  // 🔁 kembalikan ke idle/hungry setelah selesai loncat
   setTimeout(() => {
-    if(pet.hunger <= 0) setPetAnimation("hungry");
+    petImg.classList.remove("pet-fly");
+
+    if (pet.hunger <= 0) setPetAnimation("hungry");
     else setPetAnimation("idle");
   }, 800);
 
-  // Cooldown tombol 5 detik
+  // ⏳ cooldown tombol 5 detik
   btn.disabled = true;
   btn.textContent = "⏳ Tunggu...";
   setTimeout(() => {
@@ -2564,6 +2573,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
