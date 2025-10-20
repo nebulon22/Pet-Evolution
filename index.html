@@ -5,14 +5,7 @@
   <title>Game Pet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-  body {
-    margin:0; text-align:center; background:#2e7d32; color:white;
-    font-family:sans-serif;
-    display:flex; flex-direction:column; align-items:center;
-  padding: 0;
-  overflow-x: auto;     /* bisa digeser kiri–kanan */
-  overflow-y: hidden;
-  }
+ 
 
   h2 { margin-top:10px; font-size:6vw; }
 
@@ -718,24 +711,6 @@
 }
 
 
-#petInfoPanel {
-  position: fixed;
-  bottom: calc(5vh + 15vw); /* posisi dasar, proporsional */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 8;
-}
-
-/* 📱 Mode layar kecil (HP) */
-@media (max-width: 600px) {
-  #petInfoPanel {
-    bottom: calc(5vh + 10vw); /* sedikit lebih dekat ke EXP bar */
-    transform: translateX(-50%);
-  }
-}
-
-
-
 /* Reset default margin tombol global untuk area bawah */
 #bottomButtons button {
   margin: 0;                /* hilangkan margin global */
@@ -818,26 +793,30 @@
 /* === BACKGROUND SCENE FIX === */
 /* =========================== */
 
-/* 🎨 Container utama background */
-#background {
-  position: fixed;               /* agar tidak ikut scroll */
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  overflow: hidden;
-  z-index: -10;                  /* di belakang semua elemen gameplay */
+body {
+  margin:0; text-align:center; color:white; font-family:sans-serif;
+  background:#000; overflow-x:auto; overflow-y:hidden;
 }
 
-/* 🌤 Langit - proporsional, tidak pecah */
+/* ===== BACKGROUND PANORAMA ===== */
+#background {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  overflow:hidden;
+  z-index: -10;
+}
 .bg-sky {
   position: absolute;
   top: 0; left: 0;
   width: 100%;
   height: 100%;
   background: url("images/background.png") no-repeat center bottom;
-  background-size: cover;     /* ✅ tetap proporsional */
-  background-color: #8fd0ff;  /* langit isi area kosong */
+  background-size: contain;    /* proporsional */
+  background-color: #8fd0ff;   /* langit isi area kosong */
   z-index: -9;
 }
+
 
 
 /* ☁️ Awan bergerak */
@@ -987,30 +966,28 @@
   <button onclick="toggleStats()">Tutup</button>
 </div>
 
-
-  <!-- Popup Battle -->
-  <div id="battlePopup" style="display:none; position:fixed; top:60px; left:50%; transform:translateX(-50%);
-    background:rgba(51,51,51,0.95); padding:15px; border-radius:12px; z-index:40;
-    text-align:center; width:240px; font-size:3.2vw;">
-<h3>⚔️ Arena Battle</h3>
-
-<p id="playerInfo">
-  Pet: <span id="battlePetName">-</span><br>
-  Power: ⚔️ <span id="playerAtk">-</span> / 🛡️ <span id="playerDef">-</span><br>
-  🔥 Total: <span id="playerTotal">-</span>
-</p>
-
-    <p id="enemyInfo">
-  Musuh Dummy<br>
-  Power: ⚔️ <span id="enemyAtk">-</span> / 🛡️ <span id="enemyDef">-</span><br>
-  🔥 Total: <span id="enemyTotal">-</span>
-</p>
-
-</p>
-
-    <button onclick="startBattle()">Mulai</button>
-    <button onclick="toggleBattle()">Tutup</button>
+  <!-- ⚔️ Popup Battle Gabungan -->
+<div id="battlePopup" style="
+  display:none;
+  position:fixed; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  background:rgba(51,51,51,0.95);
+  padding:15px; border-radius:12px;
+  width:240px; text-align:center;
+  z-index:100; opacity:0;
+  transition:opacity 0.35s ease, transform 0.35s ease;">
+  
+  <h3>⚔️ Battle</h3>
+  <div id="petInfoText">
+    <p><b>Nama:</b> <span id="petName">Petku</span></p>
+    <p><b>Level:</b> <span id="petLevel">1</span></p>
+    <p><b>Power:</b> <span id="petPower">0</span></p>
   </div>
+  <button class="mainBtn" onclick="startBattle()">Start Battle</button>
+  <div id="battleResult" style="margin-top:10px; font-size:4vw; font-weight:bold;"></div>
+  <button class="mainBtn" style="margin-top:10px;" onclick="toggleBattle()">Tutup</button>
+</div>
+
 
   
 <div id="gameContainer">
@@ -1041,19 +1018,6 @@
       
  <div id="bubble"></div>
     
-    
-    <!-- 🧾 Info Panel -->
-<p style="font-size:4vw; text-align:center;">Level Pet: <span id="level">1</span></p>
-
-<!-- Info dinamis akan diisi oleh updateUI() -->
-<div id="petInfo" style="font-size:3.8vw; text-align:center;">
-  <div id="petName">🐾 Nama Pet: -</div>
-  <div id="ownerName">👤 Pemilik: -</div>
-  <div id="petPowerAtk">⚔️ Power Atk: -</div>
-  <div id="petPowerDef">🛡️ Power Def: -</div>
-  <div id="petPowerTotal">🔥 Total Power: -</div>
-
-</div>
 
 
 <!-- ⚡ EXP Bar -->
@@ -1322,99 +1286,62 @@ function setEnemyData(data) {
   console.log("⚔️ Enemy data set:", enemyData);
 }
 
+
+// === BATTLE POPUP GABUNGAN ===
 function toggleBattle() {
   const popup = document.getElementById("battlePopup");
-
   if (popup.style.display === "block") {
-    // 🔻 Tutup popup dengan efek fade-out
     popup.style.opacity = "0";
-    popup.style.transform = "translateY(-10px)";
-    setTimeout(() => (popup.style.display = "none"), 300);
+    setTimeout(()=>popup.style.display="none", 300);
   } else {
-    // 🔹 Siapkan data battle terbaru
-    updateDummyEnemy();
-    updateUI();
-    updateBattlePopup();
-
-    // 🔹 Tampilkan popup dengan efek fade-in
     popup.style.display = "block";
-    setTimeout(() => {
-      popup.style.opacity = "1";
-      popup.style.transform = "translateY(0)";
-    }, 10);
+    setTimeout(()=>popup.style.opacity="1", 10);
+    updatePetInfo();
+  }
+}
+
+function updatePetInfo() {
+  document.getElementById("petName").textContent = pet.name || "Petku";
+  document.getElementById("petLevel").textContent = pet.level || 1;
+  document.getElementById("petPower").textContent = pet.totalPower || 0;
+}
+
+function startBattle() {
+  const myPower = pet.totalPower || 0;
+  const enemyPower = enemyData.totalPower || 0;
+
+  const resultEl = document.getElementById("battleResult");
+  if (myPower > enemyPower) {
+    resultEl.textContent = "🏆 Kamu Menang!";
+    resultEl.style.color = "#ffeb3b";
+    showFlyText("🏆 MENANG!", "#ffeb3b");
+  } else {
+    resultEl.textContent = "❌ Kamu Kalah!";
+    resultEl.style.color = "#ff5555";
+    showFlyText("❌ KALAH!", "#ff5555");
   }
 }
 
 
 // === Efek fly text untuk hasil Battle ===
-function showBattleFlyText(text, color = "#ffeb3b") {
+function showFlyText(text, color) {
   const fly = document.createElement("div");
-  fly.className = "flytext-battle";
   fly.textContent = text;
-  fly.style.color = color;
-
-  // gaya dasar
   fly.style.position = "fixed";
   fly.style.left = "50%";
-  fly.style.top = "50%"; // tengah layar vertikal
-  fly.style.transform = "translate(-50%, -50%)";
-  fly.style.fontSize = "6vw";
+  fly.style.bottom = "10vh";
+  fly.style.transform = "translateX(-50%)";
+  fly.style.color = color;
+  fly.style.fontSize = "5vw";
   fly.style.fontWeight = "bold";
-  fly.style.textShadow = "2px 2px 6px rgba(0,0,0,0.6)";
-  fly.style.zIndex = "9999";
+  fly.style.textShadow = "2px 2px 5px black";
   fly.style.opacity = "1";
-  fly.style.transition = "all 1.2s ease-out";
-
+  fly.style.transition = "all 1s ease-out";
+  fly.style.zIndex = 9999;
   document.body.appendChild(fly);
-
-  // animasi terbang ke atas + hilang
-  setTimeout(() => {
-    fly.style.top = "30%"; // dari tengah naik sedikit
-    fly.style.opacity = "0";
-  }, 100);
-
-  // hapus setelah selesai animasi
-  setTimeout(() => fly.remove(), 1200);
+  setTimeout(()=>{ fly.style.bottom="40vh"; fly.style.opacity="0"; }, 50);
+  setTimeout(()=>fly.remove(), 1200);
 }
-
-// === HITUNG HASIL BATTLE BERDASARKAN RUMUS BARU ===
-function startBattle() {
-  const myPower = pet.totalPower || 0;
-  const enemyPower = enemyData.totalPower || 0;
-
-  let resultText = "";
-  let flyText = "";
-  let flyColor = "#ffeb3b";
-
-  if (myPower > enemyPower) {
-    resultText = "🏆 Kamu menang! +20💰";
-    flyText = "🏆 MENANG +20💰";
-    flyColor = "#00ff00";
-    pet.coins += 20;
-  } else if (myPower < enemyPower) {
-    resultText = "💀 Kalah... coba lagi!";
-    flyText = "💀 KALAH -5💰";
-    flyColor = "#ff4444";
-    pet.coins = Math.max(0, pet.coins - 5);
-  } else {
-    resultText = "🤝 Seri! Tidak ada perubahan.";
-    flyText = "🤝 SERI";
-    flyColor = "#ffaa00";
-  }
-
-  // Tutup popup lebih dulu
-  const popup = document.getElementById("battlePopup");
-  popup.style.display = "none";
-
-  // 🌟 Tampilkan bubble teks utama & efek melayang
-  showBattleFlyText(flyText, flyColor);
-
-  // Perbarui tampilan setelah animasi selesai
-  setTimeout(() => {
-    updateUI();
-  }, 1600);
-}
-
 
 
 function calculateAtkPower(pet) {
@@ -2493,6 +2420,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
