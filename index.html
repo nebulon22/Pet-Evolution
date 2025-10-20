@@ -1306,21 +1306,65 @@ function updatePetInfo() {
   document.getElementById("petPower").textContent = pet.totalPower || 0;
 }
 
+function generateEnemy() {
+  const names = ["Slime", "Bat", "Wolf", "Dragon", "Ghost"];
+  const randomName = names[Math.floor(Math.random() * names.length)];
+  const randomPower = Math.floor(Math.random() * (pet.totalPower + 10)) + 5;
+
+  enemyData = {
+    name: randomName,
+    totalPower: randomPower
+  };
+
+  return enemyData;
+}
+
+  
+// === RUMUS BARU + EFEK LENGKAP ===
 function startBattle() {
   const myPower = pet.totalPower || 0;
   const enemyPower = enemyData.totalPower || 0;
+  const enemy = generateEnemy();
+
+  
+  let resultText = "";
+  let flyText = "";
+  let flyColor = "#ffeb3b";
 
   const resultEl = document.getElementById("battleResult");
-  if (myPower > enemyPower) {
-    resultEl.textContent = "🏆 Kamu Menang!";
-    resultEl.style.color = "#ffeb3b";
-    showFlyText("🏆 MENANG!", "#ffeb3b");
-  } else {
-    resultEl.textContent = "❌ Kamu Kalah!";
-    resultEl.style.color = "#ff5555";
-    showFlyText("❌ KALAH!", "#ff5555");
+
+  if (myPower > enemy.totalPower) {
+  resultText = `🏆 Kamu Menang melawan ${enemy.name}! +EXP +Coin`;
+    flyText = "🏆 MENANG!";
+    flyColor = "#ffeb3b";
+
+    // contoh efek kemenangan
+    pet.exp = (pet.exp || 0) + 10;
+    pet.coin = (pet.coin || 0) + 5;
+
+    // efek animasi pet menang
+    petEl.style.animation = "none";
+    void petEl.offsetWidth;
+    petEl.style.animation = "petBreath 2.8s ease-in-out infinite";
+
+    } else {
+      resultText = `❌ Kamu Kalah dari ${enemy.name}! Coba lagi...`;
+      flyText = "❌ KALAH!";
+      flyColor = "#ff5555";
+
+    // contoh efek kekalahan (tidak dapat reward)
+    if (pet.exp > 1) pet.exp -= 1;
   }
+
+  resultEl.textContent = resultText;
+  resultEl.style.color = flyColor;
+  showFlyText(flyText, flyColor);
+
+  // Update info pet (EXP bar dan panel)
+  updateStats && updateStats();
+  updatePetInfo();
 }
+
 
 
 // === Efek fly text untuk hasil Battle ===
@@ -2420,6 +2464,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
