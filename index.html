@@ -1291,31 +1291,31 @@ function playWithPet() {
   const btn = document.getElementById("playBtn");
   if (btn.disabled) return; // cooldown
 
+  const petImg = document.getElementById("pet");
+  if (!petImg) return;
+
   // Kurangi hunger
   pet.hunger = Math.max(0, pet.hunger - 10);
   updateUI();
 
-  const petImg = document.getElementById("pet");
-  if (!petImg) return;
+  // Stop semua animasi lama dulu
+  petImg.classList.remove("idle", "hungry", "pet-fly");
 
-  // 🔧 hentikan animasi lama dulu
-  petImg.classList.remove("idle", "hungry");
-
-  // 🐾 jalankan animasi jump
+  // Trigger ulang animasi jump
+  void petImg.offsetWidth; // 🔧 trik reflow agar animasi restart
   petImg.classList.add("pet-fly");
 
-  // 💬 tampilkan bubble
+  // Bubble text
   showBubble("🎮 Bermain seru! Hunger -10%");
 
-  // 🔁 kembalikan ke idle/hungry setelah selesai loncat
+  // Setelah loncat selesai (0.8s), kembali idle/hungry
   setTimeout(() => {
     petImg.classList.remove("pet-fly");
-
-    if (pet.hunger <= 0) setPetAnimation("hungry");
-    else setPetAnimation("idle");
+    if (pet.hunger <= 0) petImg.classList.add("hungry");
+    else petImg.classList.add("idle");
   }, 800);
 
-  // ⏳ cooldown tombol 5 detik
+  // Cooldown tombol
   btn.disabled = true;
   btn.textContent = "⏳ Tunggu...";
   setTimeout(() => {
@@ -1323,6 +1323,7 @@ function playWithPet() {
     btn.textContent = "🎮 Play";
   }, 5000);
 }
+
 
 // ================== (Opsional) touch pet disabled ==================
 // Jika sebelumnya ada event sentuh pet untuk terbang kecil,
@@ -1689,49 +1690,6 @@ if (pet.stage === "egg" && pet.level >= 10) {
     evoAnimating = false;
   }, 2000);
 }
-
-    
-function playWithPet() {
-  const btn = document.getElementById("playBtn");
-  if (btn.disabled) return; // masih cooldown
-
-  const petImg = document.getElementById("pet");
-  if (!petImg) return;
-
-  // Kurangi hunger
-  pet.hunger = Math.max(0, pet.hunger - 10);
-  updateUI();
-
-  // Jalankan animasi jump
-  petImg.classList.add("pet-fly");
-
-  // Munculkan bubble sinkron
-  showBubble("🎮 Bermain seru! Hunger -10%");
-
-  // Setelah animasi selesai, kembali ke idle/hungry
-  setTimeout(() => {
-    petImg.classList.remove("pet-fly");
-
-    if (pet.hunger <= 0) {
-      petImg.classList.remove("idle");
-      petImg.classList.add("hungry");
-    } else {
-      petImg.classList.remove("hungry");
-      petImg.classList.add("idle");
-    }
-  }, 800); // sesuai durasi petJump
-
-  // Cooldown tombol 5 detik
-  btn.disabled = true;
-  btn.textContent = "⏳ Tunggu...";
-  setTimeout(() => {
-    btn.disabled = false;
-    btn.textContent = "🎮 Play";
-  }, 5000);
-}
-
-
-
 
 
 /* === PATCH ANIMASI PET 2025-10 === */
@@ -2573,6 +2531,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
