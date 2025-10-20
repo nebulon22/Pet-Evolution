@@ -335,7 +335,7 @@
 /* === Fix posisi Pet & Thermometer di semua layar === */
 .pet-wrapper {
   position: fixed;
-  top: 50%;
+  top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);  /* ⬅️ sejajarkan benar-benar di tengah layar */
   display: flex;
@@ -353,14 +353,14 @@
 .thermometer {
   position: fixed;
   top: 40%;
-  left: 2vw;                          /* mepet kiri layar */
+  left: 5vw;                          /* mepet kiri layar */
   transform: translateY(-50%);        /* sejajar tengah vertikal */
   z-index: 6;
 }
 
 #pet {
   position: relative;           /* tetap relative untuk rotasi 3D */
-  width: 30vw;
+  width: 50vw;
   max-width: 220px;
   height: auto;
   transform-style: preserve-3d; /* agar bisa diputar 3D */
@@ -2586,6 +2586,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
