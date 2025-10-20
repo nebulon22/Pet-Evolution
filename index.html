@@ -1233,40 +1233,29 @@ let inBattle = false;
 function showBubble(text) {
   if (inBattle) return;
 
-  // pastikan tidak ada mini-bubble aktif
-  document.querySelectorAll('.mini-bubble').forEach(el => el.remove());
+  // Hapus mini bubble jika ada
+  document.querySelectorAll(".mini-bubble").forEach(el => el.remove());
 
-  const bubble = document.getElementById("bubble");
-  bubble.textContent = text;
-  bubble.classList.add("active");
-  setTimeout(() => bubble.classList.remove("active"), 800);
-  
   const bubble = document.getElementById("bubble");
   const pet = document.getElementById("pet");
   if (!bubble || !pet) return;
 
-  // tampilkan bubble dulu agar ukurannya valid
+  // Tampilkan bubble untuk hitung posisi
   bubble.textContent = text;
   bubble.style.display = "block";
   bubble.style.opacity = 1;
-  bubble.classList.add("active");
-  setTimeout(() => bubble.classList.remove("active"), 800);
 
-  // hitung posisi berdasarkan pet
+  // Hitung posisi di sisi kanan pet
   const petRect = pet.getBoundingClientRect();
   const bubbleRect = bubble.getBoundingClientRect();
-
   let left = petRect.right + 10;
   let top = petRect.top + petRect.height / 2 - bubbleRect.height / 2;
 
-  // cegah keluar layar
+  // Cegah keluar layar
   const maxRight = window.innerWidth - 10;
   const bubbleRight = left + bubbleRect.width;
-  if (bubbleRight > maxRight) {
-    left = maxRight - bubbleRect.width - 10;
-  }
+  if (bubbleRight > maxRight) left = maxRight - bubbleRect.width - 10;
 
-  // batas vertikal
   const maxTop = window.innerHeight - bubbleRect.height - 10;
   if (top > maxTop) top = maxTop;
   if (top < 10) top = 10;
@@ -1274,12 +1263,18 @@ function showBubble(text) {
   bubble.style.left = `${left}px`;
   bubble.style.top = `${top}px`;
 
-  // animasi hilang perlahan
+  // Jalankan animasi aktif (sinkron dengan petJump)
+  bubble.classList.add("active");
+
+  // Hilangkan perlahan setelah animasi selesai
   setTimeout(() => {
+    bubble.classList.remove("active");
     bubble.style.opacity = 0;
     setTimeout(() => (bubble.style.display = "none"), 800);
-  }, 1800);
+  }, 800);
 }
+
+
 
 // ================== Fungsi helper ==================
 
@@ -1687,38 +1682,48 @@ if (pet.stage === "egg" && pet.level >= 10) {
 }
 
     
-
-
-function playWithPet(){
+function playWithPet() {
   const btn = document.getElementById("playBtn");
-  if(btn.disabled) return; // kalau masih cooldown
+  if (btn.disabled) return; // masih cooldown
+
+  const petImg = document.getElementById("pet");
+  if (!petImg) return;
 
   // Kurangi hunger
   pet.hunger = Math.max(0, pet.hunger - 10);
   updateUI();
 
-  // Ambil pet
-  const petImg = document.getElementById("pet");
-  // Stop animasi idle/hungry, lalu jalankan jump
-  petImg.style.animation = "petJump 1s ease-out";
-  showBubble("🎮 Bermain seru! Hunger -10%");
-  setTimeout(()=>{
-    // kembalikan ke idleMotion atau hungry-shake sesuai kondisi
-    if(pet.hunger <= 0){
-      petImg.style.animation = "hungry-shake 0.6s infinite";
-    } else {
-      petImg.style.animation = "idleMotion 6s ease-in-out infinite";
-    }
-  },1000);
+  // Jalankan animasi jump
+  petImg.classList.add("pet-fly");
 
-  // Cooldown 5 detik
+  // Munculkan bubble sinkron
+  showBubble("🎮 Bermain seru! Hunger -10%");
+
+  // Setelah animasi selesai, kembali ke idle/hungry
+  setTimeout(() => {
+    petImg.classList.remove("pet-fly");
+
+    if (pet.hunger <= 0) {
+      petImg.classList.remove("idle");
+      petImg.classList.add("hungry");
+    } else {
+      petImg.classList.remove("hungry");
+      petImg.classList.add("idle");
+    }
+  }, 800); // sesuai durasi petJump
+
+  // Cooldown tombol 5 detik
   btn.disabled = true;
   btn.textContent = "⏳ Tunggu...";
-  setTimeout(()=>{
+  setTimeout(() => {
     btn.disabled = false;
     btn.textContent = "🎮 Play";
-  },5000);
+  }, 5000);
 }
+
+
+
+
 
 /* === PATCH ANIMASI PET 2025-10 === */
 
@@ -2559,6 +2564,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
