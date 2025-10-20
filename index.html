@@ -149,14 +149,32 @@ body {
   50%     { transform: translateY(-4px) scale(1.03); }
 }
 
-/* ✨ Saat pet lompat bermain */
+/* ✨ Lompat bermain lebih terasa */
 @keyframes petJump {
   0%   { transform: translateY(0) scale(1); }
-  35%  { transform: translateY(-60px) scale(1.05); }
-  70%  { transform: translateY(-20px) scale(1.02); }
-  100% { transform: translateY(0) scale(1); }
+  25%  { transform: translateY(-8vh) scale(1.1); }  /* naik lebih tinggi, sedikit membesar */
+  50%  { transform: translateY(-3vh) scale(1.05); } /* turun sebagian */
+  75%  { transform: translateY(-5vh) scale(1.08); } /* naik sekilas lagi untuk efek bounce */
+  100% { transform: translateY(0) scale(1); }       /* kembali ke posisi semula */
 }
-.pet-fly { animation: petJump 1s ease-out; will-change: transform; }
+
+/* Terapkan ke pet saat bermain */
+.pet-fly { 
+  animation: petJump 0.8s ease-in-out; 
+  will-change: transform; 
+}
+/* Bubble muncul saat pet bermain */
+#bubble.active {
+  display: block;
+  animation: bubbleJump 0.8s ease-in-out forwards;
+}
+
+@keyframes bubbleJump {
+  0%   { transform: translateY(0); opacity: 0; }
+  25%  { transform: translateY(-2vh); opacity: 1; }
+  50%  { transform: translateY(-4vh); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0; }
+}
 
 /* 🌟 Bubble utama (ucapan pet, lapar, evolusi) */
 /* 💬 Bubble teks di kanan pet */
@@ -2486,6 +2504,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
