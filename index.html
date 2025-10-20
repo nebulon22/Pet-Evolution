@@ -384,17 +384,18 @@ body {
   z-index: 6;
 }
 
-
 #pet {
-  position: relative;
-  width: 40vw;
+  position: relative;           /* tetap relative untuk rotasi 3D */
+  width: 30vw;
   max-width: 220px;
   height: auto;
+  transform-style: preserve-3d; /* agar bisa diputar 3D */
   z-index: 2;
   filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
   animation: idleMotion 4.5s ease-in-out infinite;
   will-change: transform;
 }
+
 
 #pet, .mini-bubble, .flytext {
   will-change: transform, opacity;
@@ -2504,6 +2505,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
