@@ -914,17 +914,35 @@ body {
   will-change: transform;
 }
 
-/* Bubble muncul saat bermain */
+/* === BUBBLE TEXT LEMBUT === */
 #bubble.active {
   display: block;
-  animation: bubbleJump 0.8s ease-in-out forwards;
+  animation: bubbleSoftFloat 2s ease-out forwards;
 }
-@keyframes bubbleJump {
-  0%   { transform: translateY(0); opacity: 0; }
-  25%  { transform: translateY(-2vh); opacity: 1; }
-  50%  { transform: translateY(-4vh); opacity: 1; }
-  100% { transform: translateY(0); opacity: 0; }
+
+/* Muncul perlahan, naik sedikit, lalu memudar */
+@keyframes bubbleSoftFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(1vh) scale(0.95);
+    filter: blur(2px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(-1vh) scale(1);
+    filter: blur(0);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2.5vh) scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4vh) scale(1.05);
+    filter: blur(2px);
+  }
 }
+
  
     
   </style>
@@ -1485,7 +1503,6 @@ function startBattle() {
     updateUI();
   }, 1600);
 }
-
 
 
 function calculateAtkPower(pet) {
@@ -2531,6 +2548,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
