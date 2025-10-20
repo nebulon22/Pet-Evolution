@@ -26,7 +26,16 @@
 
   }
 
-
+    /* === Reset font untuk bubble dan mini-bubble === */
+#bubble,
+.mini-bubble {
+  font-family: sans-serif !important; /* kembali ke default sistem (seperti Roboto di Android) */
+  font-weight: normal !important;
+  font-style: normal !important;
+  color: #fff;
+  -webkit-text-stroke: 0 !important; /* hapus outline */
+  text-shadow: none !important;       /* hilangkan shadow */
+}
 
   h2 { margin-top:10px; font-size:6vw; }
 
@@ -2558,6 +2567,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
