@@ -612,16 +612,15 @@
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-/* === Posisi Battle Popup agar tampil di tengah layar === */
+
 #battlePopup {
-  left: 50% !important;
-  top: 50% !important;
-  right: auto !important;
-  transform: translate(-50%, -50%) !important;
-  margin: 0 !important;
-  padding: 10px 15px !important;
-  width: 240px; /* sesuaikan lebar */
-  text-align: center;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  opacity: 0;
+  transform: translate(-50%, -45%);
+}
+#battlePopup.active {
+  opacity: 1;
+  transform: translate(-50%, -48%);
 }
 
 
@@ -2478,6 +2477,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
