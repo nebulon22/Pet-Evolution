@@ -5,14 +5,32 @@
   <title>Game Pet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
-  body {
-    margin:0; text-align:center; background:#2e7d32; color:white;
-    font-family:sans-serif;
-    display:flex; flex-direction:column; align-items:center;
-  padding: 0;
-  overflow-x: auto;     /* bisa digeser kiri–kanan */
+  /* === Background Panorama Ringan === */
+body {
+  margin: 0;
+  overflow-x: auto;
   overflow-y: hidden;
-  }
+  background: #8fd0ff;
+}
+
+#background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400vw;
+  height: 100vh;
+  z-index: -10;
+}
+
+.bg-sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400vw;
+  height: 100%;
+  background: url("images/background.png") repeat-x bottom center;
+  background-size: auto 100%;
+}
 
   h2 { margin-top:10px; font-size:6vw; }
 
@@ -818,26 +836,7 @@
 /* === BACKGROUND SCENE FIX === */
 /* =========================== */
 
-/* 🎨 Container utama background */
-#background {
-  position: fixed;               /* agar tidak ikut scroll */
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  overflow: hidden;
-  z-index: -10;                  /* di belakang semua elemen gameplay */
-}
 
-/* 🌤 Langit - proporsional, tidak pecah */
-.bg-sky {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  background: url("images/background.png") no-repeat center bottom;
-  background-size: cover;     /* ✅ tetap proporsional */
-  background-color: #8fd0ff;  /* langit isi area kosong */
-  z-index: -9;
-}
 
 
 /* ☁️ Awan bergerak */
@@ -2493,6 +2492,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
