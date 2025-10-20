@@ -14,16 +14,6 @@ body {
   background: #8fd0ff;
 }
 
-#background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 400vw;
-  height: 100vh;
-  background: url("images/background.png") repeat-x bottom center;
-  background-size: auto calc(100vh);
-}
-
 
 
   h2 { margin-top:10px; font-size:6vw; }
@@ -534,7 +524,7 @@ body {
 
 /* 🧩 Tambahkan ruang bawah agar tombol tidak tertutup battleIcon */
 #gameContent {
-  padding-bottom: 16vh; /* ruang aman untuk feed/play/evo */
+  padding-bottom: 2vh; /* ruang aman untuk feed/play/evo */
 }
 
 /* 🐣 Perhalus peralihan animasi agar tidak freeze */
@@ -830,7 +820,15 @@ body {
 /* === BACKGROUND SCENE FIX === */
 /* =========================== */
 
-
+#background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 220vw;
+  height: 100vh;
+  background: url("images/background.png") repeat-x bottom center;
+  background-size: auto calc(100vh);
+}
 
 
 /* ☁️ Awan bergerak */
@@ -2476,6 +2474,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
