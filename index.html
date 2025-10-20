@@ -1248,6 +1248,7 @@ let inBattle = false;
 
 function showBubble(text) {
   if (inBattle) return;
+  if (bubble.classList.contains("active")) return;
 
   // Hapus mini bubble jika ada
   document.querySelectorAll(".mini-bubble").forEach(el => el.remove());
@@ -2546,6 +2547,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
