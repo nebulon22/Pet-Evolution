@@ -2460,6 +2460,13 @@ setInterval(() => {
 window.onload = function() {
   updateUI();
   initGame();
+    // === Aktifkan tombol PLAY ===
+  const playBtn = document.getElementById("playBtn");
+  if (playBtn && !playBtn.dataset.bound) {
+    playBtn.addEventListener("click", playWithPet);
+    playBtn.dataset.bound = "true";
+  }
+
 };
 
 
@@ -2468,6 +2475,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
