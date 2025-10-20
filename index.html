@@ -778,30 +778,34 @@
 /* =========================== */
 /* === BACKGROUND SCENE FIX === */
 /* =========================== */
-
 body {
-  margin:0; text-align:center; color:white; font-family:sans-serif;
-  background:#000; overflow-x:auto; overflow-y:hidden;
+  margin: 0;
+  overflow-x: auto;  /* bisa geser kiri-kanan */
+  overflow-y: hidden;
+  background: #8fd0ff;  /* warna langit */
 }
 
-/* ===== BACKGROUND PANORAMA ===== */
+/* AREA PANORAMA */
 #background {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  overflow:hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400vw;       /* area 4x lebar layar */
+  height: 100vh;
   z-index: -10;
 }
+
+/* GAMBAR LANGIT BERULANG */
 .bg-sky {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%;
+  top: 0;
+  left: 0;
+  width: 400vw;
   height: 100%;
-  background: url("images/background.png") no-repeat center bottom;
-  background-size: contain;    /* proporsional */
-  background-color: #8fd0ff;   /* langit isi area kosong */
-  z-index: -9;
+  background: url("images/background.png") repeat-x bottom center;
+  background-size: auto 100%;   /* gambar menyesuaikan tinggi, tidak di-resize lebar */
 }
+
 
 
 
@@ -2464,6 +2468,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
