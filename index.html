@@ -1237,6 +1237,11 @@ function showBubble(text) {
   document.querySelectorAll('.mini-bubble').forEach(el => el.remove());
 
   const bubble = document.getElementById("bubble");
+  bubble.textContent = text;
+  bubble.classList.add("active");
+  setTimeout(() => bubble.classList.remove("active"), 800);
+  
+  const bubble = document.getElementById("bubble");
   const pet = document.getElementById("pet");
   if (!bubble || !pet) return;
 
@@ -1244,6 +1249,8 @@ function showBubble(text) {
   bubble.textContent = text;
   bubble.style.display = "block";
   bubble.style.opacity = 1;
+  bubble.classList.add("active");
+  setTimeout(() => bubble.classList.remove("active"), 800);
 
   // hitung posisi berdasarkan pet
   const petRect = pet.getBoundingClientRect();
@@ -1274,6 +1281,48 @@ function showBubble(text) {
   }, 1800);
 }
 
+// ================== Fungsi helper ==================
+
+function setPetAnimation(state) {
+  const pet = document.getElementById("pet");
+  pet.classList.remove("idle", "hungry", "pet-fly");
+  pet.style.animation = ""; // reset inline style
+  if(state === "idle") pet.classList.add("idle");
+  if(state === "hungry") pet.classList.add("hungry");
+}
+
+// ================== Tombol Play ==================
+function playWithPet() {
+  const btn = document.getElementById("playBtn");
+  if(btn.disabled) return; // cooldown
+
+  // Kurangi hunger
+  pet.hunger = Math.max(0, pet.hunger - 10);
+  updateUI(); // fungsi update UI, misal exp/hunger bar
+
+  const petImg = document.getElementById("pet");
+  petImg.classList.add("pet-fly");       // trigger animasi jump
+
+  showBubble("🎮 Bermain seru! Hunger -10%");
+
+  // Kembalikan animasi idle/hungry setelah jump selesai
+  setTimeout(() => {
+    if(pet.hunger <= 0) setPetAnimation("hungry");
+    else setPetAnimation("idle");
+  }, 800);
+
+  // Cooldown tombol 5 detik
+  btn.disabled = true;
+  btn.textContent = "⏳ Tunggu...";
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = "🎮 Play";
+  }, 5000);
+}
+
+// ================== (Opsional) touch pet disabled ==================
+// Jika sebelumnya ada event sentuh pet untuk terbang kecil,
+// hapus atau comment supaya tidak bentrok dengan playWithPet
 
 
 
@@ -2510,6 +2559,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
