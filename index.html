@@ -1288,17 +1288,31 @@ function setEnemyData(data) {
 
 
 // === BATTLE POPUP GABUNGAN ===
+// === POPUP BATTLE MUNCUL & HILANG MULUS ===
 function toggleBattle() {
   const popup = document.getElementById("battlePopup");
-  if (popup.style.display === "block") {
+
+  // Jika popup sedang aktif → tutup perlahan
+  if (popup.classList.contains("active")) {
     popup.style.opacity = "0";
-    setTimeout(()=>popup.style.display="none", 300);
-  } else {
+    popup.style.transform = "translate(-50%, -45%)";
+    setTimeout(() => {
+      popup.classList.remove("active");
+      popup.style.display = "none";
+    }, 300);
+  } 
+  // Jika popup belum aktif → buka dengan animasi lembut
+  else {
     popup.style.display = "block";
-    setTimeout(()=>popup.style.opacity="1", 10);
-    updatePetInfo();
+    setTimeout(() => {
+      popup.classList.add("active");
+      popup.style.opacity = "1";
+      popup.style.transform = "translate(-50%, -48%)";
+    }, 10);
+    updatePetInfo(); // tampilkan info pet saat popup dibuka
   }
 }
+
 
 function updatePetInfo() {
   document.getElementById("petName").textContent = pet.name || "Petku";
@@ -2464,6 +2478,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
