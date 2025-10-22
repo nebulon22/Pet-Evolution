@@ -1213,6 +1213,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutBtn) logoutBtn.style.display = "none";
 });
 </script>
+
 <script>
 const assetList = [
   "images/background.png",
@@ -1233,51 +1234,62 @@ const assetList = [
   "sounds/buy.mp3"
 ];
 
-// === Fungsi preload ===
+// === Fungsi preload profesional (versi rapi & aman) ===
 function preloadAssets(list, onComplete) {
   let loaded = 0;
   const total = list.length;
+
+  function updateProgress() {
+    const percent = Math.round((loaded / total) * 100);
+    const bar = document.getElementById("loadingBar");
+    const text = document.getElementById("loadingText");
+    if (bar) bar.style.width = percent + "%";
+    if (text) text.innerText = "Loading... " + percent + "%";
+
+    if (loaded >= total) {
+      // Semua selesai
+      setTimeout(() => {
+        const loadDiv = document.getElementById("loadingScreen");
+        if (loadDiv) {
+          loadDiv.style.transition = "opacity 0.5s";
+          loadDiv.style.opacity = "0";
+          setTimeout(() => loadDiv.remove(), 500);
+        }
+        onComplete();
+      }, 300);
+    }
+  }
 
   list.forEach(src => {
     const ext = src.split('.').pop().toLowerCase();
     let el;
 
-    if (["png","jpg","jpeg","webp","gif"].includes(ext)) {
+    if (["png", "jpg", "jpeg", "webp", "gif"].includes(ext)) {
       el = new Image();
-    } else if (["mp3","ogg","wav"].includes(ext)) {
+      el.onload = el.onerror = () => { loaded++; updateProgress(); };
+      el.src = src;
+    } 
+    else if (["mp3", "ogg", "wav"].includes(ext)) {
       el = new Audio();
-    } else {
+      el.src = src;
+      // Audio sering tidak memicu onload, jadi langsung hitung selesai
+      loaded++;
+      updateProgress();
+    } 
+    else {
+      // File lain seperti font atau json
       el = document.createElement("link");
       el.rel = "preload";
       el.href = src;
+      el.onload = el.onerror = () => { loaded++; updateProgress(); };
+      document.head.appendChild(el);
     }
-
-    el.onload = el.onerror = () => {
-      loaded++;
-      const percent = Math.round((loaded / total) * 100);
-      document.getElementById("loadingBar").style.width = percent + "%";
-      document.getElementById("loadingText").innerText = "Loading... " + percent + "%";
-      if (loaded === total) {
-        setTimeout(() => {
-          const loadDiv = document.getElementById("loadingScreen");
-          loadDiv.style.transition = "opacity 0.5s";
-          loadDiv.style.opacity = "0";
-          setTimeout(() => loadDiv.remove(), 500);
-          onComplete();
-        }, 300);
-      }
-    };
-    el.src = src;
   });
 }
-</script>
 
-  <script>
 window.addEventListener("load", () => {
   preloadAssets(assetList, () => {
-    // Setelah semua asset terdownload, baru mulai game
     console.log("✅ Semua asset siap, game dimulai!");
-    // Panggil inisialisasi utama game kamu di sini
     if (typeof updateUI === "function") updateUI();
   });
 });
@@ -2671,6 +2683,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
