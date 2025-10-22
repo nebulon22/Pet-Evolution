@@ -6,14 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <style>
 
-  html, body {
+  /* === PATCH BACKGROUND RESPONSIF (khusus file background.png 1280x989) === */
+html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: auto;      /* ✅ biarkan scroll manual aktif */
-  overflow-y: hidden;
-  background: #8fd0ff;   /* warna cadangan */
+  overflow-x: auto;   /* biarkan bisa digeser kanan-kiri */
+  overflow-y: hidden; /* tidak perlu scroll vertikal */
+  background: #8fd0ff; /* warna langit cadangan */
 
   /* 🎨 Font utama */
   font-family: sans-serif;
@@ -828,32 +829,35 @@
 /* =========================== */
 #background {
   position: absolute;
-  top: -1px;             /* ✅ cegah celah atas */
-  left: -1px;            /* ✅ cegah celah kiri */
-  width: 222vw;          /* sedikit lebih besar dari 220 untuk nutupi rounding */
-  height: calc(100vh + 2px); /* tambah tinggi 2px agar tidak tampak biru bawah */
-  background: url("images/background.png") repeat-x bottom center;
-  background-size: auto calc(100vh + 2px);
+  top: 0;
+  left: 0;
+  width: 220vw;  /* area lebih lebar agar bisa scroll */
+  height: calc(var(--vh, 1vh) * 100); /* tinggi penuh akurat */
+  background: url("images/background.png") repeat-x center bottom;
+  background-size: auto calc(var(--vh, 1vh) * 100);
   z-index: 0;
 }
 
-
-/* Mode layar lebih lebar (landscape / desktop HP) */
+/* Mode layar lebih lebar (desktop HP / landscape) */
 @media (min-aspect-ratio: 16/9) {
   #background {
-    background-size: contain;  /* biar tidak ketarik tinggi */
-    height: 100vh;
-    width: 222vw;
+    width: 240vw; /* sedikit lebih panjang untuk layar lebar */
+    height: calc(var(--vh, 1vh) * 100);
+    background-size: auto calc(var(--vh, 1vh) * 100);
+    background-position: center bottom;
   }
 }
 
 /* Mode layar tinggi (HP portrait) */
 @media (max-aspect-ratio: 9/16) {
   #background {
-    background-size: auto 100vh; /* isi tinggi penuh, lebar mengikuti */
-    width: 222vw;
+    width: 200vw;
+    height: calc(var(--vh, 1vh) * 100);
+    background-size: auto calc(var(--vh, 1vh) * 100);
   }
 }
+
+
 
 
 
@@ -2701,6 +2705,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
