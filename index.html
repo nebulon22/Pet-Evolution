@@ -1199,7 +1199,78 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutBtn) logoutBtn.style.display = "none";
 });
 </script>
+<script>
+const assetList = [
+  "images/background.png",
+  "images/grass.png",
+  "images/cloud.png",
+  "images/tree.png",
+  "images/egg.png",
+  "images/chick.png",
+  "images/rooster.png",
+  "images/phoenix.png",
+  "images/fruit.png",
+  "images/meat.png",
+  "images/leaf.png",
+  "images/plate.png",
+  "sounds/feed.mp3",
+  "sounds/levelup.mp3",
+  "sounds/evo.mp3",
+  "sounds/buy.mp3"
+];
 
+// === Fungsi preload ===
+function preloadAssets(list, onComplete) {
+  let loaded = 0;
+  const total = list.length;
+
+  list.forEach(src => {
+    const ext = src.split('.').pop().toLowerCase();
+    let el;
+
+    if (["png","jpg","jpeg","webp","gif"].includes(ext)) {
+      el = new Image();
+    } else if (["mp3","ogg","wav"].includes(ext)) {
+      el = new Audio();
+    } else {
+      el = document.createElement("link");
+      el.rel = "preload";
+      el.href = src;
+    }
+
+    el.onload = el.onerror = () => {
+      loaded++;
+      const percent = Math.round((loaded / total) * 100);
+      document.getElementById("loadingBar").style.width = percent + "%";
+      document.getElementById("loadingText").innerText = "Loading... " + percent + "%";
+      if (loaded === total) {
+        setTimeout(() => {
+          const loadDiv = document.getElementById("loadingScreen");
+          loadDiv.style.transition = "opacity 0.5s";
+          loadDiv.style.opacity = "0";
+          setTimeout(() => loadDiv.remove(), 500);
+          onComplete();
+        }, 300);
+      }
+    };
+    el.src = src;
+  });
+}
+</script>
+
+  <script>
+window.addEventListener("load", () => {
+  preloadAssets(assetList, () => {
+    // Setelah semua asset terdownload, baru mulai game
+    console.log("✅ Semua asset siap, game dimulai!");
+    // Panggil inisialisasi utama game kamu di sini
+    if (typeof updateUI === "function") updateUI();
+  });
+});
+</script>
+
+
+  
 <!-- ==================== START: MAIN GAME LOGIC (keharusan diletakkan BEFORE Firebase SDK) ==================== -->
 <script>
   // Hapus data lama yang rusak / versi lama
@@ -2586,6 +2657,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
