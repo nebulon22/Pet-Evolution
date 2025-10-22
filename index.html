@@ -827,35 +827,37 @@ html, body {
 /* =========================== */
 /* === BACKGROUND SCENE FIX === */
 /* =========================== */
+/* === BACKGROUND TANPA STRETCH, RASIO ASLI 1280x989 === */
 #background {
   position: absolute;
   top: 0;
   left: 0;
-  width: 220vw;  /* area lebih lebar agar bisa scroll */
-  height: calc(var(--vh, 1vh) * 100); /* tinggi penuh akurat */
-  background: url("images/background.png") repeat-x center bottom;
-  background-size: auto calc(var(--vh, 1vh) * 100);
+  width: 160vw; /* area lebih lebar agar bisa scroll kanan–kiri */
+  height: auto; /* biarkan tinggi alami gambar */
+  aspect-ratio: 1280 / 989; /* pertahankan rasio */
+  background: url("images/background.png") repeat-x bottom center;
+  background-size: contain;   /* ✅ tampil proporsional tanpa diperbesar */
+  background-repeat: repeat-x;
+  background-position: center bottom;
   z-index: 0;
 }
 
-/* Mode layar lebih lebar (desktop HP / landscape) */
+/* === Mode layar lebih lebar (desktop HP / landscape) === */
 @media (min-aspect-ratio: 16/9) {
   #background {
-    width: 240vw; /* sedikit lebih panjang untuk layar lebar */
-    height: calc(var(--vh, 1vh) * 100);
-    background-size: auto calc(var(--vh, 1vh) * 100);
-    background-position: center bottom;
+    width: 180vw;             /* sedikit lebih panjang untuk landscape */
+    background-size: contain; /* tetap rasio asli */
   }
 }
 
-/* Mode layar tinggi (HP portrait) */
+/* === Mode layar tinggi (HP portrait) === */
 @media (max-aspect-ratio: 9/16) {
   #background {
-    width: 200vw;
-    height: calc(var(--vh, 1vh) * 100);
-    background-size: auto calc(var(--vh, 1vh) * 100);
+    width: 150vw; /* scroll masih bisa tapi tidak terlalu panjang */
+    background-size: contain;
   }
 }
+
 
 
 
@@ -880,7 +882,7 @@ html, body {
 /* 🌳 Pohon di belakang pet dan piring */
 .tree {
   position: fixed;
-  bottom: 10vh;                   /* pas di atas rumput */
+  bottom: 15vh;                   /* pas di atas rumput */
   width: 50vw;
   max-width: 320px;
   transform-origin: bottom center;
@@ -2705,6 +2707,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
