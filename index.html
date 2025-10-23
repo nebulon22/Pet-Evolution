@@ -730,24 +730,42 @@ html, body {
   z-index: 6;
 }
 
-
-
-
+/* === PANEL INFO PET (ATAS TENGAH) === */
 #petInfoPanel {
   position: fixed;
-  bottom: calc(5vh + 15vw); /* posisi dasar, proporsional */
+  top: 12vh;               /* jarak dari atas layar */
   left: 50%;
   transform: translateX(-50%);
   z-index: 8;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 3.5vw;
+  backdrop-filter: blur(3px);
 }
 
-/* 📱 Mode layar kecil (HP) */
+/* 📱 Mode layar kecil (HP portrait) */
 @media (max-width: 600px) {
   #petInfoPanel {
-    bottom: calc(5vh + 10vw); /* sedikit lebih dekat ke EXP bar */
-    transform: translateX(-50%);
+    top: 8vh;              /* lebih dekat ke atas di HP */
+    font-size: 4vw;
+    padding: 4px 10px;
   }
 }
+
+/* 💻 Mode desktop (lebar) */
+@media (min-width: 900px) {
+  #petInfoPanel {
+    top: 10vh;
+    font-size: 2vw;
+  }
+}
+
+
+
+
 
 
 
@@ -2729,6 +2747,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
