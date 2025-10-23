@@ -739,6 +739,14 @@ html, body {
   transform: translateX(-50%);
   z-index: 7;
 }
+    
+#petLevel {
+  position: relative;
+  top: -3.2vh;
+  font-size: 4vw;
+  color: #ffeb3b;
+  text-shadow: 2px 2px 4px black;
+}
 
 
 #petInfoPanel {
@@ -1178,16 +1186,13 @@ html, body {
 
 </div>
 
- <!-- Level Pet -->
-<div id="petLevel">Level 1</div>
-   
-
-<!-- ⚡ EXP Bar -->
-<div id="expBarContainer">
+ <div id="expBarContainer">
+  <div id="petLevel">Level 1</div>
   <div class="bar-container">
-    <div id="expBar">EXP 0%</div>
+    <div id="expBar"></div>
   </div>
 </div>
+
 
 
     <!-- 🎮 Tombol Aksi -->
@@ -2728,6 +2733,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
