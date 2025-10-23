@@ -846,35 +846,37 @@ html, body {
 /* === BACKGROUND SCENE FIX === */
 /* =========================== */
 /* === BACKGROUND TANPA STRETCH, RASIO ASLI 1280x989 === */
+/* === BACKGROUND FULL-SCREEN TANPA TERPOTONG, MASIH BISA SCROLL === */
 #background {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  width: 160vw; /* area lebih lebar agar bisa scroll kanan–kiri */
-  height: auto; /* biarkan tinggi alami gambar */
-  aspect-ratio: 1280 / 989; /* pertahankan rasio */
-  background: url("images/background.png") repeat-x bottom center;
-  background-size: contain;   /* ✅ tampil proporsional tanpa diperbesar */
+  height: 100vh;             /* penuh tinggi layar */
+  width: 160vw;              /* lebih lebar agar bisa scroll kanan–kiri */
+  background-image: url("./images/background.png");
   background-repeat: repeat-x;
-  background-position: center bottom;
+  background-size: cover;    /* ⚡ isi penuh layar tanpa potong sisi vertikal */
+  background-position: bottom center; /* jaga bagian bawah tanah tetap di bawah */
   z-index: 0;
+  overflow: hidden;
 }
 
-/* === Mode layar lebih lebar (desktop HP / landscape) === */
+/* === Mode layar lebar (desktop / landscape) === */
 @media (min-aspect-ratio: 16/9) {
   #background {
-    width: 180vw;             /* sedikit lebih panjang untuk landscape */
-    background-size: contain; /* tetap rasio asli */
+    width: 180vw;
+    background-size: cover;
   }
 }
 
 /* === Mode layar tinggi (HP portrait) === */
 @media (max-aspect-ratio: 9/16) {
   #background {
-    width: 150vw; /* scroll masih bisa tapi tidak terlalu panjang */
-    background-size: contain;
+    width: 150vw;
+    background-size: cover;
   }
 }
+
 
 
 
@@ -2730,6 +2732,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
