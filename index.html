@@ -1795,6 +1795,7 @@ else if (pet.exp >= 100 && pet.level < 40) {
     pet.coins += 5;
     pet.statPoints += 10;
     showBubble("Level naik! Sekarang level " + pet.level);
+    updatePetLevel(pet.level);
     showCoinBubble("+5 💰");
     showStatBubble("+10 📊 Stats");
     updateUI();
@@ -2727,6 +2728,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
