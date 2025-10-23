@@ -405,6 +405,19 @@ html, body {
   to   { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
 }
 
+/* === Level Pet di atas EXP Bar === */
+#petLevel {
+  position: fixed;
+  bottom: calc(7vh + 55vw); /* sedikit di atas EXP bar */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 4vw;
+  color: #ffeb3b;
+  text-shadow: 2px 2px 4px black;
+  z-index: 7;
+}
+
+    
 /* ⚡ EXP Bar */
 .bar-container {
   margin: 25px auto 10px auto;
@@ -1165,6 +1178,9 @@ html, body {
 
 </div>
 
+ <!-- Level Pet -->
+<div id="petLevel">Level 1</div>
+   
 
 <!-- ⚡ EXP Bar -->
 <div id="expBarContainer">
@@ -1677,6 +1693,10 @@ function calculateDefPower(pet) {
 }
 
 
+function updatePetLevel(level) {
+  const levelDisplay = document.getElementById("petLevel");
+  if (levelDisplay) levelDisplay.textContent = `Level ${level}`;
+}
 
 
 function getPetImage(stage){
@@ -2707,6 +2727,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
