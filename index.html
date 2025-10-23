@@ -10,11 +10,12 @@
 html, body {
   margin: 0;
   padding: 0;
-  width: 160vw;
+  width: 100%;
   height: 100%;
-  overflow-x: scroll !important;  /* biarkan bisa digeser kanan-kiri */
-  overflow-y: hidden; /* tidak perlu scroll vertikal */
-  background: #8fd0ff; /* warna langit cadangan */
+  overflow-x: auto;   /* scroll kanan–kiri aktif */
+  overflow-y: hidden; /* tidak perlu scroll atas–bawah */
+  background: #000;   /* warna cadangan */
+
 
   /* 🎨 Font utama */
   font-family: sans-serif;
@@ -312,18 +313,14 @@ html, body {
   pointer-events: none;
 }
 
-
 #gameContainer {
   position: relative;
-  width: 160vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 160vw;       /* dunia lebih lebar dari layar */
+  height: 100vh;      /* penuh tinggi layar */
   overflow: visible;
-  overflow-x: auto;
-  overflow-y: hidden;
+  z-index: 0;
 }
+
 
 /* === Layout & Spacing Scale Adjustment === */
 /* Ruang kosong antar bagian utama */
@@ -850,24 +847,22 @@ html, body {
 /* === BACKGROUND TANPA STRETCH, RASIO ASLI 1280x989 === */
 /* === BACKGROUND FULL-SCREEN TANPA TERPOTONG, MASIH BISA SCROLL === */
 #background {
-  position: relative;
-  top: 0;
-  left: 0;
-  height: 100vh;             /* penuh tinggi layar */
-  width: 160vw;              /* lebih lebar agar bisa scroll kanan–kiri */
+  position: relative;                         /* penting: biar ikut scroll */
+  width: 160vw;                               /* sama seperti lebar dunia */
+  height: auto;                               /* biarkan proporsional */
+  aspect-ratio: 1280 / 989;                   /* sesuai rasio aslinya */
   background-image: url("./images/background.png");
   background-repeat: repeat-x;
-  background-size: cover;    /* ⚡ isi penuh layar tanpa potong sisi vertikal */
-  background-position: bottom center; /* jaga bagian bawah tanah tetap di bawah */
+  background-size: contain;                   /* ⚡ tampil proporsional */
+  background-position: bottom center;         /* jaga bagian bawah tetap di bawah */
   z-index: 0;
-  overflow: hidden;
 }
 
 /* === Mode layar lebar (desktop / landscape) === */
 @media (min-aspect-ratio: 16/9) {
   #background {
     width: 180vw;
-    background-size: cover;
+    
   }
 }
 
@@ -875,7 +870,7 @@ html, body {
 @media (max-aspect-ratio: 9/16) {
   #background {
     width: 150vw;
-    background-size: cover;
+
   }
 }
 
@@ -2734,6 +2729,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
