@@ -731,22 +731,7 @@ html, body {
   z-index: 6;
 }
 
-/* ⚡ EXP Bar di atas tombol bawah */
-#expBarContainer {
-  position: fixed;
-  bottom: calc(7vh + 50vw); /* naik agar di atas tombol */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 7;
-}
-    
-#petLevel {
-  position: relative;
-  top: -3.2vh;
-  font-size: 4vw;
-  color: #ffeb3b;
-  text-shadow: 2px 2px 4px black;
-}
+
 
 
 #petInfoPanel {
@@ -788,26 +773,38 @@ html, body {
 
 /* 📊 EXP bar dan panel info pet */
 /* === Tampilan EXP Bar === */
+#expBarContainer {
+  position: fixed;
+  bottom: calc(7vh + 50vw);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 7;
+  text-align: center; /* 💡 ini kuncinya */
+}
+
+/* Teks Level */
+#petLevel {
+  position: relative;
+  top: -3.5vh; /* geser naik sedikit agar tepat di atas bar */
+  font-size: 4vw;
+  color: #ffeb3b;
+  text-shadow: 2px 2px 4px black;
+  font-weight: bold;
+  text-align: center;
+  width: 100%; /* pastikan sejajar dengan bar-container */
+}
+
+/* Bar container (tidak perlu diubah) */
 .bar-container {
   width: 80vw;
   max-width: 500px;
-  margin: 10px auto;
+  margin: 0 auto;
   background: #444;
   border-radius: 10px;
   overflow: hidden;
   height: 24px;
 }
 
-#expBar {
-  height: 100%;
-  width: 0%;
-  text-align: center;
-  color: white;
-  font-size: 3.5vw;
-  line-height: 24px;
-  background: dodgerblue;
-  transition: width 0.5s ease;
-}
 
 /* 🔸 Tombol utama bawah (Feed, Play, Evo) */
 .mainBtn {
@@ -2733,6 +2730,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
