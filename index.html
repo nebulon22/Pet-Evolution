@@ -12,7 +12,7 @@ html, body {
   padding: 0;
   width: 160vw;
   height: 100%;
-  overflow-x: auto;   /* biarkan bisa digeser kanan-kiri */
+  overflow-x: scroll !important;  /* biarkan bisa digeser kanan-kiri */
   overflow-y: hidden; /* tidak perlu scroll vertikal */
   background: #8fd0ff; /* warna langit cadangan */
 
@@ -315,12 +315,14 @@ html, body {
 
 #gameContainer {
   position: relative;
-  width: 100vw;
+  width: 160vw;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: visible;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* === Layout & Spacing Scale Adjustment === */
@@ -2732,6 +2734,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
