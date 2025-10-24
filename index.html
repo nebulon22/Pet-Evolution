@@ -412,18 +412,6 @@ html, body {
   to   { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
 }
 
-/* === Level Pet di atas EXP Bar === */
-
-#petLevel {
-  position: fixed;
-  bottom: calc(8vh + 32vw); /* 42vw mengikuti tinggi rata-rata pet */
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 4vw;
-  color: #ffeb3b;
-  text-shadow: 2px 2px 4px black;
-  z-index: 7;
-}
 
 
 
@@ -795,7 +783,17 @@ html, body {
   z-index: 30;
   text-align: center; /* 💡 ini kuncinya */
 }
-
+/* Teks Level */
+#petLevel {
+  position: relative;
+  top: -3.5vh; /* geser naik sedikit agar tepat di atas bar */
+  font-size: 4vw;
+  color: #ffeb3b;
+  text-shadow: 2px 2px 4px black;
+  font-weight: bold;
+  text-align: center;
+  width: 100%; /* pastikan sejajar dengan bar-container */
+}
 
 .bar-container {
   width: 80vw;
@@ -2763,6 +2761,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
