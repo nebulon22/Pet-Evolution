@@ -436,13 +436,11 @@ html, body {
 /* === Batang biru pengisi EXP === */
 #expBar {
   height: 100%;
-  width: 0%; /* mulai dari kosong */
   background: linear-gradient(90deg, #2196f3, #00bcd4);
   transition: width 0.4s ease;
   position: relative;
 }
 
-/* Teks di dalam bar */
 #expText {
   position: absolute;
   top: 0;
@@ -455,6 +453,7 @@ html, body {
   line-height: 24px;
   pointer-events: none;
 }
+
 
 
     
@@ -473,11 +472,6 @@ html, body {
   box-shadow: 0 3px 5px rgba(0,0,0,0.3);
   margin-top: 4px !important;
 }
-
-/* 🍽️ Piring diatur dengan jarak pas */
-
-
-/* 🍖 Food grid di bawah layar */
 
 
 /* === Slot kotak makanan === */
@@ -2004,8 +1998,12 @@ function updateUI() {
   // === BAR EXP ===
   const expBar = document.getElementById("expBar");
   expBar.style.width = pet.exp + "%";
-  expBar.textContent = "EXP " + pet.exp.toFixed(1) + "%";
 
+  const expText = document.getElementById("expText");
+  if (expText) expText.textContent = "EXP " + pet.exp.toFixed(1) + "%";
+
+
+  
   // === BAR HUNGER (THERMOMETER) ===
   const thermo = document.getElementById("thermometer");
   if (thermo) {
@@ -2779,6 +2777,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
