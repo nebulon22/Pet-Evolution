@@ -4,6 +4,8 @@
 
   <title>Game Pet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
   <style>
 
   /* === PATCH BACKGROUND RESPONSIF (khusus file background.png 1280x989) === */
@@ -875,8 +877,8 @@ html, body {
   position: relative;                         /* penting: biar ikut scroll */
   width: 160vw;                               /* sama seperti lebar dunia */
   height: auto;                               /* biarkan proporsional */
-  aspect-ratio: 1280 / 989;                   /* sesuai rasio aslinya */
-  background-image: url("./images/background.png");
+  aspect-ratio: 1280 / 989; /* sesuai rasio aslinya */
+  background-image: url("https://nebulon22.github.io/Pet-Evolution/images/background.png");
   background-repeat: repeat-x;
   background-size: contain;                   /* ⚡ tampil proporsional */
   background-position: bottom center;         /* jaga bagian bawah tetap di bawah */
@@ -1280,23 +1282,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script>
 const assetList = [
-  "images/background.png",
-  "images/grass.png",
-  "images/cloud.png",
-  "images/tree.png",
-  "images/egg.png",
-  "images/chick.png",
-  "images/rooster.png",
-  "images/phoenix.png",
-  "images/fruit.png",
-  "images/meat.png",
-  "images/leaf.png",
-  "images/plate.png",
-  "sounds/feed.mp3",
-  "sounds/levelup.mp3",
-  "sounds/evo.mp3",
-  "sounds/buy.mp3"
+  "https://nebulon22.github.io/Pet-Evolution/images/background.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/grass.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/cloud.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/tree.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/egg.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/chick.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/rooster.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/phoenix.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/fruit.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/meat.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/leaf.png",
+  "https://nebulon22.github.io/Pet-Evolution/images/plate.png",
+  "https://nebulon22.github.io/Pet-Evolution/sounds/feed.mp3",
+  "https://nebulon22.github.io/Pet-Evolution/sounds/levelup.mp3",
+  "https://nebulon22.github.io/Pet-Evolution/sounds/evo.mp3",
+  "https://nebulon22.github.io/Pet-Evolution/sounds/buy.mp3"
 ];
+
 
 // === Fungsi preload profesional (versi rapi & aman) ===
 function preloadAssets(list, onComplete) {
@@ -2754,6 +2757,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
