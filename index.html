@@ -794,6 +794,8 @@ html, body {
   text-align: center;
   width: 100%; /* pastikan sejajar dengan bar-container */
 }
+
+
 .bar-container {
   width: 80vw;
   max-width: 500px;
@@ -807,25 +809,41 @@ html, body {
   box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.8);
 }
 
-/* Batang biru bertekstur RPG */
+/* Batang EXP biru klasik bergaris penggaris */
 #expBar {
   height: 100%;
   width: 0%;
   background:
+    /* Garis penggaris putih jarang */
     repeating-linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0.1) 0px,
-      rgba(255, 255, 255, 0.1) 2px,
-      rgba(0, 0, 0, 0.15) 3px,
-      rgba(0, 0, 0, 0.15) 5px
+      transparent 0px,
+      transparent 24px,
+      rgba(255,255,255,0.35) 24px,
+      rgba(255,255,255,0.35) 25px,  /* garis pendek tiap 2.5cm */
+      transparent 50px,
+      rgba(255,255,255,0.6) 50px,
+      rgba(255,255,255,0.6) 52px,   /* garis panjang tiap 5cm */
+      transparent 100px
     ),
-    linear-gradient(90deg, #0d47a1, #42a5f5);
-  border-right: 2px solid rgba(255, 255, 255, 0.4);
-  transition: width 1.8s ease;
+    linear-gradient(90deg, #0d47a1, #42a5f5); /* gradasi biru dasar */
+  border-right: 2px solid rgba(255,255,255,0.4);
+  transition: width 0.6s ease;
   position: relative;
+  animation: expGlow 3s ease-in-out infinite alternate;
 }
 
-/* Teks di tengah batang */
+/* Cahaya biru lembut berdenyut */
+@keyframes expGlow {
+  from {
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5), 0 0 8px rgba(33, 150, 243, 0.3);
+  }
+  to {
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5), 0 0 16px rgba(33, 150, 243, 0.6);
+  }
+}
+
+/* Teks di tengah */
 #expText {
   position: absolute;
   top: 0;
@@ -2773,6 +2791,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
