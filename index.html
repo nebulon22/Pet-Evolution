@@ -424,37 +424,6 @@ html, body {
   z-index: 7;
 }
 
-    
-/* ⚡ EXP Bar */
-.bar-container {
-  margin: 25px auto 10px auto;
-  width: 80%;
-  height: 26px;
-  border-radius: 12px;
-  overflow: hidden;
-}
-/* === Batang biru pengisi EXP === */
-#expBar {
-  height: 100%;
-  background: linear-gradient(90deg, #2196f3, #00bcd4);
-  transition: width 1.8s ease;
-  position: relative;
-}
-
-/* Teks di tengah batang */
-#expText {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  color: #fff;
-  font-weight: bold;
-  font-size: 12px;
-  line-height: 24px;
-  text-shadow: 1px 1px 3px black;
-  pointer-events: none;
-}
-
 
 
     
@@ -815,7 +784,7 @@ html, body {
   transform: scale(0.95);
 }
 
-/* 📊 EXP bar dan panel info pet */
+/* 📊 EXP bar dan pet level */
 /* === Tampilan EXP Bar === */
 #expBarContainer {
   position: fixed;
@@ -826,28 +795,41 @@ html, body {
   text-align: center; /* 💡 ini kuncinya */
 }
 
-/* Teks Level */
-#petLevel {
-  position: relative;
-  top: -3.5vh; /* geser naik sedikit agar tepat di atas bar */
-  font-size: 4vw;
-  color: #ffeb3b;
-  text-shadow: 2px 2px 4px black;
-  font-weight: bold;
-  text-align: center;
-  width: 100%; /* pastikan sejajar dengan bar-container */
-}
 
-/* Bar container (tidak perlu diubah) */
 .bar-container {
   width: 80vw;
   max-width: 500px;
   margin: 0 auto;
-  background: #444;
+  background: #333;
   border-radius: 10px;
   overflow: hidden;
   height: 24px;
+  position: relative;
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
 }
+
+/* Batang biru pengisi */
+#expBar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #1976d2, #00bcd4);
+  transition: width 0.4s ease;
+  position: relative; /* penting! jadi acuan untuk teks */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Teks di dalam batang */
+#expText {
+  position: absolute;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 1px 1px 3px black;
+  pointer-events: none;
+}
+
 
 
 /* 🔸 Tombol utama bawah (Feed, Play, Evo) */
@@ -1227,11 +1209,13 @@ html, body {
 
 </div>
 
- <div id="expBarContainer">
+ 
+<div id="expBarContainer">
   <div id="petLevel">Level 1</div>
   <div class="bar-container">
-    <div id="expBar"></div>
-     <span id="expText">EXP 0%</span>
+    <div id="expBar">
+      <span id="expText">EXP 0%</span>
+    </div>
   </div>
 </div>
 
@@ -2778,6 +2762,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
