@@ -14,7 +14,14 @@ html, body {
   height: 100%;
   overflow-x: auto;   /* scroll kanan–kiri aktif */
   overflow-y: hidden; /* tidak perlu scroll atas–bawah */
-  background: #000;   /* warna cadangan */
+    /* 🌈 Gradasi langit → tanah */
+  background: linear-gradient(
+    to bottom,
+    #1e97d8 0%,     /* biru langit atas */
+    #5cc3ff 40%,    /* biru muda awan */
+    #5ca93d 80%,    /* hijau rumput terang */
+    #2f7a2f 100%    /* hijau tua dasar */
+  );
 
 
   /* 🎨 Font utama */
@@ -2747,6 +2754,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
