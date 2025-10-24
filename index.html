@@ -433,7 +433,31 @@ html, body {
   border-radius: 12px;
   overflow: hidden;
 }
+/* === Batang biru pengisi EXP === */
+#expBar {
+  height: 100%;
+  width: 0%; /* mulai dari kosong */
+  background: linear-gradient(90deg, #2196f3, #00bcd4);
+  transition: width 0.4s ease;
+  position: relative;
+}
 
+/* Teks di dalam bar */
+#expText {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 12px;
+  line-height: 24px;
+  pointer-events: none;
+}
+
+
+    
 /* 🧾 Info text di bawah pet */
 #gameContent p {
   margin: 6px 0;
@@ -2755,6 +2779,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
