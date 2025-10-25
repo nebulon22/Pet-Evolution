@@ -2017,11 +2017,11 @@ function updateUI() {
   document.getElementById("coinDisplay").textContent = "💰 " + pet.coins;
 
   // === BAR EXP ===
-  const expBar = document.getElementById("expBar");
-  const expText = document.getElementById("expText");
+const expFill = document.getElementById("expFill");
+const expText = document.getElementById("expText");
 
-  if (expBar) expBar.style.width = `${pet.exp}%`;
-  if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
+if (expFill) expFill.style.width = `${pet.exp}%`;
+if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
 
   
   // === BAR HUNGER (THERMOMETER) ===
@@ -2797,6 +2797,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
