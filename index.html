@@ -834,29 +834,35 @@ html, body {
   position: absolute;
   inset: 0;
   background:
-    /* Garis pendek (tiap 5%) */
+    /* Garis 10% penuh (utama) */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 9.5%,
+      rgba(255,255,255,1) 9.5%,
+      rgba(255,255,255,1) 10%,
+      transparent 10%
+    ),
+    /* Garis 5% pendek (setengah tinggi) */
     repeating-linear-gradient(
       90deg,
       transparent 0%,
       transparent 4.5%,
       rgba(255,255,255,0.7) 4.5%,
       rgba(255,255,255,0.7) 5%,
-      transparent 5%,
-      transparent 9.5%,
-      rgba(255,255,255,1) 9.5%,
-      rgba(255,255,255,1) 10%,
-      transparent 10%
+      transparent 5%
     );
-  mask-image: 
-    repeating-linear-gradient(
-      to bottom,
-      black 0 50%,          /* bagian bawah baris = garis pendek */
-      transparent 50% 100%  /* bagian atas = kosong, jadi garis pendek tampak separuh */
-    );
+  background-repeat: repeat-x;
+  background-size: 100% 100%;
+  pointer-events: none;
+
+  /* Mask hanya diterapkan pada garis 5% (setengah tinggi) */
+  mask-image: linear-gradient(to bottom, black 0 50%, transparent 50% 100%);
   mask-repeat: no-repeat;
   mask-size: 100% 100%;
-  background-repeat: repeat-x;
 }
+
+  
 
 
 /* ✨ Teks di tengah bar */
@@ -2813,6 +2819,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
