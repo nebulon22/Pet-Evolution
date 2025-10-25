@@ -830,25 +830,34 @@ html, body {
 }
 
 /* 📏 Garis penggaris tetap diam */
-#expMarks {
+ #expMarks {
   position: absolute;
   inset: 0;
-  background-image:
+  background:
+    /* Garis pendek (tiap 5%) */
     repeating-linear-gradient(
       90deg,
       transparent 0%,
-      transparent 4.75%,
-      rgba(255,255,255,0.6) 4.75%,
-      rgba(255,255,255,0.6) 5.25%,
-      transparent 5.25%,
-      transparent 9.75%,
-      rgba(255,255,255,1) 9.75%,
+      transparent 4.5%,
+      rgba(255,255,255,0.7) 4.5%,
+      rgba(255,255,255,0.7) 5%,
+      transparent 5%,
+      transparent 9.5%,
+      rgba(255,255,255,1) 9.5%,
       rgba(255,255,255,1) 10%,
       transparent 10%
     );
-  background-size: 100% 100%;
+  mask-image: 
+    repeating-linear-gradient(
+      to bottom,
+      black 0 50%,          /* bagian bawah baris = garis pendek */
+      transparent 50% 100%  /* bagian atas = kosong, jadi garis pendek tampak separuh */
+    );
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
   background-repeat: repeat-x;
 }
+
 
 /* ✨ Teks di tengah bar */
 #expText {
@@ -2804,6 +2813,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
