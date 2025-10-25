@@ -830,20 +830,11 @@ html, body {
 }
 
 /* 📏 Garis penggaris tetap diam */
- #expMarks {
+ /* Garis pendek 5% (setengah tinggi) */
+#expMarksShort {
   position: absolute;
   inset: 0;
   background:
-    /* Garis 10% penuh (utama) */
-    repeating-linear-gradient(
-      90deg,
-      transparent 0%,
-      transparent 9.5%,
-      rgba(255,255,255,1) 9.5%,
-      rgba(255,255,255,1) 10%,
-      transparent 10%
-    ),
-    /* Garis 5% pendek (setengah tinggi) */
     repeating-linear-gradient(
       90deg,
       transparent 0%,
@@ -852,15 +843,45 @@ html, body {
       rgba(255,255,255,0.7) 5%,
       transparent 5%
     );
-  background-repeat: repeat-x;
-  background-size: 100% 100%;
-  pointer-events: none;
-
-  /* Mask hanya diterapkan pada garis 5% (setengah tinggi) */
   mask-image: linear-gradient(to bottom, black 0 50%, transparent 50% 100%);
   mask-repeat: no-repeat;
   mask-size: 100% 100%;
+  background-repeat: repeat-x;
+  z-index: 2;
 }
+
+/* Garis panjang 10% (penuh tinggi) */
+#expMarksLong {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 9.5%,
+      rgba(255,255,255,1) 9.5%,
+      rgba(255,255,255,1) 10%,
+      transparent 10%
+    );
+  background-repeat: repeat-x;
+  z-index: 1;
+}
+
+/* Teks di tengah */
+#expText {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 24px;
+  text-shadow: 1px 1px 2px black;
+  z-index: 3;
+}
+
+  
 
   
 
@@ -2820,6 +2841,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
