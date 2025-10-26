@@ -2383,23 +2383,47 @@ function setupButtons() {
 }
 
 function resetGame(){
-  // Hapus semua data di localStorage
+  // Konfirmasi user
+  if (!confirm("Yakin ingin reset game? Semua progress akan hilang.")) return;
+
+  // Hapus semua data lama di localStorage
   localStorage.removeItem("petData");
   localStorage.removeItem("foodStock");
 
-  // Reset pet
+  // Buat ulang pet dengan nilai awal
   pet = {
-    level:1, exp:0, hunger:50, stage:"egg", coins:0,
-    stats:{att:10,def:10,spd:10,acc:10,crit:10},
-    statPoints:0, name:"Petku", owner:"Player1"
+    level: 1,
+    exp: 0,
+    hunger: 50,
+    stage: "egg",
+    coins: 0,
+    stats: { att: 10, def: 10, spd: 10, acc: 10, crit: 10 },
+    statPoints: 0,
+    name: "Petku",
+    owner: "Player1"
   };
 
-  // Reset stok makanan
-  foodStock = {meat:100, fruit:100, leaf:100};
+  // Buat ulang stok makanan
+  foodStock = { meat: 100, fruit: 100, leaf: 100 };
+
+  // Simpan data baru ke localStorage
+  localStorage.setItem("petData", JSON.stringify(pet));
   localStorage.setItem("foodStock", JSON.stringify(foodStock));
 
+  // Perbarui tampilan
   updateUI();
+
+  // Sinkronkan level di info panel dan exp bar
+  const petLevelEl = document.getElementById("petLevel");
+  if (petLevelEl) petLevelEl.textContent = "Level 1";
+
+  const panelLevelEl = document.getElementById("level");
+  if (panelLevelEl) panelLevelEl.textContent = "1";
+
+  // Bubble notifikasi opsional
+  try { showBubble("✅ Game berhasil di-reset!"); } catch (e) {}
 }
+
   
 function toggleShop() {
   const s = document.getElementById("shopPopup");
@@ -2881,6 +2905,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
