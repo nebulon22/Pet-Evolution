@@ -908,26 +908,6 @@ html, body {
 
   
 
-  
-
-
-/* ✨ Teks di tengah bar */
-#expText {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
-  line-height: 18px;
-  color: #fff;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px black;
-}
-
-
-
-
-
 
 /* 🔸 Tombol utama bawah (Feed, Play, Evo) */
 .mainBtn {
@@ -1071,7 +1051,7 @@ html, body {
   50%     { transform: translateY(-4px) scale(1.03); }
 }
 #pet.idle {
-  animation: idleMotion 6s ease-in-out infinite;
+  animation: idleMotion 5s ease-in-out infinite;
 }
 
 /* Animasi hungry */
@@ -2014,11 +1994,10 @@ else if (pet.level >= 40) {
 }
 
 
-  // Lepas animasi & izinkan klik lagi setelah 3 detik
+  // Lepas animasi & izinkan klik lagi setelah 0.5 detik
   setTimeout(() => {
-    petImg.classList.remove("pet-fly");
     feeding = false; // baru boleh klik lagi
-  }, 3000);
+  }, 500);
 }
 
 
@@ -3035,6 +3014,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
