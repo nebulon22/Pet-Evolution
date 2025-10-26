@@ -2475,7 +2475,45 @@ function toggleInfo() {
   }
 }
 
+/* === FUNGSI SINKRONISASI INFO PANEL & LEVEL BAR === */
+function syncPetInfoUI() {
+  try {
+    // Simpan ke localStorage
+    localStorage.setItem("petData", JSON.stringify(pet));
 
+    // Level atas exp bar
+    const petLevelEl = document.getElementById("petLevel");
+    if (petLevelEl) petLevelEl.textContent = `Level ${pet.level || 1}`;
+
+    // Level di info panel
+    const infoLevelEl = document.getElementById("level");
+    if (infoLevelEl) infoLevelEl.textContent = pet.level || 1;
+
+    // Nama dan pemilik
+    const petNameEl = document.getElementById("petName");
+    if (petNameEl) petNameEl.textContent = `🐾 Nama Pet: ${pet.name || "-"}`;
+
+    const ownerEl = document.getElementById("ownerName");
+    if (ownerEl) ownerEl.textContent = `👤 Pemilik: ${pet.owner || "-"}`;
+
+    // Power
+    const atk = pet.stats?.attack ?? pet.stats?.att ?? "-";
+    const def = pet.stats?.defense ?? pet.stats?.def ?? "-";
+    const total = pet.totalPower ?? (typeof getTotalPower === "function" ? getTotalPower() : "-");
+
+    const atkEl = document.getElementById("petPowerAtk");
+    if (atkEl) atkEl.textContent = `⚔️ Power Atk: ${atk}`;
+    const defEl = document.getElementById("petPowerDef");
+    if (defEl) defEl.textContent = `🛡️ Power Def: ${def}`;
+    const totalEl = document.getElementById("petPowerTotal");
+    if (totalEl) totalEl.textContent = `🔥 Total Power: ${total}`;
+  } catch (e) {
+    console.warn("⚠️ syncPetInfoUI error:", e);
+  }
+}
+
+
+  
 // ===================== STATS =====================
 function toggleStats() {
   const p = document.getElementById("statsPopup");
@@ -2905,6 +2943,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
