@@ -1688,11 +1688,14 @@ function playWithPet() {
   updateUI();
 
   // Stop semua animasi lama
-  petImg.classList.remove("idle", "hungry", "pet-fly", "pet-play-spin");
-  void petImg.offsetWidth; // 🔁 reflow agar animasi restart
+petImg.classList.remove("idle", "hungry", "pet-fly", "pet-play-spin");
+petImg.style.animation = "none";
+void petImg.offsetWidth;
+petImg.style.animation = null;
 
-  // 🎬 Gunakan animasi baru
-  petImg.classList.add("pet-play-spin");
+// Tambahkan animasi baru setelah sedikit delay biar pasti aktif
+setTimeout(() => petImg.classList.add("pet-play-spin"), 10);
+
 
   // Tampilkan bubble
   showBubble("🎮 Bermain seru! Hunger -10%");
@@ -3026,6 +3029,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
