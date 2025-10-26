@@ -1477,27 +1477,46 @@ window.addEventListener("load", () => {
 <!-- ==================== START: MAIN GAME LOGIC (keharusan diletakkan BEFORE Firebase SDK) ==================== -->
 <script>
   // Hapus data lama yang rusak / versi lama
-if (!localStorage.getItem("petData") || JSON.parse(localStorage.getItem("petData")).level < 1) {
+// === AMBIL DATA PET DARI LOCALSTORAGE ===
+let savedPetData = null;
+try {
+  savedPetData = JSON.parse(localStorage.getItem("petData"));
+} catch(e) {
+  console.warn("Pet data corrupt, resetting...", e);
   localStorage.removeItem("petData");
   localStorage.removeItem("foodStock");
 }
 
+// === CEK VALIDITAS DATA (bukan langsung hapus) ===
+if (!savedPetData || typeof savedPetData.level !== "number" || savedPetData.level < 1) {
+  // buat data baru
+  savedPetData = {
+    level: 1, exp: 0, stage: "egg", hunger: 30, coins: 0,
+    stats: { att: 10, def: 10, spd: 10, acc: 10, crit: 10 },
+    statPoints: 0,
+    name: "Petku",
+    owner: "Player1"
+  };
+  localStorage.setItem("petData", JSON.stringify(savedPetData));
+}
 
-  
-let pet = JSON.parse(localStorage.getItem("petData")) || { 
-  level:1, exp:0, stage:"egg", hunger:30, coins:0,
-  stats:{att:10,def:10,spd:10,acc:10,crit:10},
-  statPoints:0,
-  name:"Petku",          // 🐾 nama pet
-  owner:"Player1"        // 👤 pemilik
-};
+let pet = savedPetData;
 
-let foodStock = JSON.parse(localStorage.getItem("foodStock")) || {
-  meat:100, fruit:100, leaf:100
-};
+// === MUAT STOK MAKANAN ===
+let savedFood = null;
+try {
+  savedFood = JSON.parse(localStorage.getItem("foodStock"));
+} catch(e) {
+  console.warn("Food stock corrupt, resetting...", e);
+  localStorage.removeItem("foodStock");
+}
 
-let selectedFood=null;
-let evoAnimating=false;
+let foodStock = savedFood || { meat: 100, fruit: 100, leaf: 100 };
+localStorage.setItem("foodStock", JSON.stringify(foodStock));
+
+let selectedFood = null;
+let evoAnimating = false;
+
 
 // ✅ Menentukan apakah pet bisa berevolusi
 function canEvolve(pet) {
@@ -2943,6 +2962,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
