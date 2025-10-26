@@ -1660,17 +1660,14 @@ function showBubble(text) {
 
 
 // ================== Fungsi helper ==================
+
 function setPetAnimation(state) {
   const pet = document.getElementById("pet");
-  // Jika sedang mode Play, abaikan perubahan apapun
-  if (pet.dataset.state === "playing") return;
-
-  pet.classList.remove("idle", "hungry", "pet-fly", "pet-play-spin");
-  pet.style.animation = "";
-  if (state === "idle") pet.classList.add("idle");
-  if (state === "hungry") pet.classList.add("hungry");
+  pet.classList.remove("idle", "hungry", "pet-fly");
+  pet.style.animation = ""; // reset inline style
+  if(state === "idle") pet.classList.add("idle");
+  if(state === "hungry") pet.classList.add("hungry");
 }
-
 
 
 // ================== Tombol Play ==================
@@ -3030,6 +3027,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
