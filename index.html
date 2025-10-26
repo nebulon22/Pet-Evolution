@@ -1665,14 +1665,18 @@ function showBubble(text) {
 
 
 // ================== Fungsi helper ==================
-
 function setPetAnimation(state) {
   const pet = document.getElementById("pet");
+  // Jangan ubah animasi jika sedang dalam mode Play
+  if (pet.classList.contains("pet-play-spin")) return;
+
   pet.classList.remove("idle", "hungry", "pet-fly");
   pet.style.animation = ""; // reset inline style
-  if(state === "idle") pet.classList.add("idle");
-  if(state === "hungry") pet.classList.add("hungry");
+  if (state === "idle") pet.classList.add("idle");
+  if (state === "hungry") pet.classList.add("hungry");
 }
+
+
 
 // ================== Tombol Play ==================
 
@@ -3040,6 +3044,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
