@@ -2375,19 +2375,51 @@ function setupButtons() {
     playBtn.addEventListener("click", playWithPet);
     playBtn.dataset.bound = "true";
   }
-  document.addEventListener("DOMContentLoaded", () => {
+  
+
+}
+
+document.addEventListener("DOMContentLoaded", () => {
   const infoBtn = document.getElementById("infoBtn");
   const panel = document.getElementById("petInfoPanel");
+  let holdTimer;
+  let panelVisible = false;
 
   if (infoBtn && panel) {
-    infoBtn.addEventListener("click", () => {
-      const visible = panel.style.display === "block";
-      panel.style.display = visible ? "none" : "block";
+    // Saat tombol ditekan (mouse atau sentuh)
+    const showPanel = () => {
+      clearTimeout(holdTimer);
+      holdTimer = setTimeout(() => {
+        panel.classList.add("show");
+        panelVisible = true;
+      }, 150); // delay kecil biar gak nyala tak sengaja
+    };
+
+    // Saat tombol dilepas atau keluar area tombol
+    const hidePanel = () => {
+      clearTimeout(holdTimer);
+      panel.classList.remove("show");
+      panelVisible = false;
+    };
+
+    // Event untuk PC dan mobile
+    infoBtn.addEventListener("mousedown", showPanel);
+    infoBtn.addEventListener("touchstart", showPanel);
+
+    infoBtn.addEventListener("mouseup", hidePanel);
+    infoBtn.addEventListener("mouseleave", hidePanel);
+    infoBtn.addEventListener("touchend", hidePanel);
+
+    // Tutup panel kalau menyentuh area luar
+    document.addEventListener("click", (e) => {
+      if (panelVisible && !panel.contains(e.target) && e.target !== infoBtn) {
+        hidePanel();
+      }
     });
   }
 });
 
-}
+  
 
 function resetGame(){
   // Hapus semua data di localStorage
@@ -2877,6 +2909,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
