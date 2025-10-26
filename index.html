@@ -1095,38 +1095,37 @@ html, body {
 /* Animasi lompat bermain */
 
 /* === PET JUMP (versi ekspresif, 3 detik, lompat ke depan + rotasi 720°) === */
+/* === PET JUMP (versi baru: loncat dulu, lalu berputar 720°) === */
 @keyframes petJump {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+    transform: translateY(0) rotate(0deg) scale(1);
   }
-  10% {
-    transform: translate3d(2vw, -5vh, 0) rotate(180deg) scale(1.05);
+  15% {
+    transform: translateY(-8vh) rotate(0deg) scale(1.1); /* lompat cepat tanpa rotasi */
     animation-timing-function: cubic-bezier(0.3, 0.7, 0.5, 1);
   }
-  25% {
-    transform: translate3d(4vw, -9vh, 2vw) rotate(360deg) scale(1.1);
+  30% {
+    transform: translateY(-10vh) rotate(0deg) scale(1.15); /* puncak loncat */
     animation-timing-function: ease-out;
   }
   50% {
-    transform: translate3d(6vw, -6vh, 3vw) rotate(540deg) scale(1.07);
-    animation-timing-function: ease-in-out;
+    transform: translateY(-6vh) rotate(180deg) scale(1.1); /* mulai rotasi di udara */
   }
   70% {
-    transform: translate3d(3vw, -3vh, 1vw) rotate(720deg) scale(1.03);
-    animation-timing-function: ease-in;
+    transform: translateY(-3vh) rotate(360deg) scale(1.05);
   }
-  90% {
-    transform: translate3d(0, -1vh, 0) rotate(720deg) scale(1.02);
+  85% {
+    transform: translateY(-1vh) rotate(540deg) scale(1.03);
   }
   100% {
-    transform: translate3d(0, 0, 0) rotate(720deg) scale(1);
+    transform: translateY(0) rotate(720deg) scale(1);
   }
 }
 
 .pet-fly {
   animation: petJump 3s ease-in-out;
+  transform-origin: center bottom; /* titik rotasi dari kaki pet */
   will-change: transform;
-  transform-origin: center bottom; /* agar rotasi terasa dari bawah tubuh */
 }
 
     
@@ -3028,6 +3027,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
