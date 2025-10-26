@@ -716,20 +716,46 @@ html, body {
 }
 
 /* === PANEL INFO PET (ATAS TENGAH) === */
+/* === Panel Info Pet === */
 #petInfoPanel {
   position: fixed;
-  top: 12vh;               /* jarak dari atas layar */
+  top: 8vh;               /* di dekat atas layar */
   left: 50%;
   transform: translateX(-50%);
-  z-index: 8;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0,0,0,0.85);
   color: #fff;
-  padding: 6px 12px;
-  border-radius: 12px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  z-index: 100;
+  display: none;          /* tersembunyi awalnya */
+  font-size: 3.6vw;
   text-align: center;
-  font-size: 3.5vw;
-  backdrop-filter: blur(3px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 }
+
+#petInfoPanel.show {
+  display: block;         /* muncul ketika tombol ditekan */
+}
+
+/* Tombol Info di atas layar tengah */
+#infoBtn {
+  position: fixed;
+  top: 1vh;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 5vw;
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 4px 10px;
+  z-index: 110;
+  cursor: pointer;
+}
+#infoBtn:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
 
 /* 📱 Mode layar kecil (HP portrait) */
 @media (max-width: 600px) {
@@ -2907,6 +2933,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
