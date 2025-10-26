@@ -1678,43 +1678,54 @@ function setPetAnimation(state) {
 
 function playWithPet() {
   const btn = document.getElementById("playBtn");
-  if (btn.disabled) return; // cooldown
+  if (btn.disabled) return; // sedang cooldown
 
   const petImg = document.getElementById("pet");
   if (!petImg) return;
 
-  // Kurangi hunger
-  pet.hunger = Math.max(0, pet.hunger - 10);
-  updateUI();
+  // === 1. Stop SEMUA animasi yang sedang jalan ===
+  petImg.classList.remove("idle", "hungry", "pet-fly", "pet-play-spin");
+  petImg.style.animation = "none";      // hentikan animasi CSS aktif
+  void petImg.offsetWidth;              // reflow paksa
+  petImg.style.animation = null;        // kosongkan kembali
 
-  // Stop semua animasi lama
-petImg.classList.remove("idle", "hungry", "pet-fly", "pet-play-spin");
-petImg.style.animation = "none";
-void petImg.offsetWidth;
-petImg.style.animation = null;
-
-// Tambahkan animasi baru setelah sedikit delay biar pasti aktif
-setTimeout(() => petImg.classList.add("pet-play-spin"), 10);
-
-
-  // Tampilkan bubble
-  showBubble("🎮 Bermain seru! Hunger -10%");
-
-  // Kembalikan ke animasi idle/hungry setelah selesai
-  setTimeout(() => {
-    petImg.classList.remove("pet-play-spin");
-    if (pet.hunger <= 0) petImg.classList.add("hungry");
-    else petImg.classList.add("idle");
-  }, 1200); // durasi sinkron dengan CSS animasi
-
-  // Cooldown tombol
+  // === 2. Set kondisi tombol ===
   btn.disabled = true;
   btn.textContent = "⏳ Tunggu...";
+
+  // === 3. Kurangi hunger, tapi JANGAN panggil updateUI sekarang ===
+  pet.hunger = Math.max(0, pet.hunger - 10);
+
+  // === 4. Jalankan animasi utama ===
+  petImg.classList.add("pet-play-spin"); // animasi play aktif
+  showBubble("🎮 Bermain seru! Hunger -10%");
+
+  // === 5. Setelah animasi selesai (1.2 detik) ===
+  setTimeout(() => {
+    petImg.classList.remove("pet-play-spin");
+
+    // Tentukan state baru setelah selesai
+    if (pet.hunger <= 0) {
+      petImg.classList.add("hungry");
+      setPetAnimation("hungry");
+    } else {
+      petImg.classList.add("idle");
+      setPetAnimation("idle");
+    }
+
+    updateUI(); // baru sinkronkan UI di akhir
+
+  }, 1200);
+
+  // === 6. Cooldown tombol ===
   setTimeout(() => {
     btn.disabled = false;
     btn.textContent = "🎮 Play";
   }, 5000);
 }
+
+
+
 
 
 
@@ -3029,6 +3040,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
