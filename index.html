@@ -1123,9 +1123,11 @@ html, body {
 }
 
 .pet-fly {
-  animation: petJump 3s ease-in-out;
+  animation: petJump 5s ease-in-out;
   transform-origin: center bottom; /* titik rotasi dari kaki pet */
   will-change: transform;
+  z-index: 50 !important; /* naikkan sementara saat loncat */
+  filter: drop-shadow(0 1vh 1vh rgba(0,0,0,0.3));
 }
 
 
@@ -1698,7 +1700,7 @@ function playWithPet() {
   btn.style.pointerEvents = "none";
   btn.textContent = "⏳ Tunggu...";
 
-  // Setelah animasi selesai (3 detik)
+  // Setelah animasi selesai (5 detik)
   setTimeout(() => {
     petImg.classList.remove("pet-fly");
     // Tentukan state baru
@@ -1709,7 +1711,7 @@ function playWithPet() {
 
     updateUI(); // sinkronkan tampilan setelah main
 
-  }, 3000);
+  }, 5000);
 
   // Setelah cooldown (5 detik) tombol aktif lagi
   setTimeout(() => {
@@ -2012,11 +2014,11 @@ else if (pet.level >= 40) {
 }
 
 
-  // Lepas animasi & izinkan klik lagi setelah 1 detik
+  // Lepas animasi & izinkan klik lagi setelah 3 detik
   setTimeout(() => {
     petImg.classList.remove("pet-fly");
     feeding = false; // baru boleh klik lagi
-  }, 1000);
+  }, 3000);
 }
 
 
@@ -2089,7 +2091,7 @@ if (pet.stage === "egg" && pet.level >= 10) {
     showStatBubble("+20 📊 Stats");
 
     evoAnimating = false;
-  }, 2000);
+  }, 3000);
 }
 
 
@@ -3033,6 +3035,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
