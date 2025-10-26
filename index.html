@@ -2722,6 +2722,7 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
     });
 }
 
+
 // === LOGOUT FINAL HYBRID MODE ===
 function logout() {
   if (!confirm("Apakah yakin ingin logout?")) return;
@@ -2730,45 +2731,59 @@ function logout() {
     .then(() => {
       console.log("✅ Firebase: user berhasil logout.");
 
-      // === Reset data game ke mode guest (tanpa hapus save lokal) ===
-      pet = { name: "Pet", level: 1, exp: 0, stage: "egg", owner: "Guest" };
-      coins = 0;
-      inventory = {};
-      foodStock = { meat: 100, fruit: 100, leaf: 100 };
-      evoAnimating = false;
-      selectedFood = null;
+      // === Reset data game ke kondisi default ===
+      pet = {
+        level: 1,
+        exp: 0,
+        stage: "egg",
+        hunger: 30,
+        coins: 0,
+        stats: { att: 10, def: 10, spd: 10, acc: 10, crit: 10 },
+        statPoints: 0,
+        name: "Petku",
+        owner: "Guest"
+      };
 
-      // === Hapus cache login (AMAN untuk Chrome & browser lain) ===
+      foodStock = { meat: 100, fruit: 100, leaf: 100 };
+      selectedFood = null;
+      evoAnimating = false;
+
+      // === Simpan ulang data default ke localStorage ===
+      localStorage.setItem("petData", JSON.stringify(pet));
+      localStorage.setItem("foodStock", JSON.stringify(foodStock));
+
+      // === Hapus cache login Firebase (AMAN untuk Chrome & lainnya) ===
       try {
         const key = "firebase:authUser:" + auth.name + ":" + auth.app.options.apiKey;
-        localStorage.removeItem(key);            // cache Firebase
-        localStorage.removeItem("isLoggedIn");   // flag hybrid
-        localStorage.removeItem("emailForSignIn"); // email OTP login
+        localStorage.removeItem(key);             // cache Firebase
+        localStorage.removeItem("isLoggedIn");    // flag hybrid
+        localStorage.removeItem("emailForSignIn");// email OTP login
       } catch (e) {
         console.warn("⚠️ Tidak bisa hapus cache Firebase:", e);
       }
 
-      // === Kosongkan identitas user ===
-      pet.owner = "Guest";
-
-      // === Perbarui tampilan UI ===
+      // === Perbarui tampilan UI sepenuhnya ===
       const logoutBtn = document.getElementById("logoutBtn");
       const loginBox = document.getElementById("loginBox");
       if (logoutBtn) logoutBtn.style.display = "none";
       if (loginBox) loginBox.style.display = "block";
+
       updateUI();
+      if (typeof syncPetInfoUI === "function") syncPetInfoUI();
 
       // === Beri notifikasi visual ===
-      alert("👋 Anda telah logout.");
-      showBubble("Anda keluar dari akun.");
+      showBubble("👋 Anda telah logout — game di-reset ke mode Guest.");
+      alert("Logout berhasil. Data game direset ke awal.");
 
-      console.log("🎯 Logout selesai — mode guest aktif.");
+      console.log("🎯 Logout selesai — mode guest aktif & pet direset.");
     })
     .catch((error) => {
       alert("❌ Gagal logout: " + error.message);
       console.error("Logout error:", error);
     });
 }
+
+      
 
 // === SIMPAN DATA USER KE FIRESTORE (versi aman & alami) ===
 function saveUserData(uid) {
@@ -2962,6 +2977,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
