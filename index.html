@@ -717,44 +717,56 @@ html, body {
 
 /* === PANEL INFO PET (ATAS TENGAH) === */
 /* === Panel Info Pet === */
-#petInfoPanel {
-  position: fixed;
-  top: 8vh;               /* di dekat atas layar */
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  padding: 12px 18px;
-  border-radius: 10px;
-  z-index: 100;
-  display: none;          /* tersembunyi awalnya */
-  font-size: 3.6vw;
-  text-align: center;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
-}
-
-#petInfoPanel.show {
-  display: block;         /* muncul ketika tombol ditekan */
-}
-
-/* Tombol Info di atas layar tengah */
+/* === Tombol Info di tengah atas (lebih kecil, seragam) === */
 #infoBtn {
   position: fixed;
-  top: 1vh;
+  top: 0.8vh;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 5vw;
-  background: rgba(0,0,0,0.4);
-  color: white;
-  border: none;
+  background: rgba(51, 51, 51, 0.75);
+  color: #fff;
+  border: 2px solid #aaa;
   border-radius: 8px;
-  padding: 4px 10px;
-  z-index: 110;
+  font-size: 3.8vw;      /* lebih kecil, proporsional dengan ikon lain */
+  width: 8vw;
+  height: 8vw;
+  max-width: 36px;       /* batas maksimum untuk layar besar */
+  max-height: 36px;
+  text-align: center;
   cursor: pointer;
+  z-index: 50;
+  box-shadow: 0 0 4px rgba(0,0,0,0.4);
+  line-height: 8vw;
+  padding: 0;
 }
 #infoBtn:active {
-  transform: translateX(-50%) scale(0.95);
+  transform: translateX(-50%) scale(0.92);
 }
+
+/* === Panel Info Pet (disembunyikan default) === */
+#petInfoPanel {
+  display: none;
+  position: fixed;
+  bottom: calc(7vh + 30vw);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30,30,30,0.9);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  z-index: 45;
+  text-align: left;
+  border: 1px solid #888;
+  min-width: 180px;
+  transition: opacity 0.25s ease;
+  opacity: 0;
+}
+#petInfoPanel.show {
+  display: block;
+  opacity: 1;
+}
+
 
 
 /* 📱 Mode layar kecil (HP portrait) */
@@ -2401,40 +2413,29 @@ function setupButtons() {
     playBtn.addEventListener("click", playWithPet);
     playBtn.dataset.bound = "true";
   }
- 
+
   
   const infoBtn = document.getElementById("infoBtn");
   const panel = document.getElementById("petInfoPanel");
-  let holdTimer;
-  let panelVisible = false;
 
   if (infoBtn && panel) {
-    const showPanel = () => {
-      clearTimeout(holdTimer);
-      holdTimer = setTimeout(() => {
-        panel.classList.add("show");
-        panelVisible = true;
-      }, 0);
-    };
+  let panelVisible = false;
 
-    const hidePanel = () => {
-      clearTimeout(holdTimer);
+  // Klik ikon info → tampilkan / sembunyikan panel
+  infoBtn.addEventListener("click", () => {
+    panelVisible = !panelVisible;
+    panel.classList.toggle("show", panelVisible);
+  });
+
+  // Klik area luar panel → panel otomatis hilang
+  document.addEventListener("click", (e) => {
+    if (panelVisible && !panel.contains(e.target) && e.target !== infoBtn) {
       panel.classList.remove("show");
       panelVisible = false;
-    };
-
-    infoBtn.addEventListener("mousedown", showPanel);
-    infoBtn.addEventListener("touchstart", showPanel);
-    infoBtn.addEventListener("mouseup", hidePanel);
-    infoBtn.addEventListener("mouseleave", hidePanel);
-    infoBtn.addEventListener("touchend", hidePanel);
-
-    document.addEventListener("click", (e) => {
-      if (panelVisible && !panel.contains(e.target) && e.target !== infoBtn) {
-        hidePanel();
-      }
-    });
+    }
+  });
   }
+  
 }
 
 
@@ -2933,6 +2934,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
