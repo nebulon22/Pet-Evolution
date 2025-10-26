@@ -1667,11 +1667,11 @@ function showBubble(text) {
 // ================== Fungsi helper ==================
 function setPetAnimation(state) {
   const pet = document.getElementById("pet");
-  // Jangan ubah animasi jika sedang dalam mode Play
-  if (pet.classList.contains("pet-play-spin")) return;
+  // Jika sedang mode Play, abaikan perubahan apapun
+  if (pet.dataset.state === "playing") return;
 
-  pet.classList.remove("idle", "hungry", "pet-fly");
-  pet.style.animation = ""; // reset inline style
+  pet.classList.remove("idle", "hungry", "pet-fly", "pet-play-spin");
+  pet.style.animation = "";
   if (state === "idle") pet.classList.add("idle");
   if (state === "hungry") pet.classList.add("hungry");
 }
@@ -1679,7 +1679,6 @@ function setPetAnimation(state) {
 
 
 // ================== Tombol Play ==================
-
 function playWithPet() {
   const btn = document.getElementById("playBtn");
   if (btn.disabled) return; // sedang cooldown
@@ -1687,46 +1686,44 @@ function playWithPet() {
   const petImg = document.getElementById("pet");
   if (!petImg) return;
 
-  // === 1. Stop SEMUA animasi yang sedang jalan ===
+  // === 1. Matikan semua animasi termasuk pet-fly ===
   petImg.classList.remove("idle", "hungry", "pet-fly", "pet-play-spin");
-  petImg.style.animation = "none";      // hentikan animasi CSS aktif
-  void petImg.offsetWidth;              // reflow paksa
-  petImg.style.animation = null;        // kosongkan kembali
+  petImg.style.animation = "none";
+  void petImg.offsetWidth; // reflow
+  petImg.style.animation = null;
 
-  // === 2. Set kondisi tombol ===
-  btn.disabled = true;
-  btn.textContent = "⏳ Tunggu...";
+  // Tandai bahwa sedang animasi Play (agar setPetAnimation & pet-fly tidak aktif)
+  petImg.dataset.state = "playing";
 
-  // === 3. Kurangi hunger, tapi JANGAN panggil updateUI sekarang ===
+  // Kurangi hunger tapi jangan update UI dulu
   pet.hunger = Math.max(0, pet.hunger - 10);
 
-  // === 4. Jalankan animasi utama ===
-  petImg.classList.add("pet-play-spin"); // animasi play aktif
+  // === 2. Jalankan animasi Play ===
+  petImg.classList.add("pet-play-spin");
   showBubble("🎮 Bermain seru! Hunger -10%");
 
-  // === 5. Setelah animasi selesai (1.2 detik) ===
+  // === 3. Setelah animasi Play selesai ===
   setTimeout(() => {
     petImg.classList.remove("pet-play-spin");
+    petImg.dataset.state = ""; // lepas status playing
 
-    // Tentukan state baru setelah selesai
-    if (pet.hunger <= 0) {
-      petImg.classList.add("hungry");
-      setPetAnimation("hungry");
-    } else {
-      petImg.classList.add("idle");
-      setPetAnimation("idle");
-    }
+    // Tentukan kondisi baru setelah Play
+    if (pet.hunger <= 0) setPetAnimation("hungry");
+    else setPetAnimation("idle");
 
-    updateUI(); // baru sinkronkan UI di akhir
+    updateUI(); // perbarui UI
 
-  }, 1200);
+  }, 1300);
 
-  // === 6. Cooldown tombol ===
+  // === 4. Cooldown tombol ===
+  btn.disabled = true;
+  btn.textContent = "⏳ Tunggu...";
   setTimeout(() => {
     btn.disabled = false;
     btn.textContent = "🎮 Play";
   }, 5000);
 }
+
 
 
 
@@ -3044,6 +3041,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
