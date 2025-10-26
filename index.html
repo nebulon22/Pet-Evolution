@@ -2789,6 +2789,7 @@ function logout() {
 function saveUserData(uid) {
   if (!uid || !pet) return;
   try {
+    pet.updatedAt = Date.now();
     db.collection("users").doc(uid).set({
       pet: pet,
       foodStock: foodStock,
@@ -2977,6 +2978,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
