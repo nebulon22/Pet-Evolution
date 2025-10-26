@@ -716,35 +716,36 @@ html, body {
 }
 
 /* === PANEL INFO PET (ATAS TENGAH) === */
+/* === Ikon Info === */
 #infoBtn {
   position: fixed;
   top: 6px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.3);
-  color: #fff;
-  border: none;
+  font-size: 4.5vw;                 /* sama seperti ikon lain */
+  background: rgba(0,0,0,0.3);
+  padding: 4px 8px;
   border-radius: 6px;
-  font-size: 4.5vw;
-  width: 9vw;            /* ukuran tombol (sebanding ikon lain) */
-  height: 9vw;
-  max-width: 38px;       /* agar tidak kebesaran di layar besar */
-  max-height: 38px;
-  cursor: pointer;
-  z-index: 50;
-  line-height: 1;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  line-height: 1;
+  min-width: unset;
+  min-height: unset;
+  box-shadow: none;
+  border: none;
+  z-index: 50;
+  cursor: pointer;
 }
 
+/* Hover & Active — efek sama seperti ikon kanan */
 #infoBtn:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.12);
+}
+#infoBtn:active {
+  transform: translateX(-50%) scale(1.06);
 }
 
-#infoBtn:active {
-  transform: translateX(-50%) scale(0.95);
-}
 
 /* === Panel Info Pet (disembunyikan default) === */
 #petInfoPanel {
@@ -2939,6 +2940,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
