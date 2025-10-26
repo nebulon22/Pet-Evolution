@@ -1092,48 +1092,43 @@ html, body {
 }
 
 /* Animasi lompat bermain */
-/* === PET JUMP (versi natural & lembut) === */
+
+/* === PET JUMP (versi ekspresif, 3 detik, lompat ke depan + rotasi 720°) === */
 @keyframes petJump {
   0% {
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
   }
-  15% {
-    transform: translateY(-5vh) scale(1.05); /* mulai loncat cepat */
-    animation-timing-function: cubic-bezier(0.25, 0.7, 0.5, 1); /* percepatan alami */
+  10% {
+    transform: translate3d(2vw, -5vh, 0) rotate(180deg) scale(1.05);
+    animation-timing-function: cubic-bezier(0.3, 0.7, 0.5, 1);
   }
-  35% {
-    transform: translateY(-7vh) scale(1.1); /* puncak lompatan */
-    animation-timing-function: ease-out;    /* melambat di puncak */
+  25% {
+    transform: translate3d(4vw, -9vh, 2vw) rotate(360deg) scale(1.1);
+    animation-timing-function: ease-out;
   }
-  60% {
-    transform: translateY(-1.5vh) scale(1.03); /* mulai turun, sedikit mantul */
+  50% {
+    transform: translate3d(6vw, -6vh, 3vw) rotate(540deg) scale(1.07);
+    animation-timing-function: ease-in-out;
+  }
+  70% {
+    transform: translate3d(3vw, -3vh, 1vw) rotate(720deg) scale(1.03);
     animation-timing-function: ease-in;
   }
-  80% {
-    transform: translateY(-3vh) scale(1.06); /* efek bounce lembut */
+  90% {
+    transform: translate3d(0, -1vh, 0) rotate(720deg) scale(1.02);
   }
   100% {
-    transform: translateY(0) scale(1);
+    transform: translate3d(0, 0, 0) rotate(720deg) scale(1);
   }
 }
 
 .pet-fly {
-  animation: petJump 1.1s ease-in-out;
+  animation: petJump 3s ease-in-out;
   will-change: transform;
+  transform-origin: center bottom; /* agar rotasi terasa dari bawah tubuh */
 }
 
-/* === Efek tambahan saat tombol Play ditekan === */
-@keyframes petPlaySpin {
-  0%   { transform: translateY(0) rotate(0deg) scale(1); }
-  25%  { transform: translateY(-6vh) translateX(3vw) rotate(180deg) scale(1.1); }
-  50%  { transform: translateY(-2vh) translateX(6vw) rotate(360deg) scale(1.05); }
-  75%  { transform: translateY(-4vh) translateX(3vw) rotate(540deg) scale(1.1); }
-  100% { transform: translateY(0) rotate(720deg) scale(1); }
-}
-.pet-play-spin {
-  animation: petPlaySpin 1.2s ease-in-out;
-  will-change: transform;
-}
+    
 
 /* Pastikan tombol disabled benar-benar tidak bisa diklik */
 .mainBtn:disabled {
@@ -1681,41 +1676,33 @@ function setPetAnimation(state) {
 // ================== Tombol Play ==================
 function playWithPet() {
   const btn = document.getElementById("playBtn");
-  if (btn.disabled) return; // sedang cooldown
+  if (btn.disabled) return; // cooldown
 
   const petImg = document.getElementById("pet");
   if (!petImg) return;
 
-  // === 1. Matikan semua animasi termasuk pet-fly ===
-  petImg.classList.remove("idle", "hungry", "pet-fly", "pet-play-spin");
-  petImg.style.animation = "none";
-  void petImg.offsetWidth; // reflow
-  petImg.style.animation = null;
-
-  // Tandai bahwa sedang animasi Play (agar setPetAnimation & pet-fly tidak aktif)
-  petImg.dataset.state = "playing";
-
-  // Kurangi hunger tapi jangan update UI dulu
+  // Kurangi hunger
   pet.hunger = Math.max(0, pet.hunger - 10);
+  updateUI();
 
-  // === 2. Jalankan animasi Play ===
-  petImg.classList.add("pet-play-spin");
+  // Stop semua animasi lama dulu
+  petImg.classList.remove("idle", "hungry", "pet-fly");
+
+  // Trigger ulang animasi jump
+  void petImg.offsetWidth; // 🔧 trik reflow agar animasi restart
+  petImg.classList.add("pet-fly");
+
+  // Bubble text
   showBubble("🎮 Bermain seru! Hunger -10%");
 
-  // === 3. Setelah animasi Play selesai ===
+  // Setelah loncat selesai (3s), kembali idle/hungry
   setTimeout(() => {
-    petImg.classList.remove("pet-play-spin");
-    petImg.dataset.state = ""; // lepas status playing
+    petImg.classList.remove("pet-fly");
+    if (pet.hunger <= 0) petImg.classList.add("hungry");
+    else petImg.classList.add("idle");
+  }, 3000);
 
-    // Tentukan kondisi baru setelah Play
-    if (pet.hunger <= 0) setPetAnimation("hungry");
-    else setPetAnimation("idle");
-
-    updateUI(); // perbarui UI
-
-  }, 1300);
-
-  // === 4. Cooldown tombol ===
+  // Cooldown tombol
   btn.disabled = true;
   btn.textContent = "⏳ Tunggu...";
   setTimeout(() => {
@@ -1723,6 +1710,8 @@ function playWithPet() {
     btn.textContent = "🎮 Play";
   }, 5000);
 }
+
+
 
 
 
@@ -3041,6 +3030,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
