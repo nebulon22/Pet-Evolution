@@ -2682,7 +2682,9 @@ function drawStatsChart(){
 }
 
 // =================================================
-setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
+setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5);
+                 if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} 
+                 updateUI(); },5000);
 const petImg = document.getElementById("pet");
 
 function tapEffect(){
@@ -2699,8 +2701,8 @@ document.addEventListener("DOMContentLoaded", () => {
   evoBtn.addEventListener("click", evolvePet);
 });
 
-petImg.addEventListener("click", tapEffect);
-petImg.addEventListener("touchstart", tapEffect);
+//petImg.addEventListener("click", tapEffect);
+//petImg.addEventListener("touchstart", tapEffect);
   
 </script>
 
@@ -3042,5 +3044,6 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
