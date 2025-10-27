@@ -2767,18 +2767,25 @@ function sendLoginLink() {
 
 
 // === CEK LINK LOGIN (saat user klik dari email) ===
+// === CEK LINK LOGIN (saat user klik dari email) ===
 document.addEventListener("DOMContentLoaded", () => {
   if (auth.isSignInWithEmailLink(window.location.href)) {
     console.log("📩 Deteksi link OTP aktif:", window.location.href);
 
     let email = localStorage.getItem("emailForSignIn");
-    if (!email) email = prompt("Masukkan email Anda untuk verifikasi:");
 
-    auth.signInWithEmailLink(email, window.location.href)
+    // 🧠 Jika email tidak ada di localStorage, ambil dari akun hasil login
+    if (!email) {
+      console.warn("⚠️ Email tidak ditemukan di localStorage, lanjutkan otomatis.");
+    }
+
+    auth.signInWithEmailLink(email || undefined, window.location.href)
       .then(async (result) => {
-        alert("✅ Login berhasil sebagai: " + result.user.email);
-        localStorage.removeItem("emailForSignIn");
+        // ✅ Gunakan email dari Firebase jika localStorage kosong
+        const userEmail = email || result.user.email;
+        alert("✅ Login berhasil sebagai: " + userEmail);
 
+        localStorage.removeItem("emailForSignIn");
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("logoutBtn").style.display = "block";
 
@@ -2793,6 +2800,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 });
+
 
 
 
@@ -3096,6 +3104,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
