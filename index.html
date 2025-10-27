@@ -2781,8 +2781,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     auth.signInWithEmailLink(email || undefined, window.location.href)
       .then(async (result) => {
+        console.log("👤 Login UID:", result.user.uid);
+        console.log("📧 Login email:", result.user.email);
+
         // ✅ Gunakan email dari Firebase jika localStorage kosong
         const userEmail = email || result.user.email;
+        
         alert("✅ Login berhasil sebagai: " + userEmail);
 
         localStorage.removeItem("emailForSignIn");
@@ -3104,6 +3108,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
