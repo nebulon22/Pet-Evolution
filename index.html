@@ -1998,11 +1998,7 @@ createMiniBubble(`+${expGain}% EXP, +1 💰`, rect.left + rect.width/2, rect.top
 
   updateUI(); // update stok dan exp bar seketika
 
-  // Animasi makan (1 detik)
-  const petImg = document.getElementById("pet");
-  petImg.classList.add("pet-fly");
 
-  // === Cek kondisi evolusi / level up ===
   // === Cek kondisi evolusi / level up ===
 const evoBtn = document.getElementById("evoBtn");
 const feedBtn = document.getElementById("feedBtn");
@@ -2042,7 +2038,6 @@ else if (pet.level >= 40) {
 
   // Lepas animasi & izinkan klik lagi setelah 1 detik
   setTimeout(() => {
-    petImg.classList.remove("pet-fly");
     feeding = false; // baru boleh klik lagi
   }, 1000);
 }
@@ -3063,6 +3058,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
