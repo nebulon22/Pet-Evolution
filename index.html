@@ -400,7 +400,7 @@ html, body {
   height: auto;
   transform-style: preserve-3d; /* agar bisa diputar 3D */
   filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-  z-index: 100 !important; /* di atas layer gelap */
+  z-index: 200 !important; /* di atas layer gelap */
   will-change: transform, filter;
 }
 
@@ -1088,41 +1088,23 @@ html, body {
 /* Animasi lompat bermain */
 /* === ANIMASI PET SAAT BERMAIN (TOMBOL PLAY) === */
 /* 💫 Loncat dinamis + rotasi 720° dengan sedikit jeda di udara */
+
 @keyframes petJump {
-  0% {
-    transform: translateY(0) rotate(0deg) scale(1);
-    filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-  }
-  10% {
-    transform: translateY(-5vh) rotate(0deg) scale(1.05);
-  }
-  25% {
-    transform: translateY(-10vh) rotate(90deg) scale(1.15);
-    filter: drop-shadow(4px 8px 6px rgba(0,0,0,0.4));
-  }
-  50% {
-    transform: translateY(-8vh) rotate(360deg) scale(1.1);
-  }
-  70% {
-    transform: translateY(-4vh) rotate(540deg) scale(1.05);
-  }
-  85% {
-    transform: translateY(-2vh) rotate(650deg) scale(1.03);
-  }
-  100% {
-    transform: translateY(0) rotate(720deg) scale(1);
-    filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-  }
+  0%   { transform: translateY(0) rotate(0deg) scale(1); }
+  10%  { transform: translateY(-5vh) rotate(0deg) scale(1.05); }
+  25%  { transform: translateY(-10vh) rotate(90deg) scale(1.15); }
+  50%  { transform: translateY(-8vh) rotate(360deg) scale(1.1); }
+  70%  { transform: translateY(-4vh) rotate(540deg) scale(1.05); }
+  85%  { transform: translateY(-2vh) rotate(650deg) scale(1.03); }
+  100% { transform: translateY(0) rotate(720deg) scale(1); }
 }
 
-/* ✨ Class aktif saat bermain */
 .pet-fly {
-  animation: petJump 5s ease-in-out forwards;
-  transform-origin: center bottom; /* rotasi dari kaki */
+  animation: petJump 5s ease-in-out forwards !important;
+  transform-origin: center bottom;
   will-change: transform, filter;
-  z-index: 50 !important;          /* tampil di depan */
+  z-index: 100 !important;
 }
-
 
     
 .play-focus {
@@ -1660,65 +1642,96 @@ function setPetAnimation(state) {
 }
 
 // ================== Tombol Play ==================
+// === SISTEM ANIMASI PET TERPADU ===
+let isPlaying = false;
+
+// 🔄 Fungsi utama tombol Play
 function playWithPet() {
   const btn = document.getElementById("playBtn");
   const petImg = document.getElementById("pet");
   if (!btn || !petImg || isPlaying) return;
 
-  // 🔒 Kunci aksi lain
+  // 🔒 Kunci semua aksi
   isPlaying = true;
   btn.disabled = true;
   btn.style.pointerEvents = "none";
   btn.textContent = "⏳ Tunggu...";
 
-  // 🔇 Hentikan semua animasi non-play
   pauseAllAnimations();
+  darkenBackground(true);
 
-  // 🌘 Gelapkan background dan elemen sekitarnya
-  document.querySelectorAll('#background, .cloud, .tree, .grass, #plateWrapper, #foodGrid')
-    .forEach(el => el.classList.add('play-focus'));
-
-  // ✨ Siapkan animasi pet
+  // Bersihkan animasi aktif
   petImg.classList.remove("idle", "hungry", "pet-fly");
-  petImg.style.animation = "none";          // reset animasi
-  void petImg.offsetWidth;                  // paksa reflow
+  petImg.style.animation = "none";
+  void petImg.offsetWidth; // reflow
   petImg.style.animation = null;
-  petImg.classList.add("pet-fly");          // jalankan animasi loncat/berputar
 
-  // 🔊 Bubble & update hunger
+  // Kurangi hunger
   pet.hunger = Math.max(0, pet.hunger - 10);
-  showBubble("🎮 Bermain seru! Hunger -10%");
   updateUI();
 
-  // 🕐 Setelah 5 detik (selesai animasi)
+  // Jalankan animasi bermain
+  setTimeout(() => {
+    petImg.classList.add("pet-fly");
+    showBubble("🎮 Bermain seru! Hunger -10%");
+  }, 50);
+
+  // Setelah selesai (5 detik)
   setTimeout(() => {
     petImg.classList.remove("pet-fly");
 
-    // 🔓 Lepas kunci
+    // Kembalikan state normal
     isPlaying = false;
-
-    // Kembalikan animasi dasar pet
-    if (pet.hunger <= 0) petImg.classList.add("hungry");
-    else petImg.classList.add("idle");
-
-    updateUI();
-
-    // 🌅 Kembalikan kecerahan background
-    document.querySelectorAll('#background, .cloud, .tree, .grass, #plateWrapper, #foodGrid')
-      .forEach(el => el.classList.remove('play-focus'));
-
-    // ▶️ Lanjutkan semua animasi lain
+    darkenBackground(false);
     resumeAllAnimations();
 
-  }, 5000);
+    // Hidupkan kembali animasi dasar
+    setPetAnimation(pet.hunger <= 0 ? "hungry" : "idle");
 
-  // 🕐 Aktifkan kembali tombol
-  setTimeout(() => {
     btn.disabled = false;
     btn.style.pointerEvents = "auto";
     btn.textContent = "🎮 Play";
+
+    updateUI();
   }, 5000);
 }
+
+// === Animasi dasar pet (idle / hungry) ===
+function setPetAnimation(state) {
+  const petImg = document.getElementById("pet");
+  if (!petImg) return;
+
+  // Jika sedang bermain, jangan ganggu animasi
+  if (isPlaying) return;
+
+  petImg.classList.remove("idle", "hungry", "pet-fly");
+
+  if (state === "hungry") petImg.classList.add("hungry");
+  else petImg.classList.add("idle");
+}
+
+// === Pause & Resume animasi elemen lain ===
+function pauseAllAnimations() {
+  document.querySelectorAll('.cloud, .tree, .mini-bubble, #bubble.active')
+    .forEach(el => (el.style.animationPlayState = 'paused'));
+}
+
+function resumeAllAnimations() {
+  document.querySelectorAll('.cloud, .tree, .mini-bubble, #bubble.active')
+    .forEach(el => (el.style.animationPlayState = 'running'));
+}
+
+// === Efek gelap lembut fokus ke pet ===
+function darkenBackground(enable) {
+  const targets = document.querySelectorAll('#background, .cloud, .tree, .grass, #plateWrapper, #foodGrid');
+  targets.forEach(el => {
+    if (enable) el.classList.add('play-focus');
+    else el.classList.remove('play-focus');
+  });
+}
+
+
+  
 function pauseAllAnimations() {
   document.querySelectorAll('.cloud, .tree, #bubble.active, .mini-bubble')
     .forEach(el => (el.style.animationPlayState = 'paused'));
@@ -3044,6 +3057,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
