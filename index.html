@@ -39,6 +39,15 @@ html, body {
 
   }
 
+@keyframes feedMotion {
+  0%   { transform: scale(1) rotate(0deg); }
+  20%  { transform: scale(1.05) rotate(3deg); }
+  50%  { transform: scale(1.1) rotate(-3deg); }
+  80%  { transform: scale(1.05) rotate(2deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+    
     /* === Reset font untuk bubble dan mini-bubble === */
 #bubble,
 .mini-bubble {
@@ -1696,6 +1705,33 @@ function playWithPet() {
   }, 5000);
 }
 
+// === FUNGSI MEMBERI MAKAN PET ===
+function feedPet() {
+  if (isPlaying) return; // ⛔ Jangan ganggu kalau sedang bermain
+
+  const petImg = document.getElementById("pet");
+  if (!petImg) return;
+
+  // Beri efek makan
+  petImg.classList.remove("idle", "hungry");
+  petImg.style.animation = "none";
+  void petImg.offsetWidth; // reset animasi
+
+  showBubble("🍎 Nyam nyam! Hunger +20%");
+
+  // Tambah hunger (maks 100)
+  pet.hunger = Math.min(100, pet.hunger + 20);
+  updateUI();
+
+  // Animasi makan sederhana
+  petImg.style.animation = "feedMotion 2s ease-in-out";
+  setTimeout(() => {
+    petImg.style.animation = "";
+    setPetAnimation(pet.hunger <= 0 ? "hungry" : "idle");
+  }, 2000);
+}
+
+  
 // === Animasi dasar pet (idle / hungry) ===
 function setPetAnimation(state) {
   const petImg = document.getElementById("pet");
@@ -2459,7 +2495,7 @@ function setupButtons() {
   const playBtn = document.getElementById("playBtn");
 
   if (feedBtn && !feedBtn.dataset.bound) {
-    feedBtn.addEventListener("click", Pet);
+    feedBtn.addEventListener("click", feedPet);
     feedBtn.dataset.bound = "true";
   }
 
@@ -3057,6 +3093,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
