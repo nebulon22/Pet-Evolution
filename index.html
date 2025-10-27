@@ -399,9 +399,9 @@ html, body {
   max-width: 220px;
   height: auto;
   transform-style: preserve-3d; /* agar bisa diputar 3D */
-  z-index: 2;
   filter: drop-shadow(8px 12px 8px rgba(0,0,0,0.5));
-  will-change: transform;
+  z-index: 100 !important; /* agar selalu di depan */
+  will-change: transform, filter;
 }
 
 
@@ -1110,7 +1110,10 @@ html, body {
   filter: drop-shadow(0 1vh 1vh rgba(0,0,0,0.3));
 }
 
-
+.play-focus {
+  filter: brightness(0.5) blur(1px);
+  transition: filter 0.4s ease;
+}
     
 
 /* === BUBBLE TEXT LEMBUT (FADE OUT NATURAL) === */
@@ -1652,47 +1655,57 @@ function setPetAnimation(state) {
 // ================== Tombol Play ==================
 function playWithPet() {
   const btn = document.getElementById("playBtn");
-  if (btn.disabled || isPlaying) return;
-
   const petImg = document.getElementById("pet");
-  if (!petImg) return;
+  if (!btn || !petImg || isPlaying) return;
 
   // 🔒 Kunci aksi lain
   isPlaying = true;
-  pauseAllAnimations(); // ⛔ hentikan semua animasi lain
-
-  // Matikan animasi idle/hungry
-  petImg.classList.remove("idle", "hungry", "pet-fly");
-  petImg.style.animation = "none";
-  void petImg.offsetWidth;
-  petImg.style.animation = null;
-
-  pet.hunger = Math.max(0, pet.hunger - 10);
-  updateUI();
-
-  // Jalankan animasi bermain
-  petImg.classList.add("pet-fly");
-  showBubble("🎮 Bermain seru! Hunger -10%");
-
   btn.disabled = true;
   btn.style.pointerEvents = "none";
   btn.textContent = "⏳ Tunggu...";
 
-  // Setelah animasi selesai
+  // 🔇 Hentikan semua animasi non-play
+  pauseAllAnimations();
+
+  // 🌘 Gelapkan background dan elemen sekitarnya
+  document.querySelectorAll('#background, .cloud, .tree, .grass, #plateWrapper, #foodGrid')
+    .forEach(el => el.classList.add('play-focus'));
+
+  // ✨ Siapkan animasi pet
+  petImg.classList.remove("idle", "hungry", "pet-fly");
+  petImg.style.animation = "none";          // reset animasi
+  void petImg.offsetWidth;                  // paksa reflow
+  petImg.style.animation = null;
+  petImg.classList.add("pet-fly");          // jalankan animasi loncat/berputar
+
+  // 🔊 Bubble & update hunger
+  pet.hunger = Math.max(0, pet.hunger - 10);
+  showBubble("🎮 Bermain seru! Hunger -10%");
+  updateUI();
+
+  // 🕐 Setelah 5 detik (selesai animasi)
   setTimeout(() => {
     petImg.classList.remove("pet-fly");
+
+    // 🔓 Lepas kunci
     isPlaying = false;
 
-    // Kembalikan animasi dasar
+    // Kembalikan animasi dasar pet
     if (pet.hunger <= 0) petImg.classList.add("hungry");
     else petImg.classList.add("idle");
 
     updateUI();
-    resumeAllAnimations(); // ▶️ lanjutkan semua animasi lain
+
+    // 🌅 Kembalikan kecerahan background
+    document.querySelectorAll('#background, .cloud, .tree, .grass, #plateWrapper, #foodGrid')
+      .forEach(el => el.classList.remove('play-focus'));
+
+    // ▶️ Lanjutkan semua animasi lain
+    resumeAllAnimations();
 
   }, 5000);
 
-  // Reaktifkan tombol
+  // 🕐 Aktifkan kembali tombol
   setTimeout(() => {
     btn.disabled = false;
     btn.style.pointerEvents = "auto";
@@ -3019,6 +3032,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
