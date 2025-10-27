@@ -2777,17 +2777,14 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
       alert("✅ Login berhasil sebagai: " + result.user.email);
       localStorage.removeItem("emailForSignIn");
 
-      // Tampilkan tombol logout, sembunyikan loginBox
       document.getElementById("loginBox").style.display = "none";
       document.getElementById("logoutBtn").style.display = "block";
 
-      // === Ambil data pet user dari server (Firestore misalnya)
+      // 🔹 Ganti ke format Firestore versi 8
       const user = result.user;
-      const petRef = doc(db, "pets", user.uid);
-      const petSnap = await getDoc(petRef);
-      const petData = petSnap.exists() ? petSnap.data() : null;
+      const petSnap = await db.collection("pets").doc(user.uid).get();
+      const petData = petSnap.exists ? petSnap.data() : null;
 
-      // ✅ Jalankan reload otomatis agar pet user aktif
       onLoginSuccess({ petData });
     })
     .catch((error) => {
@@ -3097,6 +3094,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
