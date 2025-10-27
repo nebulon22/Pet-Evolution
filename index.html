@@ -2806,40 +2806,36 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-
-
-// === 🔄 Fungsi dipanggil setelah login OTP sukses ===
 // Aman dan tidak ganggu logika lain
+// === 🔄 Fungsi dipanggil setelah login OTP sukses ===
 function onLoginSuccess(userData) {
   try {
-    // Tutup popup login
     const box = document.getElementById("loginBox");
     if (box) box.style.display = "none";
 
-    // Simpan data pet ke localStorage (jika ada dari server)
     if (userData && userData.petData) {
       localStorage.setItem("petData", JSON.stringify(userData.petData));
       console.log("✅ Data pet user tersimpan:", userData.petData);
     }
 
-    // Notifikasi ringan
     if (typeof showBubble === "function") {
-      showBubble("✅ Login berhasil! Memuat ulang halaman...");
+      showBubble("✅ Login berhasil! Menyambungkan akun...");
     }
 
-    // Efek visual lembut sebelum reload
     document.body.style.transition = "opacity 0.4s ease";
     document.body.style.opacity = "0.6";
 
-    // Reload halaman setelah sedikit jeda
+    // 🔧 Tambah jeda sedikit lebih lama agar Firebase Auth sempat update status
     setTimeout(() => {
-      location.reload();  // ⏳ muat ulang game agar pet user aktif
-    }, 1200);
-
+      console.log("🔁 Reload untuk sinkron user login...");
+      location.reload();
+    }, 3000);
   } catch (err) {
     console.error("❌ Gagal memproses login sukses:", err);
   }
 }
+
+  
 </script>
 
 <script>
@@ -3108,6 +3104,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
