@@ -1403,7 +1403,7 @@ const assetList = [
   "images/meat.png",
   "images/leaf.png",
   "images/plate.png",
-  "sounds/feed.mp3",
+  "sounds/soundEat.mp3",
   "sounds/levelup.mp3",
   "sounds/evo.mp3",
   "sounds/buy.mp3"
@@ -1705,31 +1705,6 @@ function playWithPet() {
   }, 5000);
 }
 
-// === FUNGSI MEMBERI MAKAN PET ===
-function feedPet() {
-  if (isPlaying) return; // ⛔ Jangan ganggu kalau sedang bermain
-
-  const petImg = document.getElementById("pet");
-  if (!petImg) return;
-
-  // Beri efek makan
-  petImg.classList.remove("idle", "hungry");
-  petImg.style.animation = "none";
-  void petImg.offsetWidth; // reset animasi
-
-  showBubble("🍎 Nyam nyam! Hunger +20%");
-
-  // Tambah hunger (maks 100)
-  pet.hunger = Math.min(100, pet.hunger + 20);
-  updateUI();
-
-  // Animasi makan sederhana
-  petImg.style.animation = "feedMotion 2s ease-in-out";
-  setTimeout(() => {
-    petImg.style.animation = "";
-    setPetAnimation(pet.hunger <= 0 ? "hungry" : "idle");
-  }, 2000);
-}
 
   
 // === Animasi dasar pet (idle / hungry) ===
@@ -1980,8 +1955,10 @@ function playSound(id){
 
   let feeding = false; // ⛔ mencegah dobel klik feed
 
-function Pet() {
+function feedPet() {
   if (feeding) return; // cegah spam
+  if (isPlaying) return; // ⛔ cegah bentrok jika sedang bermain
+
   feeding = true;
 
   if (!selectedFood) {
@@ -2018,7 +1995,7 @@ function Pet() {
   }
 
   // Efek suara dan bubble
-  playSound("sound");
+  playSound("soundEat");
   showBubble(`Nyam nyam 🍖 +${expGain}% EXP, +1 koin!`);
   showCoinBubble("+1 💰");
 // === Bubble tengah layar di atas piring ===
@@ -3093,6 +3070,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
