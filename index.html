@@ -2678,27 +2678,7 @@ function drawStatsChart(){
   ctx.closePath(); ctx.fill();
 }
 
-// =================================================
-setInterval(()=>{ pet.hunger=Math.max(0,pet.hunger-5); if(pet.hunger<50&&Math.random()<0.3){showBubble("Aku lapar 🥺");} updateUI(); },5000);
-const petImg = document.getElementById("pet");
 
-function tapEffect(){
-  petImg.style.transition = "transform 0.4s ease, filter 0.4s ease";
-  petImg.style.transform = "rotateY(15deg) rotateX(6deg) skewX(3deg) scale(1.05)";
-  petImg.style.filter = "drop-shadow(15px 20px 12px rgba(0,0,0,0.6))";
-  setTimeout(()=>{
-    petImg.style.transform = "";
-    petImg.style.filter = "";
-  }, 500);
-}
-document.addEventListener("DOMContentLoaded", () => {
-  const evoBtn = document.getElementById("evoBtn");
-  evoBtn.addEventListener("click", evolvePet);
-});
-
-petImg.addEventListener("click", tapEffect);
-petImg.addEventListener("touchstart", tapEffect);
-  
 </script>
 
 <!-- ==================== END: MAIN GAME LOGIC ==================== -->
@@ -3039,6 +3019,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
