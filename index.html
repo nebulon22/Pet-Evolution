@@ -1650,55 +1650,80 @@ function setPetAnimation(state) {
 
 
 // ================== Tombol Play ==================
-
 function playWithPet() {
   const btn = document.getElementById("playBtn");
-  if (btn.disabled || isPlaying) return; // ⛔ cegah klik ganda
+  if (btn.disabled || isPlaying) return;
 
   const petImg = document.getElementById("pet");
   if (!petImg) return;
 
-  // 🔒 Kunci status bermain
+  // 🔒 Kunci aksi lain
   isPlaying = true;
+  pauseAllAnimations(); // ⛔ hentikan semua animasi lain
 
-  // Kurangi hunger tapi jangan update UI lagi nanti di akhir
+  // Matikan animasi idle/hungry
+  petImg.classList.remove("idle", "hungry", "pet-fly");
+  petImg.style.animation = "none";
+  void petImg.offsetWidth;
+  petImg.style.animation = null;
+
   pet.hunger = Math.max(0, pet.hunger - 10);
   updateUI();
 
-  // Hentikan semua animasi aktif
-  petImg.classList.remove("idle", "hungry", "pet-fly");
-  petImg.style.animation = "none";
-  void petImg.offsetWidth; // reflow agar animasi bisa restart
-  petImg.style.animation = null;
-
-  // Jalankan animasi loncat + rotasi
+  // Jalankan animasi bermain
   petImg.classList.add("pet-fly");
   showBubble("🎮 Bermain seru! Hunger -10%");
 
-  // Tombol cooldown dan kunci klik
   btn.disabled = true;
   btn.style.pointerEvents = "none";
   btn.textContent = "⏳ Tunggu...";
 
-  // Setelah animasi selesai (5 detik)
+  // Setelah animasi selesai
   setTimeout(() => {
     petImg.classList.remove("pet-fly");
-    // Tentukan state baru
+    isPlaying = false;
+
+    // Kembalikan animasi dasar
     if (pet.hunger <= 0) petImg.classList.add("hungry");
     else petImg.classList.add("idle");
 
-    isPlaying = false; // 🔓 buka kunci
-
-    updateUI(); // sinkronkan tampilan setelah main
+    updateUI();
+    resumeAllAnimations(); // ▶️ lanjutkan semua animasi lain
 
   }, 5000);
 
-  // Setelah cooldown (5 detik) tombol aktif lagi
+  // Reaktifkan tombol
   setTimeout(() => {
     btn.disabled = false;
     btn.style.pointerEvents = "auto";
     btn.textContent = "🎮 Play";
   }, 5000);
+}
+
+// === SISTEM PAUSE/RESUME ANIMASI NON-PLAY ===
+function pauseAllAnimations() {
+  // Pause awan, pohon, bubble aktif, mini-bubble
+  document.querySelectorAll('.cloud, .tree, #bubble.active, .mini-bubble').forEach(el => {
+    el.style.animationPlayState = 'paused';
+  });
+}
+
+function resumeAllAnimations() {
+  document.querySelectorAll('.cloud, .tree, #bubble.active, .mini-bubble').forEach(el => {
+    el.style.animationPlayState = 'running';
+  });
+}
+
+function pauseAllAnimations() {
+  document.querySelectorAll('.cloud, .tree, #bubble.active, .mini-bubble').forEach(el => {
+    el.style.animationPlayState = 'paused';
+  });
+}
+
+function resumeAllAnimations() {
+  document.querySelectorAll('.cloud, .tree, #bubble.active, .mini-bubble').forEach(el => {
+    el.style.animationPlayState = 'running';
+  });
 }
 
 
@@ -3014,6 +3039,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
