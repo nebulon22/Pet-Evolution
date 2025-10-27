@@ -1355,7 +1355,7 @@ html, body {
   </div> <!-- end #gameContent -->
 </div> <!-- end #gameContainer -->
 
-<img src="images/grass.png" class="grass"
+<img src="images/grass.png" class="grass"/>
   
   <!-- Suara -->
   <audio id="soundEat" src="sounds/soundEat.mp3" preload="auto"></audio>
@@ -1734,17 +1734,6 @@ function darkenBackground(enable) {
   });
 }
 
-
-  
-function pauseAllAnimations() {
-  document.querySelectorAll('.cloud, .tree, #bubble.active, .mini-bubble')
-    .forEach(el => (el.style.animationPlayState = 'paused'));
-}
-
-function resumeAllAnimations() {
-  document.querySelectorAll('.cloud, .tree, #bubble.active, .mini-bubble')
-    .forEach(el => (el.style.animationPlayState = 'running'));
-}
 
 
 
@@ -3058,6 +3047,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
