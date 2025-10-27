@@ -2738,9 +2738,11 @@ const db   = firebase.firestore();
   .catch((error) => {
     console.error("❌ Gagal set persistence:", error);
   });
-
+</script>
 
 // === LOGIN EMAIL OTP ===
+<!-- === LOGIN EMAIL OTP === -->
+<script>
 function sendLoginLink() {
   const email = document.getElementById("emailInput").value.trim();
   if (!email) {
@@ -2764,18 +2766,29 @@ function sendLoginLink() {
 }
 
 
+
 // === CEK LINK LOGIN (saat user klik dari email) ===
 if (auth.isSignInWithEmailLink(window.location.href)) {
   let email = localStorage.getItem("emailForSignIn");
   if (!email) email = prompt("Masukkan email Anda untuk verifikasi:");
 
   auth.signInWithEmailLink(email, window.location.href)
-    .then((result) => {
+    .then(async (result) => {
       alert("✅ Login berhasil sebagai: " + result.user.email);
       localStorage.removeItem("emailForSignIn");
+
+      // Tampilkan tombol logout, sembunyikan loginBox
       document.getElementById("loginBox").style.display = "none";
       document.getElementById("logoutBtn").style.display = "block";
-      loadUserData(result.user.uid);
+
+      // === Ambil data pet user dari server (Firestore misalnya)
+      const user = result.user;
+      const petRef = doc(db, "pets", user.uid);
+      const petSnap = await getDoc(petRef);
+      const petData = petSnap.exists() ? petSnap.data() : null;
+
+      // ✅ Jalankan reload otomatis agar pet user aktif
+      onLoginSuccess({ petData });
     })
     .catch((error) => {
       alert("❌ Login gagal: " + error.message);
@@ -2783,6 +2796,43 @@ if (auth.isSignInWithEmailLink(window.location.href)) {
 }
 
 
+
+// === 🔄 Fungsi dipanggil setelah login OTP sukses ===
+// Aman dan tidak ganggu logika lain
+function onLoginSuccess(userData) {
+  try {
+    // Tutup popup login
+    const box = document.getElementById("loginBox");
+    if (box) box.style.display = "none";
+
+    // Simpan data pet ke localStorage (jika ada dari server)
+    if (userData && userData.petData) {
+      localStorage.setItem("petData", JSON.stringify(userData.petData));
+      console.log("✅ Data pet user tersimpan:", userData.petData);
+    }
+
+    // Notifikasi ringan
+    if (typeof showBubble === "function") {
+      showBubble("✅ Login berhasil! Memuat ulang halaman...");
+    }
+
+    // Efek visual lembut sebelum reload
+    document.body.style.transition = "opacity 0.4s ease";
+    document.body.style.opacity = "0.6";
+
+    // Reload halaman setelah sedikit jeda
+    setTimeout(() => {
+      location.reload();  // ⏳ muat ulang game agar pet user aktif
+    }, 1200);
+
+  } catch (err) {
+    console.error("❌ Gagal memproses login sukses:", err);
+  }
+}
+</script>
+
+<script>
+  
 // === LOGOUT FINAL HYBRID MODE ===
 function logout() {
   if (!confirm("Apakah yakin ingin logout?")) return;
@@ -3047,6 +3097,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
