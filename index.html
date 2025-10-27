@@ -2767,29 +2767,32 @@ function sendLoginLink() {
 
 
 // === CEK LINK LOGIN (saat user klik dari email) ===
-if (auth.isSignInWithEmailLink(window.location.href)) {
-  let email = localStorage.getItem("emailForSignIn");
-  if (!email) email = prompt("Masukkan email Anda untuk verifikasi:");
+document.addEventListener("DOMContentLoaded", () => {
+  if (auth.isSignInWithEmailLink(window.location.href)) {
+    console.log("📩 Deteksi link OTP aktif:", window.location.href);
 
-  auth.signInWithEmailLink(email, window.location.href)
-    .then(async (result) => {
-      alert("✅ Login berhasil sebagai: " + result.user.email);
-      localStorage.removeItem("emailForSignIn");
+    let email = localStorage.getItem("emailForSignIn");
+    if (!email) email = prompt("Masukkan email Anda untuk verifikasi:");
 
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("logoutBtn").style.display = "block";
+    auth.signInWithEmailLink(email, window.location.href)
+      .then(async (result) => {
+        alert("✅ Login berhasil sebagai: " + result.user.email);
+        localStorage.removeItem("emailForSignIn");
 
-      // 🔹 Ganti ke format Firestore versi 8
-      const user = result.user;
-      const petSnap = await db.collection("pets").doc(user.uid).get();
-      const petData = petSnap.exists ? petSnap.data() : null;
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("logoutBtn").style.display = "block";
 
-      onLoginSuccess({ petData });
-    })
-    .catch((error) => {
-      alert("❌ Login gagal: " + error.message);
-    });
-}
+        const user = result.user;
+        const petSnap = await db.collection("pets").doc(user.uid).get();
+        const petData = petSnap.exists ? petSnap.data() : null;
+
+        onLoginSuccess({ petData });
+      })
+      .catch((error) => {
+        alert("❌ Login gagal: " + error.message);
+      });
+  }
+});
 
 
 
@@ -3093,6 +3096,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
