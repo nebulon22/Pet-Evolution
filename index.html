@@ -288,22 +288,23 @@ html, body {
   height: 220px;
   border: 2px solid #ccc;
   border-radius: 6px;
-  overflow: hidden;
   background: rgba(102,102,102,0.4);
   position: relative;
+  overflow: visible; /* biar bar atas tidak terpotong */
 }
 
 /* Bar default */
 .bar {
   flex: 1;
-  margin: 1px 0;
+  margin: 0; /* hilangkan margin agar pas 10 bar */
   background: rgba(51,51,51,0.4);
   transition: background 0.3s ease, opacity 0.3s ease;
 }
+
+/* Warna aktif */
 .bar.active { opacity: 1; }
 
-/* === GRADASI WARNA DARI BAWAH KE ATAS === */
-
+/* Warna gradasi (tidak diubah) */
 .thermometer > .bar:nth-of-type(1).active  { background:#1a0000; }
 .thermometer > .bar:nth-of-type(2).active  { background:#800000; }
 .thermometer > .bar:nth-of-type(3).active  { background:#b22222; }
@@ -315,21 +316,17 @@ html, body {
 .thermometer > .bar:nth-of-type(9).active  { background:#32cd32; }
 .thermometer > .bar:nth-of-type(10).active { background:#00ff00; }
 
-
-    
-/* Label thermometer */
-.thermo-label {
+/* Label posisi */
+#labelTop, #labelBottom, #labelPercent {
   position: absolute;
-  left: 10%;
-  transform: translateX(-10%);
-  font-size: 2vw;
+  left: 35px;
+  font-size: 12px;
   color: white;
   text-shadow: 1px 1px 2px black;
-  white-space: nowrap;
 }
-
-#labelTop { top:1px; } #labelBottom { bottom:1px; }
-  
+#labelTop { top: -5px; }       /* agak di atas kotak */
+#labelBottom { bottom: -5px; } /* agak di bawah */
+#labelPercent { left: 40px; }  /* tengah kanan */
     
     
     
@@ -3315,6 +3312,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
