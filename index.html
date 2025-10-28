@@ -1084,7 +1084,7 @@ html, body {
   100% { transform: translate(0,0) rotate(0deg); }
 }
 #pet.hungry {
-  animation: hungry-shake 0.6s infinite;
+  animation: hungry-shake 0.7s infinite;
 }
 
 /* Animasi lompat bermain */
@@ -2294,6 +2294,22 @@ if (totalEl) totalEl.textContent = "🔥 Total Power: " + pet.totalPower;
     const totalPowerEl = document.getElementById("popupTotalPower");
     if (totalPowerEl) totalPowerEl.textContent = pet.totalPower || 0;
   }
+  // === CEK KONDISI LAPAR DAN ANIMASI ===
+  const petEl = document.getElementById("pet");
+  if (petEl) {
+    if (pet.hunger < 30) {
+      petEl.classList.add("hungry");
+
+      // Tampilkan teks lapar sekali saja (tidak spam)
+      if (typeof showBubble === "function" && !petEl.dataset.warnedHungry) {
+        showBubble("😿 Aku lapar...");
+        petEl.dataset.warnedHungry = "true";
+      }
+    } else {
+      petEl.classList.remove("hungry");
+      delete petEl.dataset.warnedHungry;
+    }
+  }
 
 
 }
@@ -3256,6 +3272,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
