@@ -2223,30 +2223,22 @@ if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
 
   
 
-// === BAR HUNGER (THERMOMETER) ===
-// === BAR HUNGER (THERMOMETER) ===
-const thermo = document.getElementById("thermometer");
-if (thermo) {
-  const bars = thermo.querySelectorAll(".bar");
-  const label = thermo.querySelector(".thermo-label");
 
-  if (isNaN(pet.hunger)) pet.hunger = 0;
-  const hungerVal = Math.max(0, Math.min(100, pet.hunger));
+  // === BAR HUNGER (THERMOMETER) ===
+  const thermo = document.getElementById("thermometer");
+  if (thermo) {
+    const bars = thermo.querySelectorAll(".bar");
+    const label = thermo.querySelector(".thermo-label");
+    if (isNaN(pet.hunger)) pet.hunger = 0;
+    const hungerVal = Math.max(0, Math.min(100, pet.hunger));
+    const activeCount = Math.round((hungerVal / 100) * bars.length);
+    bars.forEach((bar, i) => {
+      if (i < activeCount) bar.classList.add("active");
+      else bar.classList.remove("active");
+    });
+    if (label) label.textContent = Math.floor(hungerVal) + "%";
+  }
 
-  // Hitung bar aktif
-  let activeCount = Math.round((hungerVal / 100) * bars.length);
-  if (hungerVal >= 99) activeCount = bars.length; // pastikan 100% aktif semua
-
-  // === AKTIFKAN BAR MULAI DARI BAWAH VISUAL (karena column-reverse) ===
-  bars.forEach((bar, i) => {
-    const visualIndex = bars.length - 1 - i; // urutan visual (atas → bawah)
-    if (visualIndex < activeCount) bar.classList.add("active");
-    else bar.classList.remove("active");
-  });
-
-  // Perbarui label
-  if (label) label.textContent = Math.floor(hungerVal) + "%";
-}
 
 
 
@@ -3323,6 +3315,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
