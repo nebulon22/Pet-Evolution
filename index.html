@@ -2207,29 +2207,39 @@ if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
 
   
 
+// Simulasi nilai hunger pet yang berkurang 5 poin tiap detik
+let hunger = 100; // mulai dari 100%
 
- 
-  // === BAR HUNGER (THERMOMETER) ===
-// === BAR HUNGER (THERMOMETER) ===
-const thermo = document.getElementById("thermometer");
-if (thermo) {
-  const bars = thermo.querySelectorAll(".bar");
-  const label = thermo.querySelector(".thermo-label");
-  if (isNaN(pet.hunger)) pet.hunger = 0;
-  const hungerVal = Math.max(0, Math.min(100, pet.hunger));
-  const activeCount = Math.round((hungerVal / 100) * bars.length);
-  bars.forEach((bar, i) => {
-    if (i < activeCount) bar.classList.add("active");
-    else bar.classList.remove("active");
-  });
-  if (label) label.textContent = Math.floor(hungerVal) + "%";
+const fill = document.querySelector('.thermometer .fill');
+const labelPercent = document.getElementById('labelPercent');
+const thermoLabel = document.querySelector('.thermo-label');
+
+function updateThermometer(hungerVal) {
+  // Batasi nilai antara 0 dan 100
+  const clampedVal = Math.max(0, Math.min(100, hungerVal));
+
+  // Ubah tinggi fill sesuai persentase hunger
+  fill.style.height = clampedVal + '%';
+
+  // Update label persentase
+  labelPercent.textContent = clampedVal + '%';
+  thermoLabel.textContent = clampedVal + '%';
 }
 
+// Fungsi untuk mengurangi hunger tiap detik
+function decreaseHunger() {
+  hunger -= 5;
+  if (hunger < 0) hunger = 0;
+  updateThermometer(hunger);
+}
 
+// Inisialisasi tampilan awal
+updateThermometer(hunger);
 
+// Jalankan pengurangan hunger tiap 1 detik
+setInterval(decreaseHunger, 1000);
 
-
-
+ 
 
   // === Gambar Pet ===
   const petImg = document.getElementById("pet");
@@ -3303,6 +3313,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
