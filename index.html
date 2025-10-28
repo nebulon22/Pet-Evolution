@@ -2236,7 +2236,7 @@ if (thermo) {
   const hungerVal = Math.max(0, Math.min(100, pet.hunger));
 
   // Hitung jumlah bar aktif (0–10)
-  const activeCount = Math.round((hungerVal / 100) * bars.length);
+  const activeCount = Math.ceil((hungerVal / 100) * bars.length);
 
   // Karena flex-direction: column-reverse,
   // bar pertama di DOM tampil di posisi bawah visual
@@ -3333,6 +3333,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
