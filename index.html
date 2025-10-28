@@ -2211,24 +2211,18 @@ if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
 
   
 
-// Simulasi nilai hunger pet yang berkurang 5 poin tiap detik
-let hunger = 100; // mulai dari 100%
+function updateThermometerFill(hungerVal) {
+  const fill = document.querySelector('.thermometer .fill');
+  const labelPercent = document.getElementById('labelPercent');
+  const thermoLabel = document.querySelector('.thermo-label');
 
-const fill = document.querySelector('.thermometer .fill');
-const labelPercent = document.getElementById('labelPercent');
-const thermoLabel = document.querySelector('.thermo-label');
-
-function updateThermometer(hungerVal) {
-  // Batasi nilai antara 0 dan 100
   const clampedVal = Math.max(0, Math.min(100, hungerVal));
-
-  // Ubah tinggi fill sesuai persentase hunger
   fill.style.height = clampedVal + '%';
 
-  // Update label persentase
   labelPercent.textContent = clampedVal + '%';
   thermoLabel.textContent = clampedVal + '%';
 }
+
 
 // Fungsi untuk mengurangi hunger tiap detik
 function decreaseHunger() {
@@ -3317,6 +3311,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
