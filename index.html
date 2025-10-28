@@ -304,16 +304,16 @@ html, body {
 
 /* === GRADASI WARNA DARI BAWAH KE ATAS === */
 
-.thermometer > .bar:nth-of-type(1).active  { background: #00ff00; } /* hijau terang (atas) */
-.thermometer > .bar:nth-of-type(2).active  { background: #32cd32; }
-.thermometer > .bar:nth-of-type(3).active  { background: #adff2f; }
-.thermometer > .bar:nth-of-type(4).active  { background: #f0e68c; }
-.thermometer > .bar:nth-of-type(5).active  { background: #ffd700; }
-.thermometer > .bar:nth-of-type(6).active  { background: #ff8c00; }
-.thermometer > .bar:nth-of-type(7).active  { background: #ff4500; }
-.thermometer > .bar:nth-of-type(8).active  { background: #b22222; }
-.thermometer > .bar:nth-of-type(9).active  { background: #800000; }
-.thermometer > .bar:nth-of-type(10).active { background: #1a0000; } /* hitam gelap (bawah) */
+.thermometer > .bar:nth-of-type(1).active  { background:#1a0000; }
+.thermometer > .bar:nth-of-type(2).active  { background:#800000; }
+.thermometer > .bar:nth-of-type(3).active  { background:#b22222; }
+.thermometer > .bar:nth-of-type(4).active  { background:#ff4500; }
+.thermometer > .bar:nth-of-type(5).active  { background:#ff8c00; }
+.thermometer > .bar:nth-of-type(6).active  { background:#ffd700; }
+.thermometer > .bar:nth-of-type(7).active  { background:#f0e68c; }
+.thermometer > .bar:nth-of-type(8).active  { background:#adff2f; }
+.thermometer > .bar:nth-of-type(9).active  { background:#32cd32; }
+.thermometer > .bar:nth-of-type(10).active { background:#00ff00; }
 
 
     
@@ -2224,36 +2224,41 @@ if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
   
 
 // === BAR HUNGER (THERMOMETER) ===
+
 const thermo = document.getElementById("thermometer");
 if (thermo) {
   const bars = thermo.querySelectorAll(".bar");
-  const labelOld = thermo.querySelector(".thermo-label");   // label lama
+  const labelOld = thermo.querySelector(".thermo-label");   // label lama (opsional)
   const labelPercent = thermo.querySelector("#labelPercent"); // label baru dinamis
 
+  // Validasi nilai hunger
   if (isNaN(pet.hunger)) pet.hunger = 0;
   const hungerVal = Math.max(0, Math.min(100, pet.hunger));
+
+  // Hitung jumlah bar aktif (0–10)
   const activeCount = Math.round((hungerVal / 100) * bars.length);
 
-  // aktifkan bar dari bawah visual (karena column-reverse)
+  // Karena flex-direction: column-reverse,
+  // bar pertama di DOM tampil di posisi bawah visual
+  // Maka aktifkan dari index 0 sampai activeCount-1
   bars.forEach((bar, i) => {
-    if (i >= bars.length - activeCount) bar.classList.add("active");
+    if (i < activeCount) bar.classList.add("active");
     else bar.classList.remove("active");
   });
 
-  // update teks lama (kalau masih ada)
+  // Update teks lama jika masih ada
   if (labelOld) labelOld.textContent = Math.floor(hungerVal) + "%";
 
-  // update label baru di tengah thermometer
+  // Update label dinamis di tengah thermometer
   if (labelPercent) {
     labelPercent.textContent = Math.floor(hungerVal) + "%";
 
-    // gerakkan label mengikuti tinggi isi thermometer
+    // Geser posisi label mengikuti tinggi isi thermometer
     const height = thermo.clientHeight;
     const posY = height - (hungerVal / 100) * height;
-    labelPercent.style.top = `${posY - 12}px`; // sedikit di atas garis bar aktif
+    labelPercent.style.top = `${posY - 12}px`; // sedikit di atas garis aktif
   }
 }
-
 
 
   // === Gambar Pet ===
@@ -3328,6 +3333,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
