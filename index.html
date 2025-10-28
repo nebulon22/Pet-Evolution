@@ -1997,7 +1997,7 @@ function feedPet() {
   foodStock[selectedFood]--;
 
   // Update thermometer fill dan label
-  updateThermometerFill(pet.hunger);
+  updateThermometer(pet.hunger);
 
   // Efek teks pada slot makanan
   const slotDiv = document.querySelector(`.slot[data-food="${selectedFood}"]`);
@@ -3317,6 +3317,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
