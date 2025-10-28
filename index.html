@@ -283,7 +283,11 @@ html, body {
 
 
 .thermometer {
-  position: relative;
+  position: fixed;
+  top: 40%;
+  left: 5vw;                          /* mepet kiri layar */
+  transform: translateY(-50%);        /* sejajar tengah vertikal */
+  z-index: 6;
   width: 40px;
   height: 220px;
   border: 2px solid #ccc;
@@ -3313,6 +3317,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
