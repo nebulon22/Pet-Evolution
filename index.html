@@ -1930,7 +1930,7 @@ function feedPet() {
   }
 
   // === Hitung hasil makan ===
-  const hungerGain = 20;
+  const hungerGain = 10;
   const expGain =
     selectedFood === "meat" ? 10 :
     selectedFood === "fruit" ? 5 : 2.5;
@@ -2099,7 +2099,7 @@ function updatePetAnimation() {
   petImg.classList.remove("idle", "hungry");
 
   const hungerVal = Number(pet.hunger) || 0;
-  if (hungerVal < 30) {
+  if (hungerVal < 10) {
     petImg.classList.add("hungry");
   } else {
     petImg.classList.add("idle");
@@ -2278,7 +2278,7 @@ if (totalEl) totalEl.textContent = "🔥 Total Power: " + pet.totalPower;
   // === CEK KONDISI LAPAR DAN ANIMASI ===
   const petEl = document.getElementById("pet");
   if (petEl) {
-    if (pet.hunger < 30) {
+    if (pet.hunger < 10) {
       petEl.classList.add("hungry");
 
       // Tampilkan teks lapar sekali saja (tidak spam)
@@ -3253,6 +3253,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
