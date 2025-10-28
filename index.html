@@ -1677,7 +1677,7 @@ function playWithPet() {
     resumeAllAnimations();
 
     // Hidupkan kembali animasi dasar
-    setPetAnimation(pet.hunger < 10 ? "hungry" : "idle");
+     updatePetAnimation (pet.hunger < 10 ? "hungry" : "idle");
 
     btn.disabled = false;
     btn.style.pointerEvents = "auto";
@@ -3249,6 +3249,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
