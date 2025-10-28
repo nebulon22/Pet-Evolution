@@ -2225,40 +2225,30 @@ if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
 
 // === BAR HUNGER (THERMOMETER) ===
 
+// === BAR HUNGER (THERMOMETER) ===
 const thermo = document.getElementById("thermometer");
 if (thermo) {
   const bars = thermo.querySelectorAll(".bar");
-  const labelOld = thermo.querySelector(".thermo-label");   // label lama (opsional)
-  const labelPercent = thermo.querySelector("#labelPercent"); // label baru dinamis
+  const label = thermo.querySelector(".thermo-label");
 
-  // Validasi nilai hunger
   if (isNaN(pet.hunger)) pet.hunger = 0;
   const hungerVal = Math.max(0, Math.min(100, pet.hunger));
 
-  // Hitung jumlah bar aktif (0–10)
-  const activeCount = Math.ceil((hungerVal / 100) * bars.length);
+  // Hitung berapa bar yang aktif
+  const activeCount = Math.round((hungerVal / 100) * bars.length);
 
   // Karena flex-direction: column-reverse,
-  // bar pertama di DOM tampil di posisi bawah visual
-  // Maka aktifkan dari index 0 sampai activeCount-1
+  // bar terakhir di DOM tampil di atas visual,
+  // jadi kita aktifkan dari belakang.
   bars.forEach((bar, i) => {
-    if (i < activeCount) bar.classList.add("active");
+    const reverseIndex = bars.length - 1 - i;
+    if (reverseIndex < activeCount) bar.classList.add("active");
     else bar.classList.remove("active");
   });
 
-  // Update teks lama jika masih ada
-  if (labelOld) labelOld.textContent = Math.floor(hungerVal) + "%";
-
-  // Update label dinamis di tengah thermometer
-  if (labelPercent) {
-    labelPercent.textContent = Math.floor(hungerVal) + "%";
-
-    // Geser posisi label mengikuti tinggi isi thermometer
-    const height = thermo.clientHeight;
-    const posY = height - (hungerVal / 100) * height;
-    labelPercent.style.top = `${posY - 12}px`; // sedikit di atas garis aktif
-  }
+  if (label) label.textContent = Math.floor(hungerVal) + "%";
 }
+
 
 
   // === Gambar Pet ===
@@ -3333,6 +3323,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
