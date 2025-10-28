@@ -2222,20 +2222,21 @@ if (expFill) expFill.style.width = `${pet.exp}%`;
 if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
 
   
-  // === BAR HUNGER (THERMOMETER) ===
+
+// === BAR HUNGER (THERMOMETER) ===
 const thermo = document.getElementById("thermometer");
 if (thermo) {
   const bars = thermo.querySelectorAll(".bar");
-  const labelOld = thermo.querySelector(".thermo-label");  // label lama
+  const labelOld = thermo.querySelector(".thermo-label");   // label lama
   const labelPercent = thermo.querySelector("#labelPercent"); // label baru dinamis
 
   if (isNaN(pet.hunger)) pet.hunger = 0;
   const hungerVal = Math.max(0, Math.min(100, pet.hunger));
   const activeCount = Math.round((hungerVal / 100) * bars.length);
 
-  // aktifkan bar sesuai hunger
+  // aktifkan bar dari bawah visual (karena column-reverse)
   bars.forEach((bar, i) => {
-    if (i < activeCount) bar.classList.add("active");
+    if (i >= bars.length - activeCount) bar.classList.add("active");
     else bar.classList.remove("active");
   });
 
@@ -2252,6 +2253,7 @@ if (thermo) {
     labelPercent.style.top = `${posY - 12}px`; // sedikit di atas garis bar aktif
   }
 }
+
 
 
   // === Gambar Pet ===
@@ -3326,6 +3328,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
