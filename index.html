@@ -280,28 +280,21 @@ html, body {
 
 
 /* === THERMOMETER BAR UTUH DENGAN GRADASI === */
+/* === PATCH FIX THERMOMETER (arah & warna akurat) === */
+
+/* Pastikan kolom dari bawah ke atas */
 .thermometer {
   display: flex;
-  flex-direction: column; /* <– BUKAN column-reverse lagi */
-  justify-content: flex-end; /* tumpuk dari bawah */
-  width: 30px;
-  height: 220px;
-  border: 2px solid #ccc;
-  border-radius: 6px;
-  overflow: hidden;
-  background: rgba(102,102,102,0.4);
-  position: relative;
+  flex-direction: column-reverse !important;  /* ⬅️ dibalik lagi */
+  justify-content: flex-start !important;
 }
 
-/* Bar default */
+/* Reset warna default */
 .bar {
-  flex: 1;
-  margin: 0;
   background: rgba(51,51,51,0.4);
-  transition: background 0.3s ease, opacity 0.3s ease;
 }
 
-/* Warna aktif (gradasi bawah → atas) */
+/* Urutan warna bawah → atas (sesuai visual sekarang) */
 .thermometer > .bar:nth-of-type(1).active  { background:#1a0000; }  /* bawah hitam tua */
 .thermometer > .bar:nth-of-type(2).active  { background:#800000; }
 .thermometer > .bar:nth-of-type(3).active  { background:#b22222; }
@@ -314,6 +307,8 @@ html, body {
 .thermometer > .bar:nth-of-type(10).active { background:#00ff00; } /* atas hijau terang */
 
 
+
+    
 /* Label posisi */
 #labelTop, #labelBottom, #labelPercent {
   position: absolute;
@@ -2221,6 +2216,7 @@ if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
 
  
   // === BAR HUNGER (THERMOMETER) ===
+// === BAR HUNGER (THERMOMETER) ===
 const thermo = document.getElementById("thermometer");
 if (thermo) {
   const bars = thermo.querySelectorAll(".bar");
@@ -2234,6 +2230,7 @@ if (thermo) {
   });
   if (label) label.textContent = Math.floor(hungerVal) + "%";
 }
+
 
 
 
@@ -3312,6 +3309,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
