@@ -2275,23 +2275,19 @@ if (totalEl) totalEl.textContent = "🔥 Total Power: " + pet.totalPower;
     const totalPowerEl = document.getElementById("popupTotalPower");
     if (totalPowerEl) totalPowerEl.textContent = pet.totalPower || 0;
   }
-  // === CEK KONDISI LAPAR DAN ANIMASI ===
-  const petEl = document.getElementById("pet");
-  if (petEl) {
-    if (pet.hunger < 10) {
-      petEl.classList.add("hungry");
-
-      // Tampilkan teks lapar sekali saja (tidak spam)
-      if (typeof showBubble === "function" && !petEl.dataset.warnedHungry) {
-        showBubble("😿 Aku lapar...");
-        petEl.dataset.warnedHungry = "true";
-      }
-    } else {
-      petEl.classList.remove("hungry");
-      delete petEl.dataset.warnedHungry;
+  
+// === CEK KONDISI LAPAR DAN PESAN TEKS ===
+const petEl = document.getElementById("pet");
+if (petEl) {
+  if (pet.hunger < 10) {
+    if (typeof showBubble === "function" && !petEl.dataset.warnedHungry) {
+      showBubble("😿 Aku lapar...");
+      petEl.dataset.warnedHungry = "true";
     }
+  } else {
+    delete petEl.dataset.warnedHungry;
   }
-
+}
 
 }
 
@@ -3253,6 +3249,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
