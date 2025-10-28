@@ -1632,17 +1632,6 @@ function showBubble(text) {
 }
 
 
-
-// ================== Fungsi helper ==================
-
-function setPetAnimation(state) {
-  const pet = document.getElementById("pet");
-  pet.classList.remove("idle", "hungry", "pet-fly");
-  pet.style.animation = ""; // reset inline style
-  if(state === "idle") pet.classList.add("idle");
-  if(state === "hungry") pet.classList.add("hungry");
-}
-
 // ================== Tombol Play ==================
 // === SISTEM ANIMASI PET TERPADU ===
 let isPlaying = false;
@@ -1699,20 +1688,6 @@ function playWithPet() {
 }
 
 
-  
-// === Animasi dasar pet (idle / hungry) ===
-function setPetAnimation(state) {
-  const petImg = document.getElementById("pet");
-  if (!petImg) return;
-
-  // Jika sedang bermain, jangan ganggu animasi
-  if (isPlaying) return;
-
-  petImg.classList.remove("idle", "hungry", "pet-fly");
-
-  if (state === "hungry") petImg.classList.add("hungry");
-  else petImg.classList.add("idle");
-}
 
 // === Pause & Resume animasi elemen lain ===
 function pauseAllAnimations() {
@@ -2111,18 +2086,31 @@ if (pet.stage === "egg" && pet.level >= 10) {
  * Ubah animasi pet antara idle / hungry
  * agar tidak bentrok transform dan lebih halus
  */
+// === ANIMASI PET TERPADU ===
 function updatePetAnimation() {
   const petImg = document.getElementById("pet");
   if (!petImg) return;
 
-  petImg.classList.remove("idle", "hungry");
+  // Jangan ganggu animasi lain seperti fly
+  if (typeof isPlaying !== "undefined" && isPlaying) return;
 
-  if (pet.hunger <= 0) {
+  petImg.classList.remove("idle", "hungry");
+  const hungerVal = Number(pet.hunger) || 0;
+
+  if (hungerVal < 10) {
     petImg.classList.add("hungry");
   } else {
     petImg.classList.add("idle");
   }
 }
+
+// Hubungkan dengan updateUI
+const _oldUpdateUI = updateUI;
+updateUI = function() {
+  _oldUpdateUI();
+  updatePetAnimation();
+};
+
 
 // Jalankan setiap kali UI diperbarui
 const _oldUpdateUI = updateUI;
@@ -3272,6 +3260,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
