@@ -281,22 +281,30 @@ html, body {
 
 /* === THERMOMETER BAR UTUH DENGAN GRADASI === */
 
-   .thermometer {
-  display: flex;
-  flex-direction: column-reverse; /* agar bar pertama di bawah */
-  justify-content: flex-start;
-  width: 30px;
+
+.thermometer {
+  position: relative;
+  width: 40px;
   height: 220px;
   border: 2px solid #ccc;
-  border-radius: 6px;
+  border-radius: 8px;
+  background: #333; /* warna dasar */
   overflow: hidden;
+  box-shadow: 0 0 8px rgba(0,0,0,0.7);
+}
 
-  /* Linear gradient dari bawah ke atas */
+/* Elemen fill dengan gradasi warna */
+.fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; /* default penuh */
   background: linear-gradient(
     to top,
-    #000 0%,        /* hitam di bawah */
+    #000 0%,
     #111 10%,
-    #800000 20%,    /* merah tua */
+    #800000 20%,
     #a52a2a 35%,
     #b22222 45%,
     #ff4500 55%,
@@ -305,48 +313,59 @@ html, body {
     #f0e68c 85%,
     #adff2f 92%,
     #7fff00 97%,
-    #00ff00 100%    /* hijau di atas */
+    #00ff00 100%
   );
-  position: relative;
+  border-radius: 6px 6px 0 0;
+  transition: height 0.8s ease-in-out;
+  box-shadow: inset 0 0 10px rgba(255,255,255,0.3);
 }
 
-/* Bar sebagai overlay transparan untuk menandai level */
-.bar {
-  flex: 1;
-  margin: 1px 0;
-  background: transparent; /* transparan agar background gradient terlihat */
-  opacity: 0.2;            /* default redup */
-  transition: opacity 0.3s ease;
-  cursor: pointer;         /* opsional, agar terlihat interaktif */
+/* Label atas dan bawah */
+#labelTop, #labelBottom {
+  position: absolute;
+  left: 50px;
+  font-size: 14px;
+  color: white;
+  text-shadow: 1px 1px 3px black;
+  user-select: none;
+}
+#labelTop {
+  top: 0;
+}
+#labelBottom {
+  bottom: 0;
 }
 
-.bar.active {
-  opacity: 1;              /* bar aktif lebih terang */
+/* Label persentase di samping */
+#labelPercent {
+  position: absolute;
+  left: 50px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px black;
+  user-select: none;
 }
 
-/* Label thermometer */
+/* Label persentase di dalam thermometer */
 .thermo-label {
   position: absolute;
-  left: 10%;
-  transform: translateX(-10%);
-  font-size: 2vw;
+  width: 100%;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  font-weight: bold;
   color: white;
-  text-shadow: 1px 1px 2px black;
-  white-space: nowrap;
+  text-shadow: 1px 1px 4px black;
+  pointer-events: none;
+  user-select: none;
 }
 
-/* Label posisi */
-#labelTop, #labelBottom, #labelPercent {
-  position: absolute;
-  left: 35px;
-  font-size: 10px;
-  color: white;
-  text-shadow: 1px 1px 2px black;
-}
-#labelTop { top: -5px; }
-#labelBottom { bottom: -5px; }
-#labelPercent { left: 40px; }
- 
+   
+
 
 .hungry { }
     @keyframes evoPulse { 0%,100% { transform: scale(1);} 25%{transform:scale(1.3);} 50%{transform:scale(0.7);} 75%{transform:scale(1.4);} }
@@ -418,48 +437,7 @@ html, body {
 }
 
 
-.thermometer {
-  position: fixed;
-  top: 40%;
-  left: 5vw;                          /* mepet kiri layar */
-  transform: translateY(-50%);        /* sejajar tengah vertikal */
-  z-index: 6;
-}
 
-/* === Label atas-bawah dan label persen dinamis === */
-#labelTop, #labelBottom {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
-  color: #fff;
-  text-shadow: 1px 1px 2px #000;
-  font-weight: bold;
-  pointer-events: none;
-  z-index: 3;
-}
-#labelTop { top: 4px;
-            font-size: 10px; 
-            font-weight: normal;
-           }
-#labelBottom { bottom: 4px; 
-             font-size: 10px; 
-             font-weight: normal;
-
-             }
-
-#labelPercent {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 50%);
-  font-size: 10px; 
-  font-weight: normal;
-  color: #fff;
-  text-shadow: 1px 1px 2px #000;
-  pointer-events: none;
-  z-index: 4;
-  transition: top 0.3s ease;
-}
 
     
 #pet {
@@ -1355,28 +1333,20 @@ html, body {
       <div class="glow" id="evoGlow"></div>
       <img id="pet" src="images/egg.png">
     </div>
+
+    <!-- 🌡️Thermometer -->
+
     
- <div class="thermometer" id="thermometer">
-  <!-- Label atas & bawah -->
+<div class="thermometer" id="thermometer">
   <div id="labelTop">Kenyang</div>
   <div id="labelBottom">Lapar</div>
-  <div id="labelPercent">0%</div>
+  <div id="labelPercent">100%</div>
 
-  <!-- Batang thermometer -->
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
-  <div class="bar"></div>
+  <div class="fill"></div>
 
-  <!-- (Opsional) label lama -->
-  <span class="thermo-label">0%</span>
+  <span class="thermo-label">100%</span>
 </div>
+
 
       
  <div id="bubble"></div>
@@ -3333,6 +3303,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
