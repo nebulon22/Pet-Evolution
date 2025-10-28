@@ -410,6 +410,35 @@ html, body {
   z-index: 6;
 }
 
+/* === Label atas-bawah dan label persen dinamis === */
+#labelTop, #labelBottom {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 3;
+}
+#labelTop { top: 4px; }
+#labelBottom { bottom: 4px; }
+
+#labelPercent {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  font-size: 13px;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 4;
+  transition: top 0.3s ease;
+}
+
+    
 #pet {
   position: relative;           /* tetap relative untuk rotasi 3D */
   width: 50vw;
@@ -1304,14 +1333,28 @@ html, body {
       <img id="pet" src="images/egg.png">
     </div>
     
-     <div class="thermometer" id="thermometer">
-       <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-        <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-        <div class="bar"></div>
-        <span class="thermo-label">0%</span>
-        <div id="labelBottom" class="thermo-label" style="bottom:-1.5em;">Lapar</div>
-      </div>
+ <div class="thermometer" id="thermometer">
+  <!-- Label atas & bawah -->
+  <div id="labelTop">Kenyang</div>
+  <div id="labelBottom">Lapar</div>
+  <div id="labelPercent">0%</div>
+
+  <!-- Batang thermometer -->
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+
+  <!-- (Opsional) label lama -->
+  <span class="thermo-label">0%</span>
+</div>
+
       
  <div id="bubble"></div>
     
@@ -2171,19 +2214,36 @@ if (expText) expText.textContent = `EXP ${pet.exp.toFixed(1)}%`;
 
   
   // === BAR HUNGER (THERMOMETER) ===
-  const thermo = document.getElementById("thermometer");
-  if (thermo) {
-    const bars = thermo.querySelectorAll(".bar");
-    const label = thermo.querySelector(".thermo-label");
-    if (isNaN(pet.hunger)) pet.hunger = 0;
-    const hungerVal = Math.max(0, Math.min(100, pet.hunger));
-    const activeCount = Math.round((hungerVal / 100) * bars.length);
-    bars.forEach((bar, i) => {
-      if (i < activeCount) bar.classList.add("active");
-      else bar.classList.remove("active");
-    });
-    if (label) label.textContent = Math.floor(hungerVal) + "%";
+const thermo = document.getElementById("thermometer");
+if (thermo) {
+  const bars = thermo.querySelectorAll(".bar");
+  const labelOld = thermo.querySelector(".thermo-label");  // label lama
+  const labelPercent = thermo.querySelector("#labelPercent"); // label baru dinamis
+
+  if (isNaN(pet.hunger)) pet.hunger = 0;
+  const hungerVal = Math.max(0, Math.min(100, pet.hunger));
+  const activeCount = Math.round((hungerVal / 100) * bars.length);
+
+  // aktifkan bar sesuai hunger
+  bars.forEach((bar, i) => {
+    if (i < activeCount) bar.classList.add("active");
+    else bar.classList.remove("active");
+  });
+
+  // update teks lama (kalau masih ada)
+  if (labelOld) labelOld.textContent = Math.floor(hungerVal) + "%";
+
+  // update label baru di tengah thermometer
+  if (labelPercent) {
+    labelPercent.textContent = Math.floor(hungerVal) + "%";
+
+    // gerakkan label mengikuti tinggi isi thermometer
+    const height = thermo.clientHeight;
+    const posY = height - (hungerVal / 100) * height;
+    labelPercent.style.top = `${posY - 12}px`; // sedikit di atas garis bar aktif
   }
+}
+
 
   // === Gambar Pet ===
   const petImg = document.getElementById("pet");
@@ -3257,6 +3317,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
