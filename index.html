@@ -279,43 +279,54 @@ html, body {
 }
 
 
+/* === THERMOMETER BAR UTUH DENGAN GRADASI === */
+.thermometer {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  width: 30px;
+  height: 220px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(102,102,102,0.4);
+  position: relative;
+}
 
-    .thermometer { display:flex; 
-                  flex-direction:column-reverse;
-                  justify-content:flex-start;
-                  width:30px;
-                  height:220px;
-                  border:2px
-                  solid #ccc;
-                  border-radius:6px;
-                  overflow:hidden;
-                  background:#666;
-                  position:relative;
-                 }
-    .bar { flex:1; margin:1px 0; background:#666; }
-    .bar.active { opacity:1; }
-    .bar:nth-child(2).active{background:#800000;}
-    .bar:nth-child(3).active{background:#b22222;}
-    .bar:nth-child(4).active{background:#ff4500;}
-    .bar:nth-child(5).active{background:#ff8c00;}
-    .bar:nth-child(6).active{background:#ffd700;}
-    .bar:nth-child(7).active{background:#f0e68c;}
-    .bar:nth-child(8).active{background:#adff2f;}
-    .bar:nth-child(9).active{background:#7fff00;}
-    .bar:nth-child(10).active{background:#32cd32;}
-    .bar:nth-child(11).active{background:#00ff00;}
-    .thermo-label { position:absolute; left:10%; transform:translateX(-10%); font-size:2vw; color:white;
+/* Bar default */
+.bar {
+  flex: 1;
+  margin: 1px 0;
+  background: rgba(51,51,51,0.4);
+  transition: background 0.3s ease, opacity 0.3s ease;
+}
+.bar.active { opacity: 1; }
 
-    text-shadow:1px 1px 2px black;
-    white-space: nowrap;
-    .thermometer .bar:first-child {
-     background: #111 !important; /* hitam pekat */
-     }
+/* === GRADASI WARNA DARI BAWAH KE ATAS === */
+.bar:nth-child(1).active { background: linear-gradient(to top, #000 0%, #111 30%, #800000 100%); } /* dasar hitam ke merah tua */
+.bar:nth-child(2).active { background: linear-gradient(to top, #800000, #a52a2a); }              /* merah tua lebih hangat */
+.bar:nth-child(3).active { background: linear-gradient(to top, #b22222, #ff4500); }              /* merah → oranye */
+.bar:nth-child(4).active { background: linear-gradient(to top, #ff4500, #ff8c00); }              /* oranye terang */
+.bar:nth-child(5).active { background: linear-gradient(to top, #ff8c00, #ffd700); }              /* oranye → kuning emas */
+.bar:nth-child(6).active { background: linear-gradient(to top, #ffd700, #f0e68c); }              /* kuning ke krem */
+.bar:nth-child(7).active { background: linear-gradient(to top, #f0e68c, #adff2f); }              /* krem → hijau muda */
+.bar:nth-child(8).active { background: linear-gradient(to top, #adff2f, #7fff00); }              /* hijau muda lebih kuat */
+.bar:nth-child(9).active { background: linear-gradient(to top, #7fff00, #32cd32); }              /* hijau terang → hijau daun */
+.bar:nth-child(10).active { background: linear-gradient(to top, #32cd32, #00ff00); }             /* hijau daun → hijau neon */
+.bar:nth-child(11).active { background: linear-gradient(to top, #00ff00, #00ff66); }             /* puncak hijau terang ke neon muda */
 
-    }
+/* Label thermometer */
+.thermo-label {
+  position: absolute;
+  left: 10%;
+  transform: translateX(-10%);
+  font-size: 2vw;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  white-space: nowrap;
+}
 
-
-    #labelTop { top:1px; } #labelBottom { bottom:1px; }
+#labelTop { top:1px; } #labelBottom { bottom:1px; }
   
     
     
@@ -3246,6 +3257,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
