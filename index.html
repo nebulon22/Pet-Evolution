@@ -303,16 +303,16 @@ html, body {
 .bar.active { opacity: 1; }
 
 /* === GRADASI WARNA DARI BAWAH KE ATAS === */
-.bar:nth-child(2).active  { background: #1a0000; }   /* hitam ke merah tua */
-.bar:nth-child(3).active  { background: #800000; }   /* merah gelap */
-.bar:nth-child(4).active  { background: #b22222; }   /* merah sedang */
-.bar:nth-child(5).active  { background: #ff4500; }   /* oranye kemerahan */
-.bar:nth-child(6).active  { background: #ff8c00; }   /* oranye terang */
-.bar:nth-child(7).active  { background: #ffd700; }   /* kuning emas */
-.bar:nth-child(8).active  { background: #f0e68c; }   /* kuning muda */
-.bar:nth-child(9).active  { background: #adff2f; }   /* hijau muda */
-.bar:nth-child(10).active { background: #32cd32; }   /* hijau terang */
-.bar:nth-child(11).active { background: #00ff00; }   /* hijau penuh (atas) */
+ .bar:nth-of-type(1).active  { background: #1a0000; }
+.bar:nth-of-type(2).active  { background: #800000; }
+.bar:nth-of-type(3).active  { background: #b22222; }
+.bar:nth-of-type(4).active  { background: #ff4500; }
+.bar:nth-of-type(5).active  { background: #ff8c00; }
+.bar:nth-of-type(6).active  { background: #ffd700; }
+.bar:nth-of-type(7).active  { background: #f0e68c; }
+.bar:nth-of-type(8).active  { background: #adff2f; }
+.bar:nth-of-type(9).active  { background: #32cd32; }
+.bar:nth-of-type(10).active { background: #00ff00; }
 /* Label thermometer */
 .thermo-label {
   position: absolute;
@@ -420,17 +420,24 @@ html, body {
   pointer-events: none;
   z-index: 3;
 }
-#labelTop { top: 4px; }
-#labelBottom { bottom: 4px; }
+#labelTop { top: 4px;
+            font-size: 10px; 
+            font-weight: normal;
+           }
+#labelBottom { bottom: 4px; 
+             font-size: 10px; 
+             font-weight: normal;
+
+             }
 
 #labelPercent {
   position: absolute;
   left: 50%;
   transform: translate(-50%, 50%);
-  font-size: 13px;
+  font-size: 10px; 
+  font-weight: normal;
   color: #fff;
   text-shadow: 1px 1px 2px #000;
-  font-weight: bold;
   pointer-events: none;
   z-index: 4;
   transition: top 0.3s ease;
@@ -3315,6 +3322,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
