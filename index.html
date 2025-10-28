@@ -3230,13 +3230,6 @@ window.addEventListener("load", () => {
     }
   }
 
-  // Pastikan #pet menggunakan CSS variable animation (cadangan)
-  (function ensurePetAnimVar(){
-    const s = document.createElement('style');
-    s.textContent = '#pet:not(.pet-fly){ animation: var(--pet-anim, idleMotion 6s ease-in-out infinite, breathing 3s infinite); }';
-    document.head.appendChild(s);
-  })();
-
 
 window.onload = function() {
   updateUI();
@@ -3249,6 +3242,7 @@ window.onload = function() {
 
 </body>
 </html>
+
 
 
 
